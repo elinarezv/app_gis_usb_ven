@@ -1,0 +1,19 @@
+{
+  "name": "amenazas-usb",
+  "version": "1.0.0",
+  "description": "App móvil para georeferenciación de diversas amenazas",
+  "main": "app.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Elio Linarez: elio.linarez@tk-peru.com",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^7.14.0"
+  }
+}

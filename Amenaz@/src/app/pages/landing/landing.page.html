@@ -1,0 +1,35 @@
+    <ion-header>
+      <ion-toolbar>
+        <ion-title class="title-default">¡Bienvenid@!</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+       <ion-card class="welcome-card" color="dark">
+            <ion-card-header>
+                <ion-card-title>.::Amenaz@s::.</ion-card-title>
+                <ion-card-subtitle>APP para geolocalización de Riesgos</ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+                <p>Amenaz@s es una App que permite visualizar mapas de riesgo de diferentes
+                amenazas p. ej. sismos, inundaciones entre otras. </p>
+                <p>La información utilizada por la App es derivada de diferentes estudios
+                realizados por diversas instituciones, entre ellas la Universidad Simón Bolívar
+                (USB) de Venezuela.</p>
+                <p>Amenaz@s se publica bajo licencia GPLv3</p>
+                <p>La información que se ofrece a través de esta App es solamente un resumen
+                general preparado para el público. No pretende sustituir ningún procedimiento.</p>
+            </ion-card-content>
+        </ion-card>
+    </ion-content>
+    <ion-footer>
+        <ion-toolbar>
+            <ion-row>
+                <ion-col>
+                    <ion-button color="primary" expand="full" color="primary" (click)="login()">Iniciar sesión</ion-button>
+                </ion-col>
+                <ion-col>
+                    <ion-button color="primary" expand="full" color="danger" (click)="register()">Crear cuenta</ion-button>
+                </ion-col>
+            </ion-row>
+        </ion-toolbar>
+    </ion-footer>

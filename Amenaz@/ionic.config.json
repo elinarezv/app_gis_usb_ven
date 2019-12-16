@@ -1,0 +1,7 @@
+{
+  "name": "APP-riesgo",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}

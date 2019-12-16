@@ -1,0 +1,8 @@
+{
+  "WELCOME": "¡BIENVENID@!",
+  "TITLE": ".::AMENAZ@S::.",
+  "SUBTITLE": "Hello {{value}}",
+  "WELCOME_TEXT": "Ooohh .... did you just translate this text ?",
+
+  "data": { "name": "My name is {{name_value}}" }
+}
