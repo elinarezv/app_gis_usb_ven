@@ -22,7 +22,7 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule),
+    loadChildren: () => import('./pages/home/home.module').then(m => m.HomePageModule),
     canActivate: [AuthGuard]
   },
   {
@@ -31,8 +31,39 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'home',
-    loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule)
+    path: 'myaccount',
+    loadChildren: () => import('./pages/myaccount/myaccount.module').then( m => m.MyaccountPageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'notifications',
+    loadChildren: () => import('./pages/notifications/notifications.module').then( m => m.NotificationsPageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'credits',
+    loadChildren: () => import('./pages/credits/credits.module').then( m => m.CreditsPageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'privacy',
+    loadChildren: () => import('./pages/privacy/privacy.module').then( m => m.PrivacyPageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'notifications-logs',
+    loadChildren: () => import('./pages/notifications-logs/notifications-logs.module').then( m => m.NotificationsLogsPageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'threat-env',
+    loadChildren: () => import('./pages/threat-env/threat-env.module').then( m => m.ThreatEnvPageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'threat-map',
+    loadChildren: () => import('./pages/threat-map/threat-map.module').then( m => m.ThreatMapPageModule),
+    canActivate: [AuthGuard]
   }
 ];
 

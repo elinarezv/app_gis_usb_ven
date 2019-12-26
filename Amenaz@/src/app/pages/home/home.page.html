@@ -1,9 +1,48 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>home</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Amenaz@s</ion-title>
+        <ion-buttons slot="end">
+            <ion-button>
+                <ion-icon name="notifications"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+    <ion-toolbar>
+        <ion-buttons slot="primary">
+            <ion-button>
+                <ion-icon slot="icon-only" name="search"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-searchbar placeholder="Buscar lugar o dirección"></ion-searchbar>
+    </ion-toolbar>
 </ion-header>
-
 <ion-content>
-
+    <div id="mapId" style="width: 100%; height: 100%"></div>
 </ion-content>
+<ion-footer>
+    <ion-button expand="full" (click)="centerOnCity()" color="light">
+        <ion-icon slot="icon-only" name="business"></ion-icon>
+        <ion-title>LOCALIDAD: Mérida</ion-title>
+    </ion-button>
+    <ion-button expand="full" color="light" (click)="ThreadEnv()">
+        <ion-icon slot="icon-only" name="locate"></ion-icon>
+        <ion-title>Entornos de Amenazas</ion-title>
+    </ion-button>
+    <ion-button expand="full" color="light" (click)="ThreadMap()">
+        <ion-icon slot="icon-only" name="logo-buffer"></ion-icon>
+        <ion-title>Mapas de Amenazas</ion-title>
+    </ion-button>
+    <ion-toolbar>
+        <ion-buttons slot="end">
+            <ion-button>
+                <ion-icon slot="icon-only" name="information-circle"></ion-icon>
+            </ion-button>
+            <ion-button>
+                <ion-icon slot="icon-only" name="help-circle"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-footer>

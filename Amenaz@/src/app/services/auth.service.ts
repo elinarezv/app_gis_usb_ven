@@ -1,16 +1,28 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { EnvService } from './env.service';
 import { User } from '../models/user';
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   isLoggedIn = false;
   token: any;
+
   constructor(private http: HttpClient, private storage: NativeStorage, private env: EnvService) {}
+  isLogged() {
+    return this.isLoggedIn;
+  }
+  getTokenStr() {
+    return this.token;
+  }
+  setToken(newToken: any) {
+    this.token = newToken;
+  }
   login(email: String, password: String) {
     return this.http.post(this.env.API_URL + 'auth/login', { email: email, password: password }).pipe(
       tap(token => {
@@ -27,7 +39,6 @@ export class AuthService {
     );
   }
   register(fName: string, lName: string, addr: string, email: string, password: string, notifications: string) {
-    console.log('Notifications: ' + notifications);
     const body = new HttpParams()
       .set('fName', fName)
       .set('lName', lName)
@@ -35,7 +46,6 @@ export class AuthService {
       .set('email', email)
       .set('password', password)
       .set('notifications', notifications);
-    console.log(body.toString());
     return this.http.post(this.env.API_URL + 'auth/register', body.toString(), {
       headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
     });
@@ -62,6 +72,22 @@ export class AuthService {
       .pipe(
         tap(user => {
           return user;
+        })
+      );
+  }
+  getLayer(layerName: string) {
+    const params = new HttpParams().set('layerName', layerName);
+    return this.http
+      .get(this.env.API_URL + 'data/getlayer', {
+        headers: {
+          Authorization: 'Besic ' + this.token,
+          'x-access-token': this.token.token
+        },
+        params: params
+      })
+      .pipe(
+        tap(data => {
+          return data;
         })
       );
   }

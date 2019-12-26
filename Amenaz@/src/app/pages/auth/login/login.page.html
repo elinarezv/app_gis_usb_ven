@@ -1,7 +1,13 @@
     <ion-header>
+        <ion-toolbar>
+            <ion-buttons slot="end">
+                <ion-button (click)="dismissLogin()">
+                    <ion-icon slot="icon-only" name="close"></ion-icon>
+                </ion-button>
+            </ion-buttons>
+        </ion-toolbar>
       <ion-toolbar>
-        <ion-button color="light" (click)="dismissLogin()">Close</ion-button>
-        <ion-title>Login</ion-title>
+            <ion-title>Login</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content padding>
@@ -12,14 +18,14 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="floating">Password</ion-label>
+          <ion-label position="floating">Contraseña</ion-label>
           <ion-input ngModel type="password" name="password"></ion-input>
         </ion-item>
 
-        <p text-right>Forgot Password?</p>
+        <p text-right>¿Olvidó la contraseña?</p>
 
-        <ion-button type="submit" expand="full" color="primary">Login</ion-button>
+        <ion-button type="submit" expand="full" color="primary">Iniciar sesión</ion-button>
       </form>
-      <p text-center>Don't have a account?</p>
-      <ion-button expand="full" color="danger" (click)="registerModal()">Register</ion-button>
+      <p text-center>¿No tiene una cuenta?</p>
+      <ion-button expand="full" color="secondary" (click)="registerModal()">Registrarse</ion-button>
     </ion-content>

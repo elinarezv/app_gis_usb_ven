@@ -42,7 +42,12 @@
                 <ion-toggle [checked]="actNotify" (ionChange)="notify()"></ion-toggle>
             </ion-item>
 
-            <ion-button type="submit" expand="full" color="primary">Crear cuenta</ion-button>
+            <ion-item>
+                <ion-label>Acepto Términos y Condiciones</ion-label>
+                <ion-checkbox slot="end" [checked]="termAccept" (ionChange)="notifyTermsCond()"></ion-checkbox>
+            </ion-item>
+
+            <ion-button [disabled]="!termAccept" type="submit" expand="full" color="primary">Crear cuenta</ion-button>
       </form>
       <p text-center>¿Ya está registrado?</p>
       <ion-button expand="full" color="secondary" (click)="loginModal()">Iniciar sesión</ion-button>

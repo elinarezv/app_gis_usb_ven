@@ -11,6 +11,8 @@ import { AlertService } from 'src/app/services/alert.service';
 })
 export class RegisterPage implements OnInit {
   public actNotify: boolean = true;
+  public termAccept: boolean = false;
+  private activateRegisterButton: boolean = true;
 
   constructor(
     private modalController: ModalController,
@@ -20,12 +22,9 @@ export class RegisterPage implements OnInit {
   ) {}
 
   ngOnInit() {}
-  // Dismiss Register Modal
   dismissRegister() {
     this.modalController.dismiss();
   }
-
-  // On Login button tap, dismiss Register modal and open login Modal
   async loginModal() {
     this.dismissRegister();
     const loginModal = await this.modalController.create({
@@ -33,12 +32,15 @@ export class RegisterPage implements OnInit {
     });
     return await loginModal.present();
   }
-
   notify() {
     this.actNotify = !this.actNotify;
   }
-
+  notifyTermsCond() {
+    this.termAccept = !this.termAccept;
+  }
   register(form: NgForm) {
+    this.termAccept = false;
+    this.alertService.presentToast('Conectando al servidor...');
     this.authService
       .register(
         form.value.fName,
@@ -53,6 +55,7 @@ export class RegisterPage implements OnInit {
           this.authService.login(form.value.email, form.value.password).subscribe(
             data => {},
             error => {
+              this.termAccept = true;
               console.log(error);
             },
             () => {
@@ -63,6 +66,7 @@ export class RegisterPage implements OnInit {
           this.alertService.presentToast(data['message']);
         },
         error => {
+          this.termAccept = true;
           console.log(error);
         },
         () => {}
