@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { EnvService } from './env.service';
-import { Map, Control, tileLayer, Layer, marker, icon, polygon, geoJSON, LatLngExpression } from 'leaflet';
+import { Map, tileLayer, marker, icon, geoJSON, LatLngExpression } from 'leaflet';
 import { AuthService } from 'src/app/services/auth.service';
+
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +33,18 @@ export class MappingService {
   // Flood Thread Layers
   zpHydrograph: any;
 
-  constructor(private authService: AuthService, private storage: NativeStorage, private env: EnvService) {
+  geoLatitude: number;
+  geoLongitude: number;
+  geoAccuracy: number;
+  geoAddress: string;
+  gotGeoposition: boolean;
+
+  constructor(
+    private authService: AuthService,
+    private storage: NativeStorage,
+    private env: EnvService,
+    private geolocation: Geolocation
+  ) {
     // Add OSM Base Map
     this.baseMap = tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       id: 'mapId',
@@ -46,7 +59,7 @@ export class MappingService {
     const iconUrl = 'assets/marker-icon.png';
     const shadowUrl = 'assets/marker-shadow.png';
     // Add Marker of City with GeoInformation
-    this.mainCityMarker =  marker(this.mainCity, {
+    this.mainCityMarker = marker(this.mainCity, {
       icon: icon({
         iconRetinaUrl,
         iconUrl,
@@ -60,5 +73,26 @@ export class MappingService {
     })
       .bindPopup('Merida')
       .openPopup();
+    this.gotGeoposition = false;
+  }
+  getGeolocation() {
+    this.geolocation
+      .getCurrentPosition({ maximumAge: 1000, timeout: 5000, enableHighAccuracy: true })
+      .then(
+        resp => {
+          console.log(resp);
+          this.geoLatitude = resp.coords.latitude;
+          this.geoLongitude = resp.coords.longitude;
+          this.geoAccuracy = resp.coords.accuracy;
+          this.gotGeoposition = true;
+        },
+        err => {
+          //alert("error getting location")
+          alert('Can not retrieve Location');
+        }
+      )
+      .catch(error => {
+        alert('Error getting location' + JSON.stringify(error));
+      });
   }
 }

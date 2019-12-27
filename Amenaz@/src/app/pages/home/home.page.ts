@@ -90,6 +90,12 @@ export class HomePage implements OnInit {
       this.addLayertoMap('zpr_albarregas_geojson', '#0000ff');
     }
   }
+  gotoPosition() {
+    this.mappingService.getGeolocation();
+    if (this.mappingService.gotGeoposition) {
+      this.map.flyTo([this.mappingService.geoLatitude, this.mappingService.geoLongitude], 12);
+    }
+  }
   mainScreenMap() {
     // Center Map on Venezuela
     this.map = new Map('mapId').setView([8.031, -65.346], 5);
