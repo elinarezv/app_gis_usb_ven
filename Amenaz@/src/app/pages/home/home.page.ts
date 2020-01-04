@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { observable } from 'rxjs';
 import { NgForm } from '@angular/forms';
+import { Capabilities } from 'protractor';
 
 @Component({
   selector: 'app-home',
@@ -33,65 +34,15 @@ export class HomePage implements OnInit {
     this.mainScreenMap();
   }
   allowLayerControl() {
-    if (
-      this.mappingService.urbanArea &&
-      this.mappingService.urbanPoly &&
-      this.mappingService.albarregasPZ &&
-      this.mappingService.meridaPolitical
-    ) {
-      return true;
-    }
-    return false;
-  }
-  addLayertoMap(layerName: string, color: string) {
-    this.authService.getLayer(layerName).subscribe(
-      (result: any) => {
-        const var1 = geoJSON(result, {
-          style: {
-            color: color,
-            weight: 2,
-            opacity: 0.65
-          }
-        });
-        switch (layerName) {
-          case 'a_urbana_geojson':
-            this.mappingService.urbanArea = var1;
-            break;
-          case 'polg_urbana_geojson':
-            this.mappingService.urbanPoly = var1;
-            break;
-          case 'zpr_albarregas_geojson':
-            this.mappingService.albarregasPZ = var1;
-            break;
-          case 'pquias_libertador_geojson':
-            this.mappingService.meridaPolitical = var1;
-            break;
-        }
-      },
-      error => {
-        console.log(error);
-      },
-      () => {
-        console.log('Add to map');
+    this.mappingService.nonThreadMaps.forEach(val => {
+      if (!val.downloaded) {
+        return false;
       }
-    );
-  }
-  addLayers2MainMap() {
-    if (!this.mappingService.urbanArea) {
-      this.addLayertoMap('a_urbana_geojson', '#ff3300');
-    }
-    if (!this.mappingService.urbanPoly) {
-      this.addLayertoMap('polg_urbana_geojson', '#ccff33');
-    }
-    if (!this.mappingService.meridaPolitical) {
-      this.addLayertoMap('pquias_libertador_geojson', '#33cc33');
-    }
-    if (!this.mappingService.albarregasPZ) {
-      this.addLayertoMap('zpr_albarregas_geojson', '#0000ff');
-    }
+    });
+    return true;
   }
   gotoPosition() {
-    this.mappingService.getGeolocation();
+    this.mappingService.checkGPSPermission();
     if (this.mappingService.gotGeoposition) {
       this.map.flyTo([this.mappingService.geoLatitude, this.mappingService.geoLongitude], 12);
     }
@@ -102,18 +53,15 @@ export class HomePage implements OnInit {
     this.mappingService.mainCityMarker.addTo(this.map);
 
     // Add all non-thread layers
-    this.addLayers2MainMap();
     this.mappingService.baseMap.addTo(this.map);
   }
   centerOnCity() {
     this.map.flyTo(this.mappingService.mainCity, 12);
     if (this.allowLayerControl() && !this.addedLayerControl) {
-      const overlayMaps = {
-        'Área urbana': this.mappingService.urbanArea,
-        'Poligonal urbana': this.mappingService.urbanPoly,
-        'Zona Prot. Río Albarregas': this.mappingService.albarregasPZ,
-        'Parroquias Libertador': this.mappingService.meridaPolitical
-      };
+      const overlayMaps = {};
+      this.mappingService.nonThreadMaps.forEach(val => {
+        overlayMaps[val.layerName] = val.gJSON;
+      });
       control.layers(null, overlayMaps).addTo(this.map);
       this.addedLayerControl = true;
     }

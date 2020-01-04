@@ -30,7 +30,7 @@ export class AuthService {
           () => {
             console.log('Token Stored');
           },
-          error => console.error('Error storing item', error)
+          error => console.error('Error storing token', error)
         );
         this.token = token;
         this.isLoggedIn = true;
@@ -72,22 +72,6 @@ export class AuthService {
       .pipe(
         tap(user => {
           return user;
-        })
-      );
-  }
-  getLayer(layerName: string) {
-    const params = new HttpParams().set('layerName', layerName);
-    return this.http
-      .get(this.env.API_URL + 'data/getlayer', {
-        headers: {
-          Authorization: 'Besic ' + this.token,
-          'x-access-token': this.token.token
-        },
-        params: params
-      })
-      .pipe(
-        tap(data => {
-          return data;
         })
       );
   }

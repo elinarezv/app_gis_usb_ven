@@ -32,104 +32,53 @@ export class ThreatMapPage implements OnInit {
     this.mainScreenMap();
   }
   allowSeismLayerControl() {
-    if (this.mappingService.bufferBT && this.mappingService.bufferFault && this.mappingService.mzsSediments) {
-      return true;
-    }
-    return false;
+    this.mappingService.seismThreadMaps.forEach(val => {
+      if (!val.downloaded) {
+        return false;
+      }
+    });
+    return true;
   }
   allowFloodLayerControl() {
-    if (this.mappingService.zpHydrograph) {
-      return true;
-    }
-    return false;
+    this.mappingService.floodThreadMaps.forEach(val => {
+      if (!val.downloaded) {
+        return false;
+      }
+    });
+    return true;
   }
   allowLandSlideLayerControl() {
-    if (this.mappingService.bufferBT && this.mappingService.sMovMass) {
-      return true;
-    }
-    return false;
-  }
-  addLayertoMap(layerName: string, color: string) {
-    this.authService.getLayer(layerName).subscribe(
-      result => {
-        const var1 = geoJSON(result, {
-          style: {
-            color: color,
-            weight: 2,
-            opacity: 0.65
-          }
-        });
-        switch (layerName) {
-          case 'bufer_bt_mda_geojson':
-            this.mappingService.bufferBT = var1;
-            break;
-          case 'buffer_fallas_geol_geojson':
-            this.mappingService.bufferFault = var1;
-            break;
-          case 'mzs_sedimentos_geojson':
-            this.mappingService.mzsSediments = var1;
-            break;
-          case 'zp_hydrograf_geojson':
-            this.mappingService.zpHydrograph = var1;
-            break;
-          case 's_mov_mass_geojson':
-            this.mappingService.sMovMass = var1;
-            break;
-        }
-        this.addControlLayers();
-      },
-      error => {
-        console.log(error);
-      },
-      () => {
-        console.log('Add to map');
+    this.mappingService.landSlideThreadMaps.forEach(val => {
+      if (!val.downloaded) {
+        return false;
       }
-    );
+    });
+    return true;
   }
   addControlLayers() {
     if (this.allowSeismLayerControl() && !this.addedSeismLayerControl) {
-      const seismOverlay = {
-        'Bordes de Terraza': this.mappingService.bufferBT,
-        'Zona Influencia Fallas Geol': this.mappingService.bufferFault,
-        'Microzonas Sísmicas': this.mappingService.mzsSediments
-      };
+      const seismOverlay = {};
+      this.mappingService.seismThreadMaps.forEach(val => {
+        seismOverlay[val.layerName] = val.gJSON;
+      });
       control.layers(null, seismOverlay).addTo(this.threadMap);
       this.addedSeismLayerControl = true;
     }
     if (this.allowFloodLayerControl() && !this.addedFloodLayerControl) {
-      const floodOverlay = {
-        'Crecida de Afluentes': this.mappingService.zpHydrograph
-      };
+      const floodOverlay = {};
+      this.mappingService.floodThreadMaps.forEach(val => {
+        floodOverlay[val.layerName] = val.gJSON;
+      });
       control.layers(null, floodOverlay).addTo(this.threadMap);
       this.addedFloodLayerControl = true;
     }
     if (this.allowLandSlideLayerControl() && !this.addedLandSlideLayerControl) {
-      const landSlideOverlay = {
-        'Bordes de Terraza': this.mappingService.bufferBT,
-        'Zonas Suceptibles': this.mappingService.sMovMass
-      };
+      const landSlideOverlay = {};
+      this.mappingService.landSlideThreadMaps.forEach(val => {
+          landSlideOverlay[val.layerName] = val.gJSON;
+      });
       control.layers(null, landSlideOverlay).addTo(this.threadMap);
       this.addedLandSlideLayerControl = true;
-    }
-  }
-  addLayers2ThreadMap() {
-    // Seismic Thread
-    if (!this.mappingService.bufferBT) {
-      this.addLayertoMap('bufer_bt_mda_geojson', '#ff3300');
-    }
-    if (!this.mappingService.bufferFault) {
-      this.addLayertoMap('buffer_fallas_geol_geojson', '#ccff33');
-    }
-    if (!this.mappingService.mzsSediments) {
-      this.addLayertoMap('mzs_sedimentos_geojson', '#33cc33');
-    }
-    // Flood Thread
-    if (!this.mappingService.zpHydrograph) {
-      this.addLayertoMap('zp_hydrograf_geojson', '#0000ff');
-    }
-    // LandSlide Thread
-    if (!this.mappingService.sMovMass) {
-      this.addLayertoMap('s_mov_mass_geojson', '#750028');
     }
   }
   mainScreenMap() {
@@ -140,7 +89,6 @@ export class ThreatMapPage implements OnInit {
 
     // Add all thread layers
     this.threadMap.flyTo(this.mappingService.mainCity, 12);
-    this.addLayers2ThreadMap();
     this.addControlLayers();
   }
   ionViewWillLeave() {

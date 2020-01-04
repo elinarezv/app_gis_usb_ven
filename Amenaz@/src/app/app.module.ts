@@ -11,13 +11,23 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule],
-  providers: [StatusBar, SplashScreen, Geolocation, { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, NativeStorage],
+  providers: [
+    StatusBar,
+    SplashScreen,
+    AndroidPermissions,
+    Geolocation,
+    LocationAccuracy,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    NativeStorage
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
