@@ -14,6 +14,8 @@ import { OpenStreetMapProvider } from 'leaflet-geosearch';
 })
 export class ThreatEnvPage implements OnInit {
   threadEnvMap: Map;
+  arePlacesAvailable: boolean;
+  isMarkerActive: boolean;
 
   constructor(
     private menu: MenuController,
@@ -21,21 +23,52 @@ export class ThreatEnvPage implements OnInit {
     private authService: AuthService,
     private alertService: AlertService,
     private mappingService: MappingService
-  ) {}
+  ) {
+    this.arePlacesAvailable = false;
+    this.isMarkerActive = false;
+  }
 
   mainScreenMap() {
     // Center Map on Venezuela
     this.threadEnvMap = new Map('mapIdEnvThreads').setView([8.031, -65.346], 5);
     this.mappingService.mainCityMarker.addTo(this.threadEnvMap);
     this.mappingService.threadBaseMap.addTo(this.threadEnvMap);
-
-    // console.log(this.getGeolocation());
-
+    this.threadEnvMap.locate({setView: true, watch: true});
     // Add all thread layers
     // this.threadEnvMap.flyTo(this.mappingService.mainCity, 12);
   }
   ionViewDidEnter() {
     this.mainScreenMap();
+  }
+  getPlaces(ev: any) {
+    const input = ev.target.value;
+    if (input && input.trim() !== '') {
+      this.mappingService.searchPlaces = [];
+      this.arePlacesAvailable = true;
+      this.mappingService.searchProvider.search({ query: input }).then(results => {
+        results.forEach(result => {
+          this.mappingService.searchPlaces.push(result);
+        });
+      });
+    } else {
+      this.mappingService.searchPlaces = [];
+    }
+  }
+  clickPlace(place) {
+    if (this.mappingService.isSearchMarkerSet && this.isMarkerActive) {
+      this.threadEnvMap.removeLayer(this.mappingService.searchMarker);
+    }
+    this.mappingService.setSearchMarker(Number(place.y), Number(place.x));
+    if (this.mappingService.isSearchMarkerSet) {
+      this.mappingService.searchMarker
+        .addTo(this.threadEnvMap)
+        .bindPopup(place.label)
+        .openPopup();
+      this.threadEnvMap.flyTo([Number(place.y), Number(place.x)], 11);
+      this.isMarkerActive = true;
+    }
+    this.mappingService.searchPlaces = [];
+    this.arePlacesAvailable = false;
   }
   ionViewWillLeave() {
     this.threadEnvMap.remove();

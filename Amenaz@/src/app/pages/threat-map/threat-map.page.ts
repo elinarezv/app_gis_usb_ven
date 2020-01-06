@@ -12,9 +12,12 @@ import { MappingService } from 'src/app/services/mapping.service';
 })
 export class ThreatMapPage implements OnInit {
   threadMap: Map;
+  addedLayerControl: boolean;
   addedSeismLayerControl: boolean;
   addedFloodLayerControl: boolean;
   addedLandSlideLayerControl: boolean;
+  arePlacesAvailable: boolean;
+  isMarkerActive: boolean;
 
   constructor(
     private menu: MenuController,
@@ -24,12 +27,23 @@ export class ThreatMapPage implements OnInit {
     private mappingService: MappingService
   ) {
     this.menu.enable(true);
+    this.addedLayerControl = false;
     this.addedSeismLayerControl = false;
     this.addedFloodLayerControl = false;
     this.addedLandSlideLayerControl = false;
+    this.arePlacesAvailable = false;
+    this.isMarkerActive = false;
   }
   ionViewDidEnter() {
     this.mainScreenMap();
+  }
+  allowLayerControl() {
+    this.mappingService.nonThreadMaps.forEach(val => {
+      if (!val.downloaded) {
+        return false;
+      }
+    });
+    return true;
   }
   allowSeismLayerControl() {
     this.mappingService.seismThreadMaps.forEach(val => {
@@ -56,6 +70,23 @@ export class ThreatMapPage implements OnInit {
     return true;
   }
   addControlLayers() {
+    if (this.allowLayerControl() && !this.addedLayerControl) {
+      const overlayMaps = {};
+      this.mappingService.nonThreadMaps.forEach(val => {
+        overlayMaps[val.layerName] = val.gJSON;
+      });
+      control.layers(null, overlayMaps).addTo(this.threadMap);
+      const nodeList = document.querySelectorAll<HTMLElement>(
+        '.leaflet-top.leaflet-right .leaflet-control-layers.leaflet-control:nth-child(1) .leaflet-control-layers-toggle'
+      );
+      Array.from(nodeList).forEach(el => {
+        el.style.backgroundImage = 'url("/assets/icon/political.png")';
+        el.style.backgroundPosition = 'center';
+        el.style.backgroundRepeat = 'no-repeat';
+        el.style.backgroundSize = 'cover';
+      });
+      this.addedLayerControl = true;
+    }
     if (this.allowSeismLayerControl() && !this.addedSeismLayerControl) {
       const seismOverlay = {};
       this.mappingService.seismThreadMaps.forEach(val => {
@@ -63,7 +94,7 @@ export class ThreatMapPage implements OnInit {
       });
       control.layers(null, seismOverlay).addTo(this.threadMap);
       const nodeList = document.querySelectorAll<HTMLElement>(
-        '.leaflet-top.leaflet-right .leaflet-control-layers.leaflet-control:nth-child(1) .leaflet-control-layers-toggle'
+        '.leaflet-top.leaflet-right .leaflet-control-layers.leaflet-control:nth-child(2) .leaflet-control-layers-toggle'
       );
       Array.from(nodeList).forEach(el => {
         el.style.backgroundImage = 'url("/assets/icon/seismic-on.svg")';
@@ -80,7 +111,7 @@ export class ThreatMapPage implements OnInit {
       });
       control.layers(null, floodOverlay).addTo(this.threadMap);
       const nodeList = document.querySelectorAll<HTMLElement>(
-        '.leaflet-top.leaflet-right .leaflet-control-layers.leaflet-control:nth-child(2) .leaflet-control-layers-toggle'
+        '.leaflet-top.leaflet-right .leaflet-control-layers.leaflet-control:nth-child(3) .leaflet-control-layers-toggle'
       );
       Array.from(nodeList).forEach(el => {
         el.style.backgroundImage = 'url("/assets/icon/flood-on.svg")';
@@ -97,7 +128,7 @@ export class ThreatMapPage implements OnInit {
       });
       control.layers(null, landSlideOverlay).addTo(this.threadMap);
       const nodeList = document.querySelectorAll<HTMLElement>(
-        '.leaflet-top.leaflet-right .leaflet-control-layers.leaflet-control:nth-child(3) .leaflet-control-layers-toggle'
+        '.leaflet-top.leaflet-right .leaflet-control-layers.leaflet-control:nth-child(4) .leaflet-control-layers-toggle'
       );
       Array.from(nodeList).forEach(el => {
         el.style.backgroundImage = 'url("/assets/icon/landslide-on.svg")';
@@ -117,6 +148,37 @@ export class ThreatMapPage implements OnInit {
     // Add all thread layers
     this.threadMap.flyTo(this.mappingService.mainCity, 12);
     this.addControlLayers();
+  }
+  getPlaces(ev: any) {
+    const input = ev.target.value;
+    if (input && input.trim() !== '') {
+      this.mappingService.searchPlaces = [];
+      this.arePlacesAvailable = true;
+      this.mappingService.searchProvider.search({ query: input }).then(results => {
+        results.forEach(result => {
+          this.mappingService.searchPlaces.push(result);
+        });
+      });
+    } else {
+      this.mappingService.searchPlaces = [];
+    }
+  }
+  clickPlace(place) {
+    if (this.mappingService.isSearchMarkerSet && this.isMarkerActive) {
+      this.threadMap.removeLayer(this.mappingService.searchMarker);
+    }
+    this.mappingService.setSearchMarker(Number(place.y), Number(place.x));
+    if (this.mappingService.isSearchMarkerSet) {
+      console.log('Adding to map');
+      this.mappingService.searchMarker
+        .addTo(this.threadMap)
+        .bindPopup(place.label)
+        .openPopup();
+      this.threadMap.flyTo([Number(place.y), Number(place.x)], 11);
+      this.isMarkerActive = true;
+    }
+    this.mappingService.searchPlaces = [];
+    this.arePlacesAvailable = false;
   }
   ionViewWillLeave() {
     this.addedSeismLayerControl = false;

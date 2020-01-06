@@ -12,12 +12,10 @@
         </ion-buttons>
     </ion-toolbar>
     <ion-toolbar>
-        <ion-buttons slot="primary">
-            <ion-button>
-                <ion-icon slot="icon-only" name="search"></ion-icon>
-            </ion-button>
-        </ion-buttons>
-        <ion-searchbar placeholder="Buscar lugar o dirección"></ion-searchbar>
+        <ion-searchbar autocomplete='on' placeholder="Buscar lugar o dirección" debounce="500" (ionInput)="getPlaces($event)"></ion-searchbar>
+        <ion-list *ngIf="arePlacesAvailable">
+            <ion-item *ngFor="let place of mappingService.searchPlaces"><button (click)="clickPlace(place)"> {{ place.label }} </button></ion-item>
+        </ion-list>
     </ion-toolbar>
 </ion-header>
 <ion-content>
