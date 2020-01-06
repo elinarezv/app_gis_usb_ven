@@ -52,7 +52,8 @@ export class AuthService {
   }
   logout() {
     const headers = new HttpHeaders({
-      Authorization: this.token['token_type'] + ' ' + this.token['access_token']
+      Authorization: 'Basic' + ' ' + this.token,
+      'x-access-token': this.token.token
     });
     return this.http.get(this.env.API_URL + 'auth/logout', { headers: headers }).pipe(
       tap(data => {

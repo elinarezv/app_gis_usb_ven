@@ -19,9 +19,34 @@ export class AppComponent {
       icon: 'home'
     },
     {
-      title: 'List',
-      url: '/list',
-      icon: 'list'
+      title: 'Mi Cuenta',
+      url: '/myaccount',
+      icon: 'person'
+    },
+    {
+      title: 'Mapa de Amenaz@s',
+      url: '/threat-map',
+      icon: 'compass'
+    },
+    {
+      title: 'Entorno de Amenaz@s',
+      url: '/threat-env',
+      icon: 'pulse'
+    },
+    {
+      title: 'Notificaciones',
+      url: '/notifications',
+      icon: 'notifications'
+    },
+    {
+      title: 'Créditos',
+      url: '/credits',
+      icon: 'ribbon'
+    },
+    {
+      title: 'Política de Privacidad',
+      url: '/privacy',
+      icon: 'share'
     }
   ];
 

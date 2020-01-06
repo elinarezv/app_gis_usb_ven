@@ -65,6 +65,15 @@ router.get('/user', VerifyToken, function(req, res, next) {
   });
 });
 
+router.get('/logout', VerifyToken, function(req, res, next) {
+  const id = parseInt(req.userId);
+  userLogout = {
+    id: id,
+    message: 'Cierre de sesión satisfactorio'
+  };
+  res.status(200).send(JSON.stringify(userLogout));
+});
+
 router.post('/login', function(req, res) {
   const email = req.body.email;
   if (!email) {

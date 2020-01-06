@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuController, NavController } from '@ionic/angular';
-import { Map, tileLayer, Layer, control, marker, icon, geoJSON } from 'leaflet';
+import { Map } from 'leaflet';
 import { AuthService } from 'src/app/services/auth.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { MappingService } from 'src/app/services/mapping.service';
+
+import { OpenStreetMapProvider } from 'leaflet-geosearch';
 
 @Component({
   selector: 'app-threat-env',

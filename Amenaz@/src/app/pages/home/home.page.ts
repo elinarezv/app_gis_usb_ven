@@ -4,12 +4,13 @@ import { Map, tileLayer, Layer, control, marker, icon, geoJSON } from 'leaflet';
 import { AuthService } from 'src/app/services/auth.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { MappingService } from 'src/app/services/mapping.service';
-import { Platform } from '@ionic/angular';
-import { Router } from '@angular/router';
-import { map } from 'rxjs/operators';
-import { observable } from 'rxjs';
-import { NgForm } from '@angular/forms';
-import { Capabilities } from 'protractor';
+
+// import { Platform } from '@ionic/angular';
+// import { Router } from '@angular/router';
+// import { map } from 'rxjs/operators';
+// import { observable } from 'rxjs';
+// import { NgForm } from '@angular/forms';
+// import { Capabilities } from 'protractor';
 
 @Component({
   selector: 'app-home',
@@ -19,6 +20,8 @@ import { Capabilities } from 'protractor';
 export class HomePage implements OnInit {
   map: Map;
   addedLayerControl: boolean;
+  arePlacesAvailable: boolean;
+  isMarkerActive: boolean;
 
   constructor(
     private menu: MenuController,
@@ -29,6 +32,8 @@ export class HomePage implements OnInit {
   ) {
     this.menu.enable(true);
     this.addedLayerControl = false;
+    this.arePlacesAvailable = false;
+    this.isMarkerActive = false;
   }
   ionViewDidEnter() {
     this.mainScreenMap();
@@ -54,6 +59,7 @@ export class HomePage implements OnInit {
 
     // Add all non-thread layers
     this.mappingService.baseMap.addTo(this.map);
+    // this.map.addControl(this.mappingService.searchControProvider);
   }
   centerOnCity() {
     this.map.flyTo(this.mappingService.mainCity, 12);
@@ -63,6 +69,15 @@ export class HomePage implements OnInit {
         overlayMaps[val.layerName] = val.gJSON;
       });
       control.layers(null, overlayMaps).addTo(this.map);
+      const nodeList = document.querySelectorAll<HTMLElement>(
+        '.leaflet-top.leaflet-right .leaflet-control-layers.leaflet-control .leaflet-control-layers-toggle'
+      );
+      Array.from(nodeList).forEach(el => {
+        el.style.backgroundImage = 'url("/assets/icon/political.png")';
+        el.style.backgroundPosition = 'center';
+        el.style.backgroundRepeat = 'no-repeat';
+        el.style.backgroundSize = 'cover';
+      });
       this.addedLayerControl = true;
     }
   }
@@ -71,6 +86,38 @@ export class HomePage implements OnInit {
   }
   ThreadMap() {
     this.navCtrl.navigateForward('/threat-map');
+  }
+  getPlaces(ev: any) {
+    const input = ev.target.value;
+    if (input && input.trim() !== '') {
+      this.mappingService.searchPlaces = [];
+      this.arePlacesAvailable = true;
+      this.mappingService.searchProvider.search({ query: input }).then(results => {
+        results.forEach(result => {
+          this.mappingService.searchPlaces.push(result);
+        });
+      });
+    } else {
+      this.mappingService.searchPlaces = [];
+    }
+  }
+  clickPlace(place) {
+    console.log(place);
+    if (this.mappingService.isSearchMarkerSet && this.isMarkerActive) {
+      this.map.removeLayer(this.mappingService.searchMarker);
+    }
+    this.mappingService.setSearchMarker(Number(place.y), Number(place.x));
+    if (this.mappingService.isSearchMarkerSet) {
+      console.log('Adding to map');
+      this.mappingService.searchMarker
+        .addTo(this.map)
+        .bindPopup(place.label)
+        .openPopup();
+      this.map.flyTo([Number(place.y), Number(place.x)], 11);
+      this.isMarkerActive = true;
+    }
+    this.mappingService.searchPlaces = [];
+    this.arePlacesAvailable = false;
   }
   ionViewWillLeave() {
     this.addedLayerControl = false;

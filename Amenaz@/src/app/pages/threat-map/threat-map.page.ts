@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuController, NavController } from '@ionic/angular';
-import { Map, tileLayer, Layer, control, marker, icon, geoJSON } from 'leaflet';
+import { Map, control } from 'leaflet';
 import { AuthService } from 'src/app/services/auth.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { MappingService } from 'src/app/services/mapping.service';
@@ -62,6 +62,15 @@ export class ThreatMapPage implements OnInit {
         seismOverlay[val.layerName] = val.gJSON;
       });
       control.layers(null, seismOverlay).addTo(this.threadMap);
+      const nodeList = document.querySelectorAll<HTMLElement>(
+        '.leaflet-top.leaflet-right .leaflet-control-layers.leaflet-control:nth-child(1) .leaflet-control-layers-toggle'
+      );
+      Array.from(nodeList).forEach(el => {
+        el.style.backgroundImage = 'url("/assets/icon/seismic-on.svg")';
+        el.style.backgroundPosition = 'center';
+        el.style.backgroundRepeat = 'no-repeat';
+        el.style.backgroundSize = 'cover';
+      });
       this.addedSeismLayerControl = true;
     }
     if (this.allowFloodLayerControl() && !this.addedFloodLayerControl) {
@@ -70,14 +79,32 @@ export class ThreatMapPage implements OnInit {
         floodOverlay[val.layerName] = val.gJSON;
       });
       control.layers(null, floodOverlay).addTo(this.threadMap);
+      const nodeList = document.querySelectorAll<HTMLElement>(
+        '.leaflet-top.leaflet-right .leaflet-control-layers.leaflet-control:nth-child(2) .leaflet-control-layers-toggle'
+      );
+      Array.from(nodeList).forEach(el => {
+        el.style.backgroundImage = 'url("/assets/icon/flood-on.svg")';
+        el.style.backgroundPosition = 'center';
+        el.style.backgroundRepeat = 'no-repeat';
+        el.style.backgroundSize = 'cover';
+      });
       this.addedFloodLayerControl = true;
     }
     if (this.allowLandSlideLayerControl() && !this.addedLandSlideLayerControl) {
       const landSlideOverlay = {};
       this.mappingService.landSlideThreadMaps.forEach(val => {
-          landSlideOverlay[val.layerName] = val.gJSON;
+        landSlideOverlay[val.layerName] = val.gJSON;
       });
       control.layers(null, landSlideOverlay).addTo(this.threadMap);
+      const nodeList = document.querySelectorAll<HTMLElement>(
+        '.leaflet-top.leaflet-right .leaflet-control-layers.leaflet-control:nth-child(3) .leaflet-control-layers-toggle'
+      );
+      Array.from(nodeList).forEach(el => {
+        el.style.backgroundImage = 'url("/assets/icon/landslide-on.svg")';
+        el.style.backgroundPosition = 'center';
+        el.style.backgroundRepeat = 'no-repeat';
+        el.style.backgroundSize = 'cover';
+      });
       this.addedLandSlideLayerControl = true;
     }
   }

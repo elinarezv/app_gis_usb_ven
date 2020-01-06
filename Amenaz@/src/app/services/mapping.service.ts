@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { EnvService } from './env.service';
-import { Map, tileLayer, marker, icon, geoJSON, LatLngExpression } from 'leaflet';
 import { AuthService } from 'src/app/services/auth.service';
 
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { from } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
@@ -12,10 +11,13 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 
+import { Map, tileLayer, marker, icon, GeoJSON, geoJSON, LatLngExpression, TileLayer } from 'leaflet';
+import { OpenStreetMapProvider } from 'leaflet-geosearch';
+
 type LayerType = {
   layerName: string;
   queryName: string;
-  gJSON: geoJSON;
+  gJSON: GeoJSON;
   color: string;
   downloaded: boolean;
 };
@@ -24,11 +26,17 @@ type LayerType = {
   providedIn: 'root'
 })
 export class MappingService {
+  iconRetinaUrl: string;
+  iconUrl: string;
+  shadowUrl: string;
+
+  // searchControProvider: GeoSearchControl;
   mainCity: LatLngExpression = [8.5875788, -71.1572352];
   mainCityMarker: any;
+  searchMarker: any;
   map: Map;
-  baseMap: Map;
-  threadBaseMap: Map;
+  baseMap: TileLayer;
+  threadBaseMap: TileLayer;
   nonThreadMaps: LayerType[] = [];
   seismThreadMaps: LayerType[] = [];
   landSlideThreadMaps: LayerType[] = [];
@@ -39,6 +47,10 @@ export class MappingService {
   geoAccuracy: number;
   geoAddress: string;
   gotGeoposition: boolean;
+
+  searchProvider: OpenStreetMapProvider;
+  searchPlaces: any[];
+  isSearchMarkerSet: boolean;
 
   constructor(
     private authService: AuthService,
@@ -59,15 +71,16 @@ export class MappingService {
       attribution: 'www.usb.ve MIT License'
     });
     // Fix Leaflet bug with markers
-    const iconRetinaUrl = 'assets/marker-icon-2x.png';
-    const iconUrl = 'assets/marker-icon.png';
-    const shadowUrl = 'assets/marker-shadow.png';
+    this.iconRetinaUrl = 'assets/marker-icon-2x.png';
+    this.iconUrl = 'assets/marker-icon.png';
+    this.shadowUrl = 'assets/marker-shadow.png';
+
     // Add Marker of City with GeoInformation
     this.mainCityMarker = marker(this.mainCity, {
       icon: icon({
-        iconRetinaUrl,
-        iconUrl,
-        shadowUrl,
+        iconRetinaUrl: this.iconRetinaUrl,
+        iconUrl: this.iconUrl,
+        shadowUrl: this.shadowUrl,
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
@@ -149,7 +162,26 @@ export class MappingService {
       downloaded: false
     });
 
+    this.searchProvider = new OpenStreetMapProvider();
+    this.searchPlaces = [];
+    this.isSearchMarkerSet = false;
+
     this.getAllMaps();
+  }
+  setSearchMarker(x: number, y: number){
+    this.searchMarker =  marker([x, y], {
+        icon: icon({
+          iconRetinaUrl: 'assets/icon/marker-icon-2x-2.png',
+          iconUrl: 'assets/icon/marker-icon-2.png',
+          shadowUrl: 'assets/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          tooltipAnchor: [16, -28],
+          shadowSize: [41, 41]
+        })
+    });
+    this.isSearchMarkerSet = true;
   }
   getGeoJSON(layerName: string) {
     const parameter = new HttpParams().set('layerName', layerName);
@@ -171,9 +203,7 @@ export class MappingService {
       );
   }
   getLayer(layerName: string) {
-    return from(this.storage.getItem(layerName)).pipe(
-        catchError(error => this.getGeoJSON(layerName))
-    );
+    return from(this.storage.getItem(layerName)).pipe(catchError(error => this.getGeoJSON(layerName)));
   }
   getNonThreadMaps() {
     this.nonThreadMaps.forEach(ntMap => {

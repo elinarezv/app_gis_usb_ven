@@ -5,18 +5,16 @@
         </ion-buttons>
         <ion-title>Amenaz@s</ion-title>
         <ion-buttons slot="end">
-            <ion-button>
+            <ion-button (click)='gotoPosition()'>
                 <ion-icon name="notifications"></ion-icon>
             </ion-button>
         </ion-buttons>
     </ion-toolbar>
     <ion-toolbar>
-        <ion-buttons slot="primary">
-            <ion-button (click)="gotoPosition()">
-                <ion-icon slot="icon-only" name="search"></ion-icon>
-            </ion-button>
-        </ion-buttons>
-        <ion-searchbar placeholder="Buscar lugar o dirección"></ion-searchbar>
+        <ion-searchbar autocomplete='on' placeholder="Buscar lugar o dirección" debounce="500" (ionInput)="getPlaces($event)"></ion-searchbar>
+        <ion-list *ngIf="arePlacesAvailable">
+            <ion-item *ngFor="let place of mappingService.searchPlaces"><button (click)="clickPlace(place)"> {{ place.label }} </button></ion-item>
+        </ion-list>
     </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -26,14 +24,6 @@
     <ion-button expand="full" (click)="centerOnCity()" color="light">
         <ion-icon slot="icon-only" name="business"></ion-icon>
         <ion-title>LOCALIDAD: Mérida</ion-title>
-    </ion-button>
-    <ion-button expand="full" color="light" (click)="ThreadEnv()">
-        <ion-icon slot="icon-only" name="locate"></ion-icon>
-        <ion-title>Entornos de Amenazas</ion-title>
-    </ion-button>
-    <ion-button expand="full" color="light" (click)="ThreadMap()">
-        <ion-icon slot="icon-only" name="logo-buffer"></ion-icon>
-        <ion-title>Mapas de Amenazas</ion-title>
     </ion-button>
     <ion-toolbar>
         <ion-buttons slot="end">
