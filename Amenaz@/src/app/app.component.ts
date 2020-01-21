@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { Platform, NavController } from '@ionic/angular';
+import { Platform, NavController, Events } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './services/auth.service';
@@ -14,41 +14,28 @@ import { AlertService } from './services/alert.service';
 export class AppComponent {
   public appPages = [
     {
-      title: 'Inicio',
+      title: 'Sitio Web',
       url: '/home',
       icon: 'home'
     },
     {
-      title: 'Mi Cuenta',
+      title: 'Configuración',
       url: '/myaccount',
-      icon: 'person'
+      icon: 'settings'
     },
     {
-      title: 'Mapa de Amenaz@s',
-      url: '/threat-map',
-      icon: 'compass'
-    },
-    {
-      title: 'Entorno de Amenaz@s',
-      url: '/threat-env',
-      icon: 'pulse'
-    },
-    {
-      title: 'Notificaciones',
-      url: '/notifications',
-      icon: 'notifications'
-    },
-    {
-      title: 'Créditos',
-      url: '/credits',
-      icon: 'ribbon'
-    },
-    {
-      title: 'Política de Privacidad',
-      url: '/privacy',
+      title: 'Compartir',
+      url: '/myaccount',
       icon: 'share'
+    },
+    {
+      title: 'Acerca de',
+      url: '/credits',
+      icon: 'information-circle'
     }
   ];
+  public userName = 'Testin123';
+  public email = '';
 
   constructor(
     private platform: Platform,
@@ -56,17 +43,25 @@ export class AppComponent {
     private statusBar: StatusBar,
     private authService: AuthService,
     private navCtrl: NavController,
-    private alertService: AlertService
+    private alertService: AlertService,
+    public events: Events
   ) {
     this.initializeApp();
   }
 
   initializeApp() {
-    this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
-      // this.splashScreen.hide();
-      this.authService.getToken();
-    });
+    this.platform.ready().then(
+      () => {
+        this.statusBar.styleDefault();
+        this.splashScreen.hide();
+        this.authService.getToken();
+      });
+    this.events.subscribe('user-login',
+      (data) => {
+        console.log('Event called');
+        this.userName = data.firstname + ' ' + data.lastname;
+        this.email = data.email;
+      });
   }
   logout() {
     this.authService.logout().subscribe(

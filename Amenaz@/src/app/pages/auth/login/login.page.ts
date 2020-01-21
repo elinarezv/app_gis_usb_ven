@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, NavController } from '@ionic/angular';
+import { ModalController, NavController, Events } from '@ionic/angular';
 import { RegisterPage } from '../register/register.page';
 import { NgForm } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
@@ -16,11 +16,12 @@ export class LoginPage implements OnInit {
     private modalController: ModalController,
     private authService: AuthService,
     private navCtrl: NavController,
-    private alertService: AlertService
+    private alertService: AlertService,
+    public events: Events
   ) {
     this.activateLoginButton = true;
   }
-  ngOnInit() {}
+  ngOnInit() { }
 
   dismissLogin() {
     this.modalController.dismiss();
@@ -37,8 +38,8 @@ export class LoginPage implements OnInit {
     this.alertService.presentToast('Iniciando sesión en servidor...');
     this.authService.login(form.value.email, form.value.password).subscribe(
       data => {
+        this.events.publish('user-login', data);
         this.alertService.presentToast('Sesión iniciada');
-        console.log(data);
       },
       error => {
         this.activateLoginButton = true;

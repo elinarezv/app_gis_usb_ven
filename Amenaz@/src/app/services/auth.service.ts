@@ -13,7 +13,10 @@ export class AuthService {
   isLoggedIn = false;
   token: any;
 
-  constructor(private http: HttpClient, private storage: NativeStorage, private env: EnvService) {}
+  constructor(private http: HttpClient,
+    private storage: NativeStorage,
+    private env: EnvService
+  ) { }
   isLogged() {
     return this.isLoggedIn;
   }
