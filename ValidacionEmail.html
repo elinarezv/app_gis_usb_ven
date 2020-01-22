@@ -1,0 +1,43 @@
+  <p *ngIf="submitAttempt" style="color: #ea6153;">Por favor revise los datos en los campos.</p>
+
+  <ion-list lines="inset">
+    <form [formGroup]="accountForm">
+
+      <ion-item>
+        <ion-label position="floating">Nombres</ion-label>
+        <ion-input formControlName="firstname" type="text"
+          [class.invalid]="!accountForm.controls.firstname.valid && (accountForm.controls.firstname.dirty || submitAttempt)">
+        </ion-input>
+      </ion-item>
+      <ion-item
+        *ngIf="!accountForm.controls.firstname.valid  && (accountForm.controls.firstname.dirty || submitAttempt)">
+        <p>Por favor ingrese un nombre válido.</p>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Apellidos</ion-label>
+        <ion-input formControlName="lastname" type="text"
+          [class.invalid]="!accountForm.controls.lastname.valid && (accountForm.controls.lastname.dirty || submitAttempt)">
+        </ion-input>
+      </ion-item>
+      <ion-item *ngIf="!accountForm.controls.lastname.valid  && (accountForm.controls.lastname.dirty || submitAttempt)">
+        <p>Por favor ingrese un apellido válido.</p>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Dirección</ion-label>
+        <ion-textarea formControlName="address"></ion-textarea>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Correo</ion-label>
+        <ion-input formControlName="email" type="text"
+          [class.invalid]="!accountForm.controls.email.valid && (accountForm.controls.email.dirty || submitAttempt)">
+        </ion-input>
+      </ion-item>
+      <ion-item *ngIf="!accountForm.controls.email.valid  && (accountForm.controls.email.dirty || submitAttempt)">
+        <p>Por favor ingrese un correo válido.</p>
+      </ion-item>
+    </form>
+  </ion-list>
+  <ion-button expand="full" color="primary" (click)="save()">Create Account!</ion-button>

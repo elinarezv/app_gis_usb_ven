@@ -141,12 +141,12 @@ export class ThreatMapPage implements OnInit {
   }
   mainScreenMap() {
     // Center Map on Venezuela
-    this.threadMap = new Map('mapThreadId').setView([8.031, -65.346], 5);
-    this.mappingService.mainCityMarker.addTo(this.threadMap);
-    this.mappingService.threadBaseMap.addTo(this.threadMap);
+    // this.threadMap = new Map('mapThreadId').setView([8.031, -65.346], 5);
+    // this.mappingService.mainCityMarker.addTo(this.threadMap);
+    // this.mappingService.threadBaseMap.addTo(this.threadMap);
 
-    // Add all thread layers
-    this.threadMap.flyTo(this.mappingService.mainCity, 12);
+    // // Add all thread layers
+    // this.threadMap.flyTo(this.mappingService.mainCity, 12);
     this.addControlLayers();
   }
   getPlaces(ev: any) {
@@ -186,5 +186,5 @@ export class ThreatMapPage implements OnInit {
     this.addedLandSlideLayerControl = false;
     this.threadMap.remove();
   }
-  ngOnInit() {}
+  ngOnInit() { }
 }

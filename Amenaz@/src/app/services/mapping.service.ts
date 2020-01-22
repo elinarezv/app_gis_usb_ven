@@ -11,7 +11,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 
-import { Map, tileLayer, marker, icon, GeoJSON, geoJSON, LatLngExpression, TileLayer } from 'leaflet';
+import { Map, tileLayer, marker, icon, GeoJSON, geoJSON, LatLngExpression, TileLayer, Marker } from 'leaflet';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 
 type LayerType = {
@@ -22,6 +22,13 @@ type LayerType = {
   downloaded: boolean;
 };
 
+type City = {
+  name: string;
+  location: LatLngExpression;
+  marker: Marker;
+  zoomLevel: any;
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -29,10 +36,9 @@ export class MappingService {
   iconRetinaUrl: string;
   iconUrl: string;
   shadowUrl: string;
+  cities: City[] = [];
 
   // searchControProvider: GeoSearchControl;
-  mainCity: LatLngExpression = [8.5875788, -71.1572352];
-  mainCityMarker: any;
   searchMarker: any;
   map: Map;
   baseMap: TileLayer;
@@ -61,8 +67,9 @@ export class MappingService {
     private locationAccuracy: LocationAccuracy,
     private http: HttpClient
   ) {
-    // Add OSM Base Map
-    this.baseMap = tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Add OSM Base Map  --  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}'
+    // 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+    this.baseMap = tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
       id: 'mapId',
       attribution: 'www.usb.ve MIT License'
     });
@@ -74,23 +81,30 @@ export class MappingService {
     this.iconRetinaUrl = 'assets/marker-icon-2x.png';
     this.iconUrl = 'assets/marker-icon.png';
     this.shadowUrl = 'assets/marker-shadow.png';
+    const iconVar = icon({
+      iconRetinaUrl: this.iconRetinaUrl,
+      iconUrl: this.iconUrl,
+      shadowUrl: this.shadowUrl,
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      tooltipAnchor: [16, -28],
+      shadowSize: [41, 41]
+    })
+
+    // Define Cities for App
+    this.cities.push({ name: 'Visión del Proyecto', location: [8.031, -65.346], marker: undefined, zoomLevel: 5 });
+    this.cities.push({ name: 'Chacao', location: [10.498820, -66.853737], marker: undefined, zoomLevel: 12 });
+    this.cities.push({ name: 'Cumaná', location: [10.433186, -64.174842], marker: undefined, zoomLevel: 12 });
+    this.cities.push({ name: 'Mérida', location: [8.5875788, -71.157235], marker: undefined, zoomLevel: 12 });
 
     // Add Marker of City with GeoInformation
-    this.mainCityMarker = marker(this.mainCity, {
-      icon: icon({
-        iconRetinaUrl: this.iconRetinaUrl,
-        iconUrl: this.iconUrl,
-        shadowUrl: this.shadowUrl,
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        tooltipAnchor: [16, -28],
-        shadowSize: [41, 41]
-      })
-    })
-      .bindPopup('Merida')
-      .openPopup();
+    this.cities.forEach(city => {
+      city.marker = marker(city.location, { icon: iconVar }).bindPopup(city.name).openPopup();
+    });
+
     this.gotGeoposition = false;
+
     this.nonThreadMaps.push({
       layerName: 'Área urbana',
       queryName: 'a_urbana_geojson',
@@ -168,18 +182,18 @@ export class MappingService {
 
     this.getAllMaps();
   }
-  setSearchMarker(x: number, y: number){
-    this.searchMarker =  marker([x, y], {
-        icon: icon({
-          iconRetinaUrl: 'assets/icon/marker-icon-2x-2.png',
-          iconUrl: 'assets/icon/marker-icon-2.png',
-          shadowUrl: 'assets/marker-shadow.png',
-          iconSize: [25, 41],
-          iconAnchor: [12, 41],
-          popupAnchor: [1, -34],
-          tooltipAnchor: [16, -28],
-          shadowSize: [41, 41]
-        })
+  setSearchMarker(x: number, y: number) {
+    this.searchMarker = marker([x, y], {
+      icon: icon({
+        iconRetinaUrl: 'assets/icon/marker-icon-2x-2.png',
+        iconUrl: 'assets/icon/marker-icon-2.png',
+        shadowUrl: 'assets/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        tooltipAnchor: [16, -28],
+        shadowSize: [41, 41]
+      })
     });
     this.isSearchMarkerSet = true;
   }

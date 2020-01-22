@@ -30,10 +30,10 @@ export class ThreatEnvPage implements OnInit {
 
   mainScreenMap() {
     // Center Map on Venezuela
-    this.threadEnvMap = new Map('mapIdEnvThreads').setView([8.031, -65.346], 5);
-    this.mappingService.mainCityMarker.addTo(this.threadEnvMap);
-    this.mappingService.threadBaseMap.addTo(this.threadEnvMap);
-    this.threadEnvMap.locate({setView: true, watch: true});
+    // this.threadEnvMap = new Map('mapIdEnvThreads').setView([8.031, -65.346], 5);
+    // this.mappingService.mainCityMarker.addTo(this.threadEnvMap);
+    // this.mappingService.threadBaseMap.addTo(this.threadEnvMap);
+    // this.threadEnvMap.locate({setView: true, watch: true});
     // Add all thread layers
     // this.threadEnvMap.flyTo(this.mappingService.mainCity, 12);
   }

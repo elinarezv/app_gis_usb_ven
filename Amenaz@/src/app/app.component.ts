@@ -6,6 +6,8 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './services/auth.service';
 import { AlertService } from './services/alert.service';
 
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -24,17 +26,12 @@ export class AppComponent {
       icon: 'settings'
     },
     {
-      title: 'Compartir',
-      url: '/myaccount',
-      icon: 'share'
-    },
-    {
       title: 'Acerca de',
       url: '/credits',
       icon: 'information-circle'
     }
   ];
-  public userName = 'Testin123';
+  public userName = '';
   public email = '';
 
   constructor(
@@ -44,7 +41,8 @@ export class AppComponent {
     private authService: AuthService,
     private navCtrl: NavController,
     private alertService: AlertService,
-    public events: Events
+    public events: Events,
+    private socialShare: SocialSharing
   ) {
     this.initializeApp();
   }
@@ -63,17 +61,8 @@ export class AppComponent {
         this.email = data.email;
       });
   }
-  logout() {
-    this.authService.logout().subscribe(
-      data => {
-        this.alertService.presentToast(data['message']);
-      },
-      error => {
-        console.log(error);
-      },
-      () => {
-        this.navCtrl.navigateRoot('/landing');
-      }
-    );
+  share() {
+    console.log('Sharing...');
+    this.socialShare.share("https://play.google.com/store/apps/details?id=com.android.chrome&hl=en_us");
   }
 }

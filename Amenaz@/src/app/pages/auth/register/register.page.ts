@@ -4,11 +4,13 @@ import { LoginPage } from '../login/login.page';
 import { AuthService } from 'src/app/services/auth.service';
 import { NgForm } from '@angular/forms';
 import { AlertService } from 'src/app/services/alert.service';
+
 @Component({
   selector: 'app-register',
   templateUrl: './register.page.html',
   styleUrls: ['./register.page.scss']
 })
+
 export class RegisterPage implements OnInit {
   public actNotify: boolean = true;
   public termAccept: boolean = false;
@@ -19,9 +21,9 @@ export class RegisterPage implements OnInit {
     private authService: AuthService,
     private navCtrl: NavController,
     private alertService: AlertService
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
   dismissRegister() {
     this.modalController.dismiss();
   }
@@ -53,7 +55,7 @@ export class RegisterPage implements OnInit {
       .subscribe(
         data => {
           this.authService.login(form.value.email, form.value.password).subscribe(
-            data => {},
+            data => { },
             error => {
               this.termAccept = true;
               console.log(error);
@@ -69,7 +71,7 @@ export class RegisterPage implements OnInit {
           this.termAccept = true;
           console.log(error);
         },
-        () => {}
+        () => { }
       );
   }
 }

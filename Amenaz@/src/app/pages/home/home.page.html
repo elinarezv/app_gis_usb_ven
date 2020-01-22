@@ -11,9 +11,40 @@
         </ion-buttons>
     </ion-toolbar>
     <ion-toolbar>
-        <ion-searchbar autocomplete='on' placeholder="Buscar lugar o dirección" debounce="500" (ionInput)="getPlaces($event)"></ion-searchbar>
+        <ion-list>
+            <ion-item-sliding>
+                <ion-item>
+                    <ion-toolbar>
+                        <ion-buttons slot="start">
+                            <ion-button (click)='previousCity(item)'>
+                                <ion-icon name="arrow-round-back"></ion-icon>
+                            </ion-button>
+                        </ion-buttons>
+                        <ion-buttons slot="end">
+                            <ion-button (click)='nextCity(item)'>
+                                <ion-icon name="arrow-round-forward"></ion-icon>
+                            </ion-button>
+                        </ion-buttons>
+                        <ion-title>
+                            <h3>{{actualCityName}}</h3>
+                        </ion-title>
+                    </ion-toolbar>
+                </ion-item>
+                <ion-item-options side="end" (ionSwipe)="nextCity(item)">
+                    <ion-item-option expandable (click)="nextCity(item)">Proxima</ion-item-option>
+                </ion-item-options>
+                <ion-item-options side="start" (ionSwipe)="previousCity(item)">
+                    <ion-item-option expandable (click)="previousCity(item)">Anterior</ion-item-option>
+                </ion-item-options>
+            </ion-item-sliding>
+        </ion-list>
+    </ion-toolbar>
+    <ion-toolbar>
+        <ion-searchbar autocomplete='on' placeholder="Buscar lugar o dirección" debounce="500"
+            (ionInput)="getPlaces($event)"></ion-searchbar>
         <ion-list *ngIf="arePlacesAvailable">
-            <ion-item *ngFor="let place of mappingService.searchPlaces"><button (click)="clickPlace(place)"> {{ place.label }} </button></ion-item>
+            <ion-item *ngFor="let place of mappingService.searchPlaces"><button (click)="clickPlace(place)">
+                    {{ place.label }} </button></ion-item>
         </ion-list>
     </ion-toolbar>
 </ion-header>
@@ -21,13 +52,28 @@
     <div id="mapId" style="width: 100%; height: 100%"></div>
 </ion-content>
 <ion-footer>
-    <ion-button expand="full" (click)="centerOnCity()" color="light">
-        <ion-icon slot="icon-only" name="business"></ion-icon>
-        <ion-title>LOCALIDAD: Mérida</ion-title>
-    </ion-button>
+    <div class="container">
+        <div class="row justify-content-center" *ngIf="botomToolbarActive">
+            <div class="col">
+                <button (click)='gotoPosition()'>
+                    <ion-icon name="notifications"></ion-icon>
+                </button>
+            </div>
+            <div class="col">
+                <button (click)='gotoPosition()'>
+                    <ion-icon name="notifications"></ion-icon>
+                </button>
+            </div>
+            <div class="col">
+                <button (click)='gotoPosition()'>
+                    <ion-icon name="notifications"></ion-icon>
+                </button>
+            </div>
+        </div>
+    </div>
     <ion-toolbar>
         <ion-buttons slot="end">
-            <ion-button>
+            <ion-button (click)="presentAlert()">
                 <ion-icon slot="icon-only" name="information-circle"></ion-icon>
             </ion-button>
             <ion-button>

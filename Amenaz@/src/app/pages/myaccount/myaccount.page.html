@@ -1,9 +1,59 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>myaccount</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Configuración</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
+  <div>
+    <h2>Datos Personales</h2>
+    <p *ngIf="submitAttempt" style="color: #ea6153;">Por favor revise los datos en los campos.</p>
 
+    <ion-list lines="inset">
+      <form [formGroup]="accountForm">
+
+        <ion-item>
+          <ion-label position="floating">Nombres</ion-label>
+          <ion-input formControlName="firstname" type="text"
+            [class.invalid]="!accountForm.controls.firstname.valid && (accountForm.controls.firstname.dirty || submitAttempt)">
+          </ion-input>
+        </ion-item>
+        <ion-item
+          *ngIf="!accountForm.controls.firstname.valid  && (accountForm.controls.firstname.dirty || submitAttempt)">
+          <p>Por favor ingrese un nombre válido.</p>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Apellidos</ion-label>
+          <ion-input formControlName="lastname" type="text"
+            [class.invalid]="!accountForm.controls.lastname.valid && (accountForm.controls.lastname.dirty || submitAttempt)">
+          </ion-input>
+        </ion-item>
+        <ion-item
+          *ngIf="!accountForm.controls.lastname.valid  && (accountForm.controls.lastname.dirty || submitAttempt)">
+          <p>Por favor ingrese un apellido válido.</p>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Dirección</ion-label>
+          <ion-textarea formControlName="address"></ion-textarea>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Activar Notificaciones</ion-label>
+          <ion-toggle [checked]="notifications"></ion-toggle>
+        </ion-item>
+
+      </form>
+    </ion-list>
+    <ion-button expand="full" color="primary" (click)="save()">Cambiar datos</ion-button>
+  </div>
+  <div class="separator"></div>
+  <div class="logout">
+    <ion-button expand="full" color="danger" (click)="logout()">Cerrar Sesión</ion-button>
+  </div>
 </ion-content>
