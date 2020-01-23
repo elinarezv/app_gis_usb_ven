@@ -61,8 +61,16 @@ export class AppComponent {
         this.email = data.email;
       });
   }
+  gotoWebsite() {
+    this.navCtrl.navigateForward('/notifications');
+  }
+  config() {
+    this.navCtrl.navigateForward('/myaccount');
+  }
   share() {
-    console.log('Sharing...');
     this.socialShare.share("https://play.google.com/store/apps/details?id=com.android.chrome&hl=en_us");
+  }
+  about() {
+    this.navCtrl.navigateForward('/credits');
   }
 }

@@ -12,6 +12,10 @@ import { User } from '../models/user';
 export class AuthService {
   isLoggedIn = false;
   token: any;
+  userFirstName: string;
+  userLastName: string;
+  userEmail: string;
+  userAddress: string;
 
   constructor(private http: HttpClient,
     private storage: NativeStorage,

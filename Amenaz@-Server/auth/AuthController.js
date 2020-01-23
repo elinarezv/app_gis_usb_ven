@@ -29,7 +29,7 @@ router.post('/register', function (req, res) {
   console.log('INSERTING USER...');
   console.log('With: ' + fName + ',' + lName + ',' + addr + ',' + email + ',' + hashedPassword + ',' + notifications);
   pool.query(
-    'INSERT INTO merida.users (firstname, lastname, address, email, password, notifications) VALUES ($1, $2, $3, $4, $5, $6)',
+    'INSERT INTO public.users (firstname, lastname, address, email, password, notifications) VALUES ($1, $2, $3, $4, $5, $6)',
     [fName, lName, addr, email, hashedPassword, notifications],
     (err, user) => {
       if (err) {
@@ -37,7 +37,7 @@ router.post('/register', function (req, res) {
         return res.status(500).send('There was a problem registering the user.');
       }
 
-      pool.query('SELECT * FROM merida.users WHERE email = $1', [email], (err, user) => {
+      pool.query('SELECT * FROM public.users WHERE email = $1', [email], (err, user) => {
         if (err) return res.status(500).send('There was a problem finding the user.');
         if (user.rowCount == 0) {
           return res.status(404).send('No user found.');
@@ -47,7 +47,13 @@ router.post('/register', function (req, res) {
           expiresIn: 31536000 // expires in 1 year
         });
 
-        res.status(200).send({ auth: true, token: token });
+        res.status(200).send({
+          auth: true, token: token,
+          email: user.rows[0].email,
+          firstname: user.rows[0].firstname,
+          lastname: user.rows[0].lastname,
+          address: user.rows[0].address
+        });
       });
     }
   );
@@ -55,7 +61,7 @@ router.post('/register', function (req, res) {
 
 router.get('/user', VerifyToken, function (req, res, next) {
   const id = parseInt(req.userId);
-  pool.query('SELECT * FROM merida.users WHERE id = $1', [id], (err, user) => {
+  pool.query('SELECT * FROM public.users WHERE id = $1', [id], (err, user) => {
     if (err) return res.status(500).send('There was a problem finding the user.');
     if (user.rowCount == 0) {
       return res.status(404).send('No user found.');
@@ -104,7 +110,8 @@ router.post('/login', function (req, res) {
       token: token,
       email: user.rows[0].email,
       firstname: user.rows[0].firstname,
-      lastname: user.rows[0].lastname
+      lastname: user.rows[0].lastname,
+      address: user.rows[0].address
     });
   });
 });

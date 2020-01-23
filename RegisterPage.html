@@ -1,0 +1,54 @@
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+            <ion-button (click)="dismissRegister()">
+                <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-toolbar>
+        <ion-title>Crear cuenta</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <form #form="ngForm" (ngSubmit)="register(form)" (ngModelOptions)="{standalone: true}" method="post">
+            <ion-item>
+                <ion-label position="floating">Nombres</ion-label>
+                <ion-input ngModel name="fName"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-label position="floating">Apellidos</ion-label>
+                <ion-input ngModel name="lName"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-label position="floating">Dirección</ion-label>
+                <ion-input ngModel name="addr"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-label position="floating">Email</ion-label>
+                <ion-input type="email" ngModel name="email"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-label position="floating">Contraseña</ion-label>
+                <ion-input type="password" ngModel name="password"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-label>Activar Notificaciones</ion-label>
+                <ion-toggle [checked]="actNotify" (ionChange)="notify()"></ion-toggle>
+            </ion-item>
+
+            <ion-item>
+                <ion-label>Acepto Términos y Condiciones</ion-label>
+                <ion-checkbox slot="end" [checked]="termAccept" (ionChange)="notifyTermsCond()"></ion-checkbox>
+            </ion-item>
+
+            <ion-button [disabled]="!termAccept" type="submit" expand="full" color="primary">Crear cuenta</ion-button>
+      </form>
+      <p text-center>¿Ya está registrado?</p>
+      <ion-button expand="full" color="secondary" (click)="loginModal()">Iniciar sesión</ion-button>
+    </ion-content>

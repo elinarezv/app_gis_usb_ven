@@ -4,3 +4,36 @@
     background-repeat: no-repeat !important;
     background-size: cover !important;
   }
+
+  .toolbar {
+    color: black;
+    background-color: transparent;
+  }
+
+  /* ---------------------------------- */
+
+  .toolbar {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    flex-direction: row;
+    justify-content: space-around;
+    align-content: center;
+    flex-wrap: nowrap;
+  }
+
+  .toolbar > .toolbar-element {
+    flex-grow: 1;
+    padding: 5px;
+  }
+
+  button {
+    background-color: transparent;
+    border: 0;
+  }
+
+  .icon {
+    background-color: transparent;
+    width: 32px;
+    height: 32px;
+  }

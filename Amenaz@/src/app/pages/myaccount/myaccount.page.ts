@@ -36,8 +36,10 @@ export class MyaccountPage implements OnInit {
         Validators.required
       ])],
       address: [''],
-      notifications: ['']
     });
+    this.accountForm.controls.firstname.setValue(this.authService.token.firstname);
+    this.accountForm.controls.lastname.setValue(this.authService.token.lastname);
+    this.accountForm.controls.address.setValue(this.authService.token.address);
   }
 
   save() {

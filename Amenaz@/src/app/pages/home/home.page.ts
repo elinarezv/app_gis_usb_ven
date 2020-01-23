@@ -182,4 +182,65 @@ export class HomePage implements OnInit {
     this.map.remove();
   }
   ngOnInit() { }
+  async generalInfo() {
+    let message: string;
+    if (this.actualCityName == 'Chacao') {
+      message = '<em>Municipio Chacao</em> <br/> \
+      Estado	Miranda <br/> \
+      N_Parro	1 <br/> \
+      A_hect	873,66 <br/> \
+      Perimetro	13,03 ';
+    } else if (this.actualCityName == 'Cumaná') {
+      message = '<em>Ciudad de Cumaná</em> <br/> \
+      Area (km2)	64,41 <br/> \
+      Perimetro (km)	47,53';
+    } else if (this.actualCityName == 'Mérida') {
+      message = '<em>Ciudad de Mérida</em> <br/> \
+      Area (km2)	96,28 <br/> \
+      Perimetro (km)	52,01';
+    }
+    const alert = await this.alertController.create({
+      header: 'Ubicación',
+      message: message,
+      buttons: ['Aceptar']
+    });
+
+    await alert.present();
+
+  }
+  async location() {
+    let message: string;
+    if (this.actualCityName == 'Chacao') {
+      message = 'El municipio Chacao es uno de los 21 municipios del estado Miranda y uno de los 5 municipios \
+      del Distrito Metropolitano de Caracas, Venezuela. Cuenta con 13 km² de superficie, lo que lo convierte \
+      en el municipio más pequeño de la ciudad y está conformado por una sola parroquia: San José de Chacao. \
+      Limita con los municipios Libertador al oeste, municipio Baruta al sur, Sucre al este y con el cerro El \
+      Ávila al norte. <br/> \
+      Posee una población de más de 71 mil habitantes, lo que representa una densidad de 5.486,53 hab./km², según el Instituto Nacional \
+      de Estadística (INE), ubicándo a Chacao en el cuarto lugar dentro de los municipios que conforman el área \
+      metropolitana de Caracas, siendo uno de los más densamente poblados del Distrito Metropolitano de Caracas. \
+      Entre las urbanizaciones se encuentran: Chacao, Altamira, La Castellana, La Floresta, Los Palos Grandes, \
+      El Rosal, Campo Alegre, El Bosque, El Dorado, EL Retiro y San Marino, San Souci, Estado Leal y Bello Campo. \
+      Entre los sectores más destacados se encuentran: El Casco Histórico de Chacao y El Caracas Country Club. \
+      Chacao es junto con el municipio Baruta y Los Salias uno de los municipios más ricos de Venezuela, con \
+      un índice de pobreza de apenas el 4,67% según el censo del año 2011. Gracias a su economía, alberga los \
+      principales centros financieros y centros comerciales de la ciudad, tales como el Centro Ciudad Comercial \
+      Tamanaco (CCCT), el Centro Sambil, el Centro Lido y el Centro San Ignacio. <br/> \
+      Es sede además de las principales sedes bancarias de instituciones locales y extranjeras, casas de bolsas, \
+      los hoteles más lujosos de la ciudad y las mansiones de personalidades reconocidas en el ámbito político y \
+      económico del país. ';
+    } else if (this.actualCityName == 'Cumaná') {
+      message = 'Info de Cumaná';
+    } else if (this.actualCityName == 'Mérida') {
+      message = 'Info de Mérida';
+    }
+    const alert = await this.alertController.create({
+      header: 'Información General',
+      message: message,
+      buttons: ['Aceptar']
+    });
+
+    await alert.present();
+
+  }
 }

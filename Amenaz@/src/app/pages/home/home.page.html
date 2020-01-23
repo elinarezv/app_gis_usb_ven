@@ -4,11 +4,6 @@
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
         <ion-title>Amenaz@s</ion-title>
-        <ion-buttons slot="end">
-            <ion-button (click)='gotoPosition()'>
-                <ion-icon name="notifications"></ion-icon>
-            </ion-button>
-        </ion-buttons>
     </ion-toolbar>
     <ion-toolbar>
         <ion-list>
@@ -26,20 +21,20 @@
                             </ion-button>
                         </ion-buttons>
                         <ion-title>
-                            <h3>{{actualCityName}}</h3>
+                            <h4>{{actualCityName}}</h4>
                         </ion-title>
                     </ion-toolbar>
                 </ion-item>
                 <ion-item-options side="end" (ionSwipe)="nextCity(item)">
-                    <ion-item-option expandable (click)="nextCity(item)">Proxima</ion-item-option>
+                    <ion-item-option expandable>Proxima</ion-item-option>
                 </ion-item-options>
                 <ion-item-options side="start" (ionSwipe)="previousCity(item)">
-                    <ion-item-option expandable (click)="previousCity(item)">Anterior</ion-item-option>
+                    <ion-item-option expandable>Anterior</ion-item-option>
                 </ion-item-options>
             </ion-item-sliding>
         </ion-list>
     </ion-toolbar>
-    <ion-toolbar>
+    <ion-toolbar *ngIf="botomToolbarActive">
         <ion-searchbar autocomplete='on' placeholder="Buscar lugar o dirección" debounce="500"
             (ionInput)="getPlaces($event)"></ion-searchbar>
         <ion-list *ngIf="arePlacesAvailable">
@@ -52,24 +47,25 @@
     <div id="mapId" style="width: 100%; height: 100%"></div>
 </ion-content>
 <ion-footer>
-    <div class="container">
-        <div class="row justify-content-center" *ngIf="botomToolbarActive">
-            <div class="col">
-                <button (click)='gotoPosition()'>
-                    <ion-icon name="notifications"></ion-icon>
-                </button>
+    <div class="toolbar" *ngIf="botomToolbarActive">
+        <button class="toolbar-element" type="button" (click)="location()">
+            <ion-icon class="icon" name="compass"></ion-icon>
+            <div class="label">
+                Ubicación
             </div>
-            <div class="col">
-                <button (click)='gotoPosition()'>
-                    <ion-icon name="notifications"></ion-icon>
-                </button>
+        </button>
+        <button class="toolbar-element" type="button" (click)="generalInfo()">
+            <ion-icon class=" icon" name="stats"></ion-icon>
+            <div class="label">
+                Datos Generales
             </div>
-            <div class="col">
-                <button (click)='gotoPosition()'>
-                    <ion-icon name="notifications"></ion-icon>
-                </button>
+        </button>
+        <button class="toolbar-element" type="button" (click)="threats()">
+            <ion-icon class=" icon" name="nuclear"></ion-icon>
+            <div class="label">
+                Amenazas
             </div>
-        </div>
+        </button>
     </div>
     <ion-toolbar>
         <ion-buttons slot="end">
