@@ -15,6 +15,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 @NgModule({
@@ -27,6 +28,7 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
     AndroidPermissions,
     Geolocation,
     LocationAccuracy,
+    InAppBrowser,
     SocialSharing,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     NativeStorage

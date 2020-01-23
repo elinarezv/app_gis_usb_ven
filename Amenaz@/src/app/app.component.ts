@@ -6,6 +6,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './services/auth.service';
 import { AlertService } from './services/alert.service';
 
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 @Component({
@@ -42,7 +43,8 @@ export class AppComponent {
     private navCtrl: NavController,
     private alertService: AlertService,
     public events: Events,
-    private socialShare: SocialSharing
+    private socialShare: SocialSharing,
+    private iab: InAppBrowser
   ) {
     this.initializeApp();
   }
@@ -62,7 +64,8 @@ export class AppComponent {
       });
   }
   gotoWebsite() {
-    this.navCtrl.navigateForward('/notifications');
+    const browser = this.iab.create('https://lsigma.maps.arcgis.com/apps/MapSeries/index.html?appid=8019210ebf1a471c9a735911be2f644e/');
+    browser.show();
   }
   config() {
     this.navCtrl.navigateForward('/myaccount');
