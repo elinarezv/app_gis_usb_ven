@@ -76,4 +76,17 @@ export class AppComponent {
   about() {
     this.navCtrl.navigateForward('/credits');
   }
+  logout() {
+    this.authService.logout().subscribe(
+      data => {
+        this.alertService.presentToast(data['message']);
+      },
+      error => {
+        console.log(error);
+      },
+      () => {
+        this.navCtrl.navigateRoot('/landing');
+      }
+    );
+  }
 }

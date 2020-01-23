@@ -59,6 +59,42 @@ router.post('/register', function (req, res) {
   );
 });
 
+router.post('/userUpdate', VerifyToken, function (req, res, next) {
+  const id = parseInt(req.userId);
+  const { fName, lName, addr } = req.body;
+  console.log('UPDATING USER WITH ID: ' + id);
+  console.log('With: ' + fName + ',' + lName + ',' + addr);
+  pool.query(
+    'UPDATE public.users SET firstname = $1, lastname = $2, address = $3 WHERE id = $4',
+    [fName, lName, addr, id],
+    (err, user) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send('There was a problem updating the user.');
+      }
+
+      pool.query('SELECT * FROM public.users WHERE email = $1', [email], (err, user) => {
+        if (err) return res.status(500).send('There was a problem finding the user.');
+        if (user.rowCount == 0) {
+          return res.status(404).send('No user found.');
+        }
+        var token = jwt.sign({ id: user.rows[0].id }, config.secret, {
+          algorithm: 'HS256',
+          expiresIn: 31536000 // expires in 1 year
+        });
+
+        res.status(200).send({
+          auth: true, token: token,
+          email: user.rows[0].email,
+          firstname: user.rows[0].firstname,
+          lastname: user.rows[0].lastname,
+          address: user.rows[0].address
+        });
+      });
+    }
+  );
+});
+
 router.get('/user', VerifyToken, function (req, res, next) {
   const id = parseInt(req.userId);
   pool.query('SELECT * FROM public.users WHERE id = $1', [id], (err, user) => {
@@ -67,7 +103,7 @@ router.get('/user', VerifyToken, function (req, res, next) {
       return res.status(404).send('No user found.');
     }
     user.rows[0].password = 0;
-    res.status(200).send(user.rows);
+    res.status(200).send(user.rows[0]);
   });
 });
 

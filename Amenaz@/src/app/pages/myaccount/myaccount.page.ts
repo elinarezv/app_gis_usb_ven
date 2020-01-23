@@ -13,10 +13,9 @@ import { NavController } from '@ionic/angular';
 })
 
 export class MyaccountPage implements OnInit {
-
   public accountForm: FormGroup;
-
   public submitAttempt: boolean = false;
+  public formDataChanged: boolean = false;
 
   constructor(public formBuilder: FormBuilder,
     private authService: AuthService,
@@ -41,26 +40,13 @@ export class MyaccountPage implements OnInit {
     this.accountForm.controls.lastname.setValue(this.authService.token.lastname);
     this.accountForm.controls.address.setValue(this.authService.token.address);
   }
-
   save() {
     this.submitAttempt = true;
     // Add code to connect to server
   }
-
-  logout() {
-    this.authService.logout().subscribe(
-      data => {
-        this.alertService.presentToast(data['message']);
-      },
-      error => {
-        console.log(error);
-      },
-      () => {
-        this.navCtrl.navigateRoot('/landing');
-      }
-    );
+  formChanged() {
+    this.formDataChanged = true;
   }
-
   ngOnInit() {
   }
 

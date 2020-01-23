@@ -200,7 +200,7 @@ export class HomePage implements OnInit {
       Perimetro (km)	52,01';
     }
     const alert = await this.alertController.create({
-      header: 'Ubicación',
+      header: 'Información General',
       message: message,
       buttons: ['Aceptar']
     });
@@ -235,7 +235,7 @@ export class HomePage implements OnInit {
       message = 'Info de Mérida';
     }
     const alert = await this.alertController.create({
-      header: 'Información General',
+      header: 'Ubicación',
       message: message,
       buttons: ['Aceptar']
     });
