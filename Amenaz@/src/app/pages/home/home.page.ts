@@ -44,6 +44,8 @@ export class HomePage implements OnInit {
     this.actualCityName = 'Visión del Proyecto';
     this.botomToolbarActive = false;
   }
+  ionViewDidLoad() {
+  }
   nextCity(item) {
     if (this.actualCity == this.mappingService.cities.length - 1) {
       this.actualCity = 0;
@@ -181,7 +183,9 @@ export class HomePage implements OnInit {
     this.addedLayerControl = false;
     this.map.remove();
   }
-  ngOnInit() { }
+  ngOnInit() {
+
+  }
   async generalInfo() {
     let message: string;
     if (this.actualCityName == 'Chacao') {

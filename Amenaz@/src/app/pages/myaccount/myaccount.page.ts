@@ -41,8 +41,25 @@ export class MyaccountPage implements OnInit {
     this.accountForm.controls.address.setValue(this.authService.token.address);
   }
   save() {
-    this.submitAttempt = true;
-    // Add code to connect to server
+    this.alertService.presentToast('Conectando al servidor...');
+    this.formDataChanged = false;
+    this.authService
+      .update(
+        this.accountForm.controls.firstname.value,
+        this.accountForm.controls.lastname.value,
+        this.accountForm.controls.address.value
+      )
+      .subscribe(
+        data => {
+          this.alertService.presentToast(data['message']);
+        },
+        error => {
+          this.alertService.presentToast(error['message']);
+          this.formDataChanged = false;
+          console.log(error);
+        },
+        () => { }
+      );
   }
   formChanged() {
     this.formDataChanged = true;

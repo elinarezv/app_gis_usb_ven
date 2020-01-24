@@ -63,13 +63,15 @@
                 <ion-label position="floating">Contraseña</ion-label>
                 <ion-input formControlName="password" type="text"> </ion-input>
             </ion-item>
-        </form>
-        <ion-item>
-            <ion-label>Acepto Términos y Condiciones</ion-label>
-            <ion-checkbox slot="end" [checked]="termAccept" (ionChange)="notifyTermsCond()"></ion-checkbox>
-        </ion-item>
 
-        <ion-button [disabled]="!termAccept" type="submit" expand="full" color="primary">Crear cuenta</ion-button>
+            <ion-item>
+                <ion-label>Acepto Términos y Condiciones</ion-label>
+                <ion-checkbox slot="end" [checked]="termAccept" (ionChange)="notifyTermsCond()"></ion-checkbox>
+            </ion-item>
+
+            <ion-button [disabled]="!termAccept" type="submit" expand="full" color="primary" (click)="register()">Crear
+                cuenta</ion-button>
+        </form>
     </ion-list>
     <p text-center>¿Ya está registrado?</p>
     <ion-button expand="full" color="secondary" (click)="loginModal()">Iniciar sesión</ion-button>

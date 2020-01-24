@@ -34,13 +34,13 @@ router.post('/register', function (req, res) {
     (err, user) => {
       if (err) {
         console.log(err);
-        return res.status(500).send('There was a problem registering the user.');
+        return res.status(500).send('Ha habido un problema al registrar el usuario.');
       }
 
       pool.query('SELECT * FROM public.users WHERE email = $1', [email], (err, user) => {
-        if (err) return res.status(500).send('There was a problem finding the user.');
+        if (err) return res.status(500).send('Ha habido un problema al consultar la BD.');
         if (user.rowCount == 0) {
-          return res.status(404).send('No user found.');
+          return res.status(404).send('Usuario no encontrado.');
         }
         var token = jwt.sign({ id: user.rows[0].id }, config.secret, {
           algorithm: 'HS256',
@@ -70,27 +70,13 @@ router.post('/userUpdate', VerifyToken, function (req, res, next) {
     (err, user) => {
       if (err) {
         console.log(err);
-        return res.status(500).send('There was a problem updating the user.');
+        return res.status(500).send('Ha habido un problema al actualizar el usuario.');
       }
-
-      pool.query('SELECT * FROM public.users WHERE email = $1', [email], (err, user) => {
-        if (err) return res.status(500).send('There was a problem finding the user.');
-        if (user.rowCount == 0) {
-          return res.status(404).send('No user found.');
-        }
-        var token = jwt.sign({ id: user.rows[0].id }, config.secret, {
-          algorithm: 'HS256',
-          expiresIn: 31536000 // expires in 1 year
-        });
-
-        res.status(200).send({
-          auth: true, token: token,
-          email: user.rows[0].email,
-          firstname: user.rows[0].firstname,
-          lastname: user.rows[0].lastname,
-          address: user.rows[0].address
-        });
-      });
+      userUpdated = {
+        id: id,
+        message: 'Actualización de datos satisfactoria.'
+      };
+      res.status(200).send(userUpdated);
     }
   );
 });
@@ -98,9 +84,9 @@ router.post('/userUpdate', VerifyToken, function (req, res, next) {
 router.get('/user', VerifyToken, function (req, res, next) {
   const id = parseInt(req.userId);
   pool.query('SELECT * FROM public.users WHERE id = $1', [id], (err, user) => {
-    if (err) return res.status(500).send('There was a problem finding the user.');
+    if (err) return res.status(500).send('Ha habido un problema al buscar en la BD.');
     if (user.rowCount == 0) {
-      return res.status(404).send('No user found.');
+      return res.status(404).send('Usuario no encontrado.');
     }
     user.rows[0].password = 0;
     res.status(200).send(user.rows[0]);
@@ -119,14 +105,14 @@ router.get('/logout', VerifyToken, function (req, res, next) {
 router.post('/login', function (req, res) {
   const email = req.body.email;
   if (!email) {
-    return res.status(500).send('No user send.');
+    return res.status(500).send('Falta parámetro requerido: correo-e.');
   }
   pool.query('SELECT * FROM public.users WHERE email = $1', [email], (err, user) => {
     if (err) {
-      return res.status(500).send('There was a problem finding the user.');
+      return res.status(500).send('Ha habido un problema al consultar la BD.');
     }
     if (user.rowCount == 0) {
-      return res.status(404).send('No user found.');
+      return res.status(404).send('Usuario no encontrado.');
     }
     if (req.body.password) {
       password2Compare = req.body.password;

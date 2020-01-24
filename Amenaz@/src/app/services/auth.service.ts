@@ -57,6 +57,20 @@ export class AuthService {
       headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
     });
   }
+  update(fName: string, lName: string, addr: string) {
+    const headers = new HttpHeaders({
+      Authorization: 'Basic' + ' ' + this.token,
+      'x-access-token': this.token.token,
+      'Content-type': 'application/x-www-form-urlencoded'
+    });
+    const body = new HttpParams()
+      .set('fName', fName)
+      .set('lName', lName)
+      .set('addr', addr);
+    return this.http.post(this.env.API_URL + 'auth/userUpdate', body.toString(), {
+      headers: headers
+    });
+  }
   logout() {
     const headers = new HttpHeaders({
       Authorization: 'Basic' + ' ' + this.token,

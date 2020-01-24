@@ -74,37 +74,36 @@ export class RegisterPage implements OnInit {
   register() {
     this.termAccept = false;
     this.alertService.presentToast('Conectando al servidor...');
-    this.submitAttempt = true;
-    //   this.authService
-    //     .register(
-    //       form.value.fName,
-    //       form.value.lName,
-    //       form.value.addr,
-    //       form.value.email,
-    //       form.value.password,
-    //       String(this.actNotify)
-    //     )
-    //     .subscribe(
-    //       data => {
-    //         this.authService.login(form.value.email, form.value.password).subscribe(
-    //           data => { },
-    //           error => {
-    //             this.termAccept = true;
-    //             console.log(error);
-    //           },
-    //           () => {
-    //             this.dismissRegister();
-    //             this.navCtrl.navigateRoot('/home');
-    //           }
-    //         );
-    //         this.alertService.presentToast(data['message']);
-    //       },
-    //       error => {
-    //         this.termAccept = true;
-    //         console.log(error);
-    //       },
-    //       () => { }
-    //     );
-    // }
+    this.authService
+      .register(
+        this.accountForm.controls.firstname.value,
+        this.accountForm.controls.lastname.value,
+        this.accountForm.controls.address.value,
+        this.accountForm.controls.email.value,
+        this.accountForm.controls.password.value,
+        String(this.actNotify)
+      )
+      .subscribe(
+        data => {
+          this.authService.login(this.accountForm.controls.email.value, this.accountForm.controls.password.value).subscribe(
+            data => { },
+            error => {
+              this.submitAttempt = true;
+              this.termAccept = true;
+              console.log(error);
+            },
+            () => {
+              this.dismissRegister();
+              this.navCtrl.navigateRoot('/home');
+            }
+          );
+          this.alertService.presentToast(data['message']);
+        },
+        error => {
+          this.termAccept = true;
+          console.log(error);
+        },
+        () => { }
+      );
   }
 }
