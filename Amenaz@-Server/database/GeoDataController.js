@@ -17,13 +17,15 @@ var config = require('../config');
 
 var VerifyToken = require('../auth/VerifyToken');
 
-router.get('/getlayer', VerifyToken, function(req, res, next) {
-  //router.get('/getlayer', function(req, res) {
+router.get('/getlayer', VerifyToken, function (req, res, next) {
+  var cityName = req.query.cityName;
   var layerName = req.query.layerName;
-  if (!layerName || layerName === '') {
-    return res.status(500).send('No layerName send.');
+
+  if (!layerName || layerName === '' || !cityName || cityName === '') {
+    return res.status(500).send({ message: 'Parámetros incorrectos.' });
   }
-  var queryString = 'SELECT * FROM merida.' + layerName + ' ';
+  var queryString = 'SELECT * FROM ' + cityName + '.' + layerName + ' ';
+  console.log('cityName: ' + cityName);
   console.log('layerName: ' + layerName);
   console.log('Query: ' + queryString);
   const pool = new Pool({
@@ -33,12 +35,12 @@ router.get('/getlayer', VerifyToken, function(req, res, next) {
     password: 'Anaporatumacaya',
     port: 5432
   });
-  pool.connect(function(err, client, done) {
+  pool.connect(function (err, client, done) {
     var query = client.query(new pg.Query(queryString));
-    query.on('row', function(row, result) {
+    query.on('row', function (row, result) {
       result.addRow(row);
     });
-    query.on('end', function(result) {
+    query.on('end', function (result) {
       // pool shutdown
       res.send(result.rows[0].row_to_json);
       pool.end();

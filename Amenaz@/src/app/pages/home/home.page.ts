@@ -27,6 +27,7 @@ export class HomePage implements OnInit {
   actualCity: any;
   actualCityName: string;
   botomToolbarActive: boolean;
+  searchBarActive: boolean;
 
   constructor(
     private menu: MenuController,
@@ -43,6 +44,7 @@ export class HomePage implements OnInit {
     this.actualCity = 0;
     this.actualCityName = 'Visión del Proyecto';
     this.botomToolbarActive = false;
+    this.searchBarActive = false;
   }
   ionViewDidLoad() {
   }
@@ -118,6 +120,7 @@ export class HomePage implements OnInit {
       this.botomToolbarActive = true;
     } else {
       this.botomToolbarActive = false;
+      this.searchBarActive = false;
     }
     // if (this.actualCity == 0) {
     // this.map.flyTo(this.mappingService.mainCity, 12);
@@ -141,11 +144,8 @@ export class HomePage implements OnInit {
     // } else if (this.actualCity == '<< Chacao >>') {
     // }
   }
-  ThreadEnv() {
-    this.navCtrl.navigateForward('/threat-env');
-  }
-  ThreadMap() {
-    this.navCtrl.navigateForward('/threat-map');
+  toggleSearchBar() {
+    this.searchBarActive = !this.searchBarActive;
   }
   getPlaces(ev: any) {
     const input = ev.target.value;
