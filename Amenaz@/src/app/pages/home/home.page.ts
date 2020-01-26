@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuController, NavController } from '@ionic/angular';
 import { Map, tileLayer, Layer, control, marker, icon, geoJSON } from 'leaflet';
+import * as L from 'leaflet';
 import { AuthService } from 'src/app/services/auth.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { MappingService } from 'src/app/services/mapping.service';
 
 import { AlertController } from '@ionic/angular';
+import { from } from 'rxjs';
+import { ConditionalExpr } from '@angular/compiler';
 
 // import { Platform } from '@ionic/angular';
 // import { Router } from '@angular/router';
@@ -26,8 +29,13 @@ export class HomePage implements OnInit {
   isMarkerActive: boolean;
   actualCity: any;
   actualCityName: string;
+  actualCityThreats: string[];
   botomToolbarActive: boolean;
   searchBarActive: boolean;
+  threatToolbarActive: boolean;
+  actualThreatName: string;
+  layerControl: L.Control;
+  overlayMaps = {};
 
   constructor(
     private menu: MenuController,
@@ -45,8 +53,23 @@ export class HomePage implements OnInit {
     this.actualCityName = 'Visión del Proyecto';
     this.botomToolbarActive = false;
     this.searchBarActive = false;
+    this.threatToolbarActive = false;
+    this.actualThreatName = '';
+    this.actualCityThreats = [];
+    this.layerControl = null;
   }
   ionViewDidLoad() {
+  }
+  removeLayerControl() {
+    Object.keys(this.overlayMaps).forEach(key => {
+      this.map.removeLayer(this.overlayMaps[key]);
+    })
+    this.overlayMaps = {};
+    if (this.layerControl != null && this.layerControl != undefined) {
+      this.layerControl.remove();
+      this.map.removeControl(this.layerControl);
+      this.layerControl = undefined;
+    }
   }
   nextCity(item) {
     if (this.actualCity == this.mappingService.cities.length - 1) {
@@ -55,6 +78,16 @@ export class HomePage implements OnInit {
       this.actualCity += 1;
     }
     this.actualCityName = this.mappingService.cities[this.actualCity].name;
+    if (this.layerControl != null && this.layerControl != undefined) {
+      this.layerControl.remove();
+      this.layerControl = null;
+    }
+    this.removeLayerControl();
+    this.botomToolbarActive = false;
+    this.searchBarActive = false;
+    this.threatToolbarActive = false;
+    this.actualThreatName = '';
+    this.actualCityThreats = [];
     this.centerOnCity();
   }
   previousCity(item) {
@@ -64,6 +97,16 @@ export class HomePage implements OnInit {
       this.actualCity -= 1;
     }
     this.actualCityName = this.mappingService.cities[this.actualCity].name;
+    if (this.layerControl != null && this.layerControl != undefined) {
+      this.layerControl.remove();
+      this.layerControl = null;
+    }
+    this.removeLayerControl();
+    this.botomToolbarActive = false;
+    this.searchBarActive = false;
+    this.threatToolbarActive = false;
+    this.actualThreatName = '';
+    this.actualCityThreats = [];
     this.centerOnCity();
   }
   ionViewDidEnter() {
@@ -114,13 +157,35 @@ export class HomePage implements OnInit {
     this.centerOnCity();
     this.presentAlert();
   }
+  loadThreatLayers(layerType: string) {
+    this.mappingService.cities.find(x => x.name === this.actualCityName).layers.forEach(layer => {
+      layer.threadType.forEach(threat => {
+        if (this.actualCityThreats.find(x => x === threat) == undefined && threat !== 'Ninguna') {
+          this.actualCityThreats.push(threat);
+        }
+        if (threat === layerType) {
+          this.overlayMaps[layer.layerName] = layer.gJSON;
+        }
+      });
+    });
+    // Load layers with 'Ninguna' on ThreatType
+    if (this.overlayMaps) {
+      this.layerControl = control.layers(null, this.overlayMaps);
+      this.layerControl.addTo(this.map);
+      this.actualThreatName = layerType;
+    }
+  }
   centerOnCity() {
     this.map.flyTo(this.mappingService.cities[this.actualCity].location, this.mappingService.cities[this.actualCity].zoomLevel);
-    if (this.mappingService.cities[this.actualCity].name != 'Visión del Proyecto') {
+    if (this.mappingService.cities[this.actualCity].name !== 'Visión del Proyecto') {
+      this.loadThreatLayers('Ninguna');
       this.botomToolbarActive = true;
     } else {
       this.botomToolbarActive = false;
       this.searchBarActive = false;
+      this.threatToolbarActive = false;
+      this.actualThreatName = '';
+      this.actualCityThreats = [];
     }
     // if (this.actualCity == 0) {
     // this.map.flyTo(this.mappingService.mainCity, 12);
@@ -243,8 +308,39 @@ export class HomePage implements OnInit {
       message: message,
       buttons: ['Aceptar']
     });
-
     await alert.present();
-
+  }
+  threats() {
+    this.threatToolbarActive = !this.threatToolbarActive;
+    this.removeLayerControl();
+    if (!this.threatToolbarActive) {
+      this.loadThreatLayers('Ninguna');
+    } else {
+      // Load first threat layers name
+      if (this.actualCityThreats.length != 0) {
+        this.actualThreatName = this.actualCityThreats[0];
+        this.loadThreatLayers(this.actualThreatName);
+      } else {
+        this.actualThreatName = 'No hay datos';
+      }
+    }
+  }
+  nextThreat(item) {
+    let index = this.actualCityThreats.indexOf(this.actualThreatName);
+    if (index == this.actualCityThreats.length - 1) {
+      this.actualThreatName = this.actualCityThreats[0];
+    } else {
+      index += 1;
+      this.actualThreatName = this.actualCityThreats[index];
+    }
+    this.removeLayerControl();
+    if (this.actualCityThreats.length != 0) {
+      this.loadThreatLayers(this.actualThreatName);
+    } else {
+      this.actualThreatName = 'No hay datos';
+    }
+  }
+  previousThreat(item) {
+    console.log('Previus threat');
   }
 }

@@ -17,7 +17,7 @@ import { OpenStreetMapProvider } from 'leaflet-geosearch';
 type LayerType = {
   layerName: string;
   queryName: string;
-  threadType: string;
+  threadType: string[];
   gJSON: GeoJSON;
   color: string;
   downloaded: boolean;
@@ -118,74 +118,74 @@ export class MappingService {
     this.gotGeoposition = false;
 
     this.cities.find(x => x.name === 'Chacao').layers.push({
-      layerName: 'Área urbana', queryName: 'a_urbana_geojson', threadType: 'Ninguna',
+      layerName: 'Área urbana', queryName: 'a_urbana_geojson', threadType: ['Ninguna'],
       gJSON: undefined, color: '#ff3300', downloaded: false
     });
     this.cities.find(x => x.name === 'Chacao').layers.push({
-      layerName: 'Aludes Torrenciales', queryName: 'aludes_union_geojson', threadType: 'Aludes torrenciales',
+      layerName: 'Aludes Torrenciales', queryName: 'aludes_union_geojson', threadType: ['Aludes torrenciales'],
       gJSON: undefined, color: '#0000ff', downloaded: false
     });
     this.cities.find(x => x.name === 'Chacao').layers.push({
       layerName: 'Inundaciones', queryName: 'inundaciones_geojson',
-      threadType: 'Inundaciones', gJSON: undefined, color: '#ccff33', downloaded: false
+      threadType: ['Inundaciones'], gJSON: undefined, color: '#ccff33', downloaded: false
     });
     this.cities.find(x => x.name === 'Chacao').layers.push({
-      layerName: 'Hidrografía', queryName: 'hidrografia_line_geojson', threadType: 'Inundaciones y Aludes torrenciales',
+      layerName: 'Hidrografía', queryName: 'hidrografia_line_geojson', threadType: ['Inundaciones', 'Aludes torrenciales'],
       gJSON: undefined, color: '#33cc33', downloaded: false
     });
     this.cities.find(x => x.name === 'Chacao').layers.push({
       layerName: 'Vialidad', queryName: 'vialidad_geojson',
-      threadType: 'Ninguna', gJSON: undefined, color: '#750028', downloaded: false
+      threadType: ['Ninguna'], gJSON: undefined, color: '#750028', downloaded: false
     });
     this.cities.find(x => x.name === 'Chacao').layers.push({
       layerName: 'Manzanas Catastrales', queryName: 'catastro_manzanas_geojson',
-      threadType: 'Ninguna', gJSON: undefined, color: '#0000ff', downloaded: false
+      threadType: ['Ninguna'], gJSON: undefined, color: '#0000ff', downloaded: false
     });
     this.cities.find(x => x.name === 'Chacao').layers.push({
       layerName: 'Inmuebles Afect Sismo 1967', queryName: 'sismica_afect_t67_geojson',
-      threadType: 'Sismica', gJSON: undefined, color: '#59994d', downloaded: false
+      threadType: ['Sismica'], gJSON: undefined, color: '#59994d', downloaded: false
     });
     this.cities.find(x => x.name === 'Chacao').layers.push({
       layerName: 'Zona Influencia Fallas Geol', queryName: 'buffer_fallag_geojson',
-      threadType: 'Sismica', gJSON: undefined, color: '#f9072a', downloaded: false
+      threadType: ['Sismica'], gJSON: undefined, color: '#f9072a', downloaded: false
     });
     this.cities.find(x => x.name === 'Chacao').layers.push({
       layerName: 'Microzonas Sísmicas', queryName: 'mzs_chacao_geojson',
-      threadType: 'Sismica', gJSON: undefined, color: '#e32eb5', downloaded: false
+      threadType: ['Sismica'], gJSON: undefined, color: '#e32eb5', downloaded: false
     });
 
 
     this.cities.find(x => x.name === 'Mérida').layers.push({
-      layerName: 'Poligonal urbana', queryName: 'polg_urbana_geojson', threadType: 'Ninguna',
+      layerName: 'Poligonal urbana', queryName: 'polg_urbana_geojson', threadType: ['Ninguna'],
       gJSON: undefined, color: '#ccff33', downloaded: false
     });
     this.cities.find(x => x.name === 'Mérida').layers.push({
-      layerName: 'Zona Prot. Río Albarregas', queryName: 'zpr_albarregas_geojson', threadType: 'Ninguna',
+      layerName: 'Zona Prot. Río Albarregas', queryName: 'zpr_albarregas_geojson', threadType: ['Ninguna'],
       gJSON: undefined, color: '#0000ff', downloaded: false
     });
     this.cities.find(x => x.name === 'Mérida').layers.push({
-      layerName: 'Parroquias Libertador', queryName: 'pquias_libertador_geojson', threadType: 'Ninguna',
+      layerName: 'Parroquias Libertador', queryName: 'pquias_libertador_geojson', threadType: ['Ninguna'],
       gJSON: undefined, color: '#33cc33', downloaded: false
     });
     this.cities.find(x => x.name === 'Mérida').layers.push({
-      layerName: 'Bordes de Terraza', queryName: 'bufer_bt_mda_geojson', threadType: 'Sismica - Mov. En masa',
+      layerName: 'Bordes de Terraza', queryName: 'bufer_bt_mda_geojson', threadType: ['Sismica', 'Movimientos en masa'],
       gJSON: undefined, color: '#ff3300', downloaded: false
     });
     this.cities.find(x => x.name === 'Mérida').layers.push({
       layerName: 'Zona Influencia Fallas Geol', queryName: 'buffer_fallas_geol_geojson',
-      threadType: 'Sismica', gJSON: undefined, color: '#ccff33', downloaded: false
+      threadType: ['Sismica'], gJSON: undefined, color: '#ccff33', downloaded: false
     });
     this.cities.find(x => x.name === 'Mérida').layers.push({
       layerName: 'Microzonas Sísmicas', queryName: 'mzs_sedimentos_geojson',
-      threadType: 'Sismica', gJSON: undefined, color: '#33cc33', downloaded: false
+      threadType: ['Sismica'], gJSON: undefined, color: '#33cc33', downloaded: false
     });
     this.cities.find(x => x.name === 'Mérida').layers.push({
       layerName: 'Zonas Suceptibles', queryName: 's_mov_mass_geojson',
-      threadType: 'Movimientos en masa', gJSON: undefined, color: '#750028', downloaded: false
+      threadType: ['Movimientos en masa'], gJSON: undefined, color: '#750028', downloaded: false
     });
     this.cities.find(x => x.name === 'Mérida').layers.push({
       layerName: 'Crecida de Afluentes', queryName: 'zp_hydrograf_geojson',
-      threadType: 'Crecidas de afluentes hídricos', gJSON: undefined, color: '#0000ff', downloaded: false
+      threadType: ['Crecidas de afluentes hídricos'], gJSON: undefined, color: '#0000ff', downloaded: false
     });
 
     this.searchProvider = new OpenStreetMapProvider();
@@ -309,6 +309,12 @@ export class MappingService {
   //     );
   //   });
   // }
+  onEachFeature(feature, layer) {
+    if (feature.properties) {
+      console.log(feature);
+      layer.bindPopup(feature.properties);
+    }
+  }
   getAllMaps() {
     this.cities.forEach(city => {
       if (city.layers.length > 0) {
@@ -320,7 +326,8 @@ export class MappingService {
                   color: layer.color,
                   weight: 2,
                   opacity: 0.45
-                }
+                },
+                onEachFeature: this.onEachFeature
               });
               layer.downloaded = true;
             },

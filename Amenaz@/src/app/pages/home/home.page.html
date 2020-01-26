@@ -52,30 +52,30 @@
     <div id="mapId" style="width: 100%; height: 100%"></div>
 </ion-content>
 <ion-footer>
-    <ion-toolbar>
+    <ion-toolbar *ngIf="botomToolbarActive && threatToolbarActive">
         <ion-list class="list-at-top">
             <ion-item-sliding>
                 <ion-item>
                     <ion-toolbar>
                         <ion-buttons slot="start">
-                            <ion-button (click)='previousCity(item)'>
+                            <ion-button>
                                 <ion-icon name="arrow-round-back"></ion-icon>
                             </ion-button>
                         </ion-buttons>
                         <ion-buttons slot="end">
-                            <ion-button (click)='nextCity(item)'>
+                            <ion-button (click)='nextThreat(item)'>
                                 <ion-icon name="arrow-round-forward"></ion-icon>
                             </ion-button>
                         </ion-buttons>
                         <ion-title>
-                            <h4>{{actualCityName}}</h4>
+                            {{actualThreatName}}
                         </ion-title>
                     </ion-toolbar>
                 </ion-item>
-                <ion-item-options side="end" (ionSwipe)="nextCity(item)">
+                <ion-item-options side="end" (ionSwipe)="nextThreat(item)">
                     <ion-item-option expandable>Proxima</ion-item-option>
                 </ion-item-options>
-                <ion-item-options side="start" (ionSwipe)="previousCity(item)">
+                <ion-item-options side="start" (ionSwipe)="previousThreat(item)">
                     <ion-item-option expandable>Anterior</ion-item-option>
                 </ion-item-options>
             </ion-item-sliding>
