@@ -4,7 +4,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { AlertService } from '../../services/alert.service';
 import { NavController } from '@ionic/angular';
+import { MappingService } from 'src/app/services/mapping.service';
 
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-myaccount',
@@ -20,7 +22,9 @@ export class MyaccountPage implements OnInit {
   constructor(public formBuilder: FormBuilder,
     private authService: AuthService,
     private navCtrl: NavController,
-    private alertService: AlertService) {
+    private alertService: AlertService,
+    private mappingService: MappingService
+  ) {
     this.accountForm = formBuilder.group({
       firstname: ['', Validators.compose([
         Validators.maxLength(30),
@@ -60,6 +64,30 @@ export class MyaccountPage implements OnInit {
         },
         () => { }
       );
+  }
+  setBaseMap(baseMap: string) {
+    if (baseMap === 'esri-vial') {
+      this.mappingService.map.removeLayer(this.mappingService.baseMap);
+      this.mappingService.baseMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+        id: 'mapId',
+        attribution: 'www.usb.ve MIT License'
+      });
+      //this.mappingService.map.addLayer(this.mappingService.baseMap);
+    } else if (baseMap === 'osm') {
+      this.mappingService.map.removeLayer(this.mappingService.baseMap);
+      this.mappingService.baseMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        id: 'mapId',
+        attribution: 'www.usb.ve MIT License'
+      });
+      //this.mappingService.map.addLayer(this.mappingService.baseMap);
+    } else {
+      this.mappingService.map.removeLayer(this.mappingService.baseMap);
+      this.mappingService.baseMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+        id: 'mapId',
+        attribution: 'www.usb.ve MIT License'
+      });
+      //this.mappingService.map.addLayer(this.mappingService.baseMap);
+    }
   }
   formChanged() {
     this.formDataChanged = true;

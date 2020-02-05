@@ -1,5 +1,6 @@
 <ion-header>
-    <ion-toolbar>
+    <ion-toolbar mode="ios">
+        <ion-title>Amenaz@s</ion-title>
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
@@ -8,36 +9,23 @@
                 <ion-icon name="search"></ion-icon>
             </ion-button>
         </ion-buttons>
-        <ion-title>Amenaz@s</ion-title>
     </ion-toolbar>
     <ion-toolbar>
-        <ion-list class="list-at-top">
-            <ion-item-sliding>
-                <ion-item>
-                    <ion-toolbar>
-                        <ion-buttons slot="start">
-                            <ion-button (click)='previousCity(item)'>
-                                <ion-icon name="arrow-round-back"></ion-icon>
-                            </ion-button>
-                        </ion-buttons>
-                        <ion-buttons slot="end">
-                            <ion-button (click)='nextCity(item)'>
-                                <ion-icon name="arrow-round-forward"></ion-icon>
-                            </ion-button>
-                        </ion-buttons>
-                        <ion-title>
-                            <h4>{{actualCityName}}</h4>
-                        </ion-title>
-                    </ion-toolbar>
-                </ion-item>
-                <ion-item-options side="end" (ionSwipe)="nextCity(item)">
-                    <ion-item-option expandable>Proxima</ion-item-option>
-                </ion-item-options>
-                <ion-item-options side="start" (ionSwipe)="previousCity(item)">
-                    <ion-item-option expandable>Anterior</ion-item-option>
-                </ion-item-options>
-            </ion-item-sliding>
-        </ion-list>
+        <ion-toolbar>
+            <ion-buttons slot="start">
+                <ion-button (click)='previousCity(item)'>
+                    <ion-icon name="arrow-round-back"></ion-icon>
+                </ion-button>
+            </ion-buttons>
+            <ion-buttons slot="end">
+                <ion-button (click)='nextCity(item)'>
+                    <ion-icon name="arrow-round-forward"></ion-icon>
+                </ion-button>
+            </ion-buttons>
+            <ion-title>
+                <h4>{{actualCityName}}</h4>
+            </ion-title>
+        </ion-toolbar>
     </ion-toolbar>
     <ion-toolbar *ngIf="searchBarActive">
         <ion-searchbar autocomplete='on' placeholder="Buscar lugar o dirección" debounce="500"
@@ -53,33 +41,19 @@
 </ion-content>
 <ion-footer>
     <ion-toolbar *ngIf="botomToolbarActive && threatToolbarActive">
-        <ion-list class="list-at-top">
-            <ion-item-sliding>
-                <ion-item>
-                    <ion-toolbar>
-                        <ion-buttons slot="start">
-                            <ion-button>
-                                <ion-icon name="arrow-round-back"></ion-icon>
-                            </ion-button>
-                        </ion-buttons>
-                        <ion-buttons slot="end">
-                            <ion-button (click)='nextThreat(item)'>
-                                <ion-icon name="arrow-round-forward"></ion-icon>
-                            </ion-button>
-                        </ion-buttons>
-                        <ion-title>
-                            {{actualThreatName}}
-                        </ion-title>
-                    </ion-toolbar>
-                </ion-item>
-                <ion-item-options side="end" (ionSwipe)="nextThreat(item)">
-                    <ion-item-option expandable>Proxima</ion-item-option>
-                </ion-item-options>
-                <ion-item-options side="start" (ionSwipe)="previousThreat(item)">
-                    <ion-item-option expandable>Anterior</ion-item-option>
-                </ion-item-options>
-            </ion-item-sliding>
-        </ion-list>
+        <ion-buttons slot="start">
+            <ion-button (click)='previousThreat(item)'>
+                <ion-icon name="arrow-round-back"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-buttons slot="end">
+            <ion-button (click)='nextThreat(item)'>
+                <ion-icon name="arrow-round-forward"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>
+            {{actualThreatName}}
+        </ion-title>
     </ion-toolbar>
     <div class="toolbar" *ngIf="botomToolbarActive">
         <button class="toolbar-element" type="button" (click)="location()">

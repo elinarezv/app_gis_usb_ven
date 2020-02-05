@@ -38,9 +38,9 @@ router.post('/register', function (req, res) {
       }
 
       pool.query('SELECT * FROM public.users WHERE email = $1', [email], (err, user) => {
-        if (err) return res.status(500).send('Ha habido un problema al consultar la BD.');
+        if (err) return res.status(500).send({ message: 'Ha habido un problema al consultar la BD.' });
         if (user.rowCount == 0) {
-          return res.status(404).send('Usuario no encontrado.');
+          return res.status(404).send({ message: 'Usuario no encontrado.' });
         }
         var token = jwt.sign({ id: user.rows[0].id }, config.secret, {
           algorithm: 'HS256',
@@ -70,7 +70,7 @@ router.post('/userUpdate', VerifyToken, function (req, res, next) {
     (err, user) => {
       if (err) {
         console.log(err);
-        return res.status(500).send('Ha habido un problema al actualizar el usuario.');
+        return res.status(500).send({ message: 'Ha habido un problema al actualizar el usuario.' });
       }
       userUpdated = {
         id: id,

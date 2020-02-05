@@ -52,7 +52,9 @@ export class AppComponent {
   initializeApp() {
     this.platform.ready().then(
       () => {
-        this.statusBar.styleDefault();
+        // To show the Status Bar must replace styleDfault with styleLightContent
+        // this.statusBar.styleDefault();
+        this.statusBar.styleLightContent()
         this.splashScreen.hide();
         this.authService.getToken();
       });
@@ -64,7 +66,7 @@ export class AppComponent {
       });
   }
   gotoWebsite() {
-    const browser = this.iab.create('https://lsigma.maps.arcgis.com/apps/MapSeries/index.html?appid=8019210ebf1a471c9a735911be2f644e/');
+    const browser = this.iab.create('https://www.lsigma.ea.usb.ve/');
     browser.show();
   }
   config() {

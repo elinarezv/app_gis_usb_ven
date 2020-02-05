@@ -42,6 +42,7 @@
     "es6-promise-plugin": "^4.2.2",
     "leaflet": "^1.6.0",
     "leaflet-geosearch": "^2.7.0",
+    "leaflet.locatecontrol": "^0.70.0",
     "rxjs": "~6.5.1",
     "tslib": "^1.9.0",
     "zone.js": "~0.9.1"
@@ -60,6 +61,7 @@
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/leaflet-geosearch": "^2.7.1",
+    "@types/leaflet.locatecontrol": "^0.60.7",
     "@types/node": "~8.9.4",
     "codelyzer": "^5.0.0",
     "cordova-plugin-device": "^2.0.2",

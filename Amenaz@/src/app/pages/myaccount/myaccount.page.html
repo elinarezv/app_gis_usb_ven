@@ -49,4 +49,29 @@
     </ion-list>
     <ion-button expand="full" color="primary" [disabled]="!formDataChanged" (click)="save()">Cambiar datos</ion-button>
   </div>
+  <div>
+    <h2>Otros ajustes</h2>
+    <ion-list>
+      <ion-radio-group>
+        <ion-list-header>
+          <ion-label>Mapa cartográfico base</ion-label>
+        </ion-list-header>
+
+        <ion-item>
+          <ion-label>Esri Oscuro</ion-label>
+          <ion-radio slot="start" value="esri-dark" (ionSelect)="setBaseMap('esri-dark')" checked></ion-radio>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>OpenStreet Map</ion-label>
+          <ion-radio slot="start" value="osm" (ionSelect)="setBaseMap('osm')"></ion-radio>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Esri Vial</ion-label>
+          <ion-radio slot="start" value="esri-vial" (ionSelect)="setBaseMap('esri-vial')"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-list>
+  </div>
 </ion-content>

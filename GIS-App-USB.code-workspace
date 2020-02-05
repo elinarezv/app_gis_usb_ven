@@ -6,6 +6,7 @@
 	],
     "settings": {
         "editor.formatOnSave": true,
-        "files.trimTrailingWhitespace": true
+		"files.trimTrailingWhitespace": true,
+		"java.configuration.updateBuildConfiguration": "automatic"
     }
 }

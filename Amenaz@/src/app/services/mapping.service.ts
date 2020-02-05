@@ -11,19 +11,28 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 
+import * as L from 'leaflet';
 import { Map, tileLayer, marker, icon, GeoJSON, geoJSON, LatLngExpression, TileLayer, Marker } from 'leaflet';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 
+import { Events } from '@ionic/angular';
+
 type LayerType = {
+  id: number;
   layerName: string;
   queryName: string;
   threadType: string[];
   gJSON: GeoJSON;
   color: string;
   downloaded: boolean;
+  description: string;
+  datum: string;
+  type: string;
+  fixed?: boolean;
 };
 
 type City = {
+  id: number;
   name: string;
   location: LatLngExpression;
   marker: Marker;
@@ -31,6 +40,14 @@ type City = {
   layers: LayerType[];
   schemaName: string;
 };
+
+interface DBCity {
+  id: number;
+  nombre: string;
+  esquema: string;
+  latitud: number;
+  longitud: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +57,7 @@ export class MappingService {
   iconUrl: string;
   shadowUrl: string;
   cities: City[] = [];
+  privateData: any;
 
   // searchControProvider: GeoSearchControl;
   searchMarker: any;
@@ -68,11 +86,13 @@ export class MappingService {
     private androidPermissions: AndroidPermissions,
     private geolocation: Geolocation,
     private locationAccuracy: LocationAccuracy,
-    private http: HttpClient
+    private http: HttpClient,
+    public events: Events
   ) {
     // Add OSM Base Map  --  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}'
+    // Arcgis Canvas Light baseMap 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}'
     // 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-    this.baseMap = tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+    this.baseMap = tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
       id: 'mapId',
       attribution: 'www.usb.ve MIT License'
     });
@@ -94,110 +114,67 @@ export class MappingService {
 
     // Define Cities for App
     this.cities.push({
+      id: 0,
       name: 'Visión del Proyecto', location: [8.031, -65.346],
       marker: undefined, zoomLevel: 5, layers: [], schemaName: ''
-    });
-    this.cities.push({
-      name: 'Chacao', location: [10.498820, -66.853737],
-      marker: undefined, zoomLevel: 13, layers: [], schemaName: 'chacao'
-    });
-    this.cities.push({
-      name: 'Cumaná', location: [10.433186, -64.174842],
-      marker: undefined, zoomLevel: 12, layers: [], schemaName: ''
-    });
-    this.cities.push({
-      name: 'Mérida', location: [8.5875788, -71.157235],
-      marker: undefined, zoomLevel: 12, layers: [], schemaName: 'merida'
-    });
-
-    // Add Marker of City with GeoInformation
-    this.cities.forEach(city => {
-      city.marker = marker(city.location, { icon: iconVar }).bindPopup(city.name).openPopup();
-    });
-
-    this.gotGeoposition = false;
-
-    this.cities.find(x => x.name === 'Chacao').layers.push({
-      layerName: 'Área urbana', queryName: 'a_urbana_geojson', threadType: ['Ninguna'],
-      gJSON: undefined, color: '#ff3300', downloaded: false
-    });
-    this.cities.find(x => x.name === 'Chacao').layers.push({
-      layerName: 'Aludes Torrenciales', queryName: 'aludes_union_geojson', threadType: ['Aludes torrenciales'],
-      gJSON: undefined, color: '#0000ff', downloaded: false
-    });
-    this.cities.find(x => x.name === 'Chacao').layers.push({
-      layerName: 'Inundaciones', queryName: 'inundaciones_geojson',
-      threadType: ['Inundaciones'], gJSON: undefined, color: '#ccff33', downloaded: false
-    });
-    this.cities.find(x => x.name === 'Chacao').layers.push({
-      layerName: 'Hidrografía', queryName: 'hidrografia_line_geojson', threadType: ['Inundaciones', 'Aludes torrenciales'],
-      gJSON: undefined, color: '#33cc33', downloaded: false
-    });
-    this.cities.find(x => x.name === 'Chacao').layers.push({
-      layerName: 'Vialidad', queryName: 'vialidad_geojson',
-      threadType: ['Ninguna'], gJSON: undefined, color: '#750028', downloaded: false
-    });
-    this.cities.find(x => x.name === 'Chacao').layers.push({
-      layerName: 'Manzanas Catastrales', queryName: 'catastro_manzanas_geojson',
-      threadType: ['Ninguna'], gJSON: undefined, color: '#0000ff', downloaded: false
-    });
-    this.cities.find(x => x.name === 'Chacao').layers.push({
-      layerName: 'Inmuebles Afect Sismo 1967', queryName: 'sismica_afect_t67_geojson',
-      threadType: ['Sismica'], gJSON: undefined, color: '#59994d', downloaded: false
-    });
-    this.cities.find(x => x.name === 'Chacao').layers.push({
-      layerName: 'Zona Influencia Fallas Geol', queryName: 'buffer_fallag_geojson',
-      threadType: ['Sismica'], gJSON: undefined, color: '#f9072a', downloaded: false
-    });
-    this.cities.find(x => x.name === 'Chacao').layers.push({
-      layerName: 'Microzonas Sísmicas', queryName: 'mzs_chacao_geojson',
-      threadType: ['Sismica'], gJSON: undefined, color: '#e32eb5', downloaded: false
-    });
-
-
-    this.cities.find(x => x.name === 'Mérida').layers.push({
-      layerName: 'Poligonal urbana', queryName: 'polg_urbana_geojson', threadType: ['Ninguna'],
-      gJSON: undefined, color: '#ccff33', downloaded: false
-    });
-    this.cities.find(x => x.name === 'Mérida').layers.push({
-      layerName: 'Zona Prot. Río Albarregas', queryName: 'zpr_albarregas_geojson', threadType: ['Ninguna'],
-      gJSON: undefined, color: '#0000ff', downloaded: false
-    });
-    this.cities.find(x => x.name === 'Mérida').layers.push({
-      layerName: 'Parroquias Libertador', queryName: 'pquias_libertador_geojson', threadType: ['Ninguna'],
-      gJSON: undefined, color: '#33cc33', downloaded: false
-    });
-    this.cities.find(x => x.name === 'Mérida').layers.push({
-      layerName: 'Bordes de Terraza', queryName: 'bufer_bt_mda_geojson', threadType: ['Sismica', 'Movimientos en masa'],
-      gJSON: undefined, color: '#ff3300', downloaded: false
-    });
-    this.cities.find(x => x.name === 'Mérida').layers.push({
-      layerName: 'Zona Influencia Fallas Geol', queryName: 'buffer_fallas_geol_geojson',
-      threadType: ['Sismica'], gJSON: undefined, color: '#ccff33', downloaded: false
-    });
-    this.cities.find(x => x.name === 'Mérida').layers.push({
-      layerName: 'Microzonas Sísmicas', queryName: 'mzs_sedimentos_geojson',
-      threadType: ['Sismica'], gJSON: undefined, color: '#33cc33', downloaded: false
-    });
-    this.cities.find(x => x.name === 'Mérida').layers.push({
-      layerName: 'Zonas Suceptibles', queryName: 's_mov_mass_geojson',
-      threadType: ['Movimientos en masa'], gJSON: undefined, color: '#750028', downloaded: false
-    });
-    this.cities.find(x => x.name === 'Mérida').layers.push({
-      layerName: 'Crecida de Afluentes', queryName: 'zp_hydrograf_geojson',
-      threadType: ['Crecidas de afluentes hídricos'], gJSON: undefined, color: '#0000ff', downloaded: false
     });
 
     this.searchProvider = new OpenStreetMapProvider();
     this.searchPlaces = [];
     this.isSearchMarkerSet = false;
-
-    this.getAllMaps();
+    this.downloadLocations().subscribe(
+      (result: DBCity[]) => {
+        result.forEach((city: DBCity) => {
+          this.cities.push({
+            id: city.id,
+            name: city.nombre,
+            schemaName: city.esquema,
+            location: [city.latitud, city.longitud],
+            marker: undefined,
+            layers: [],
+            zoomLevel: 13
+          });
+        });
+      },
+      error => {
+        console.log('error');
+      },
+      () => {
+        // Add Marker of City with GeoInformation
+        this.cities.forEach(city => {
+          city.marker = marker(city.location, { icon: iconVar }).bindPopup(city.name).openPopup();
+        });
+        this.gotGeoposition = false;
+        this.getAllMaps();
+        this.events.publish('cities-loaded');
+      }
+    );
+  }
+  downloadLocations() {
+    return from(this.storage.getItem("cities"))
+      .pipe(catchError(
+        error => this.loadLocations()));
+  }
+  loadLocations() {
+    return this.http.get(this.env.API_URL + 'data/getlocations', {
+      headers: {
+        Authorization: 'Basic ' + this.authService.token,
+        'x-access-token': this.authService.token.token
+      }
+    })
+      .pipe(
+        tap(data => {
+          this.storage.setItem('cities', data).catch(error => {
+            console.log('Error storing Item');
+          });
+          return data;
+        })
+      );
   }
   setSearchMarker(x: number, y: number) {
     this.searchMarker = marker([x, y], {
       icon: icon({
-        iconRetinaUrl: 'assets/icon/marker-icon-2x-2.png',
+        iconRetinaUrl: 'assets/icon/marker-icon-2-2x.png',
         iconUrl: 'assets/icon/marker-icon-2.png',
         shadowUrl: 'assets/marker-shadow.png',
         iconSize: [25, 41],
@@ -233,110 +210,161 @@ export class MappingService {
   getLayer(schemaName: string, layerName: string) {
     return from(this.storage.getItem(layerName)).pipe(catchError(error => this.getGeoJSON(schemaName, layerName)));
   }
-  // getNonThreadMaps() {
-  //   this.nonThreadMaps.forEach(ntMap => {
-  //     this.getLayer(ntMap.queryName).subscribe(
-  //       result => {
-  //         ntMap.gJSON = geoJSON(result, {
-  //           style: {
-  //             color: ntMap.color,
-  //             weight: 2,
-  //             opacity: 0.65
-  //           }
-  //         });
-  //         ntMap.downloaded = true;
-  //       },
-  //       error => {
-  //         console.log(error);
-  //       }
-  //     );
-  //   });
-  // }
-  // getSeismMaps() {
-  //   this.seismThreadMaps.forEach(sMap => {
-  //     this.getLayer(sMap.queryName).subscribe(
-  //       result => {
-  //         sMap.gJSON = geoJSON(result, {
-  //           style: {
-  //             color: sMap.color,
-  //             weight: 2,
-  //             opacity: 0.65
-  //           }
-  //         });
-  //         sMap.downloaded = true;
-  //       },
-  //       error => {
-  //         console.log(error);
-  //       }
-  //     );
-  //   });
-  // }
-  // getLandSlideMaps() {
-  //   this.landSlideThreadMaps.forEach(landMap => {
-  //     this.getLayer(landMap.queryName).subscribe(
-  //       result => {
-  //         landMap.gJSON = geoJSON(result, {
-  //           style: {
-  //             color: landMap.color,
-  //             weight: 2,
-  //             opacity: 0.65
-  //           }
-  //         });
-  //         landMap.downloaded = true;
-  //       },
-  //       error => {
-  //         console.log(error);
-  //       }
-  //     );
-  //   });
-  // }
-  // getFloodThreadMaps() {
-  //   this.floodThreadMaps.forEach(floodMap => {
-  //     this.getLayer(floodMap.queryName).subscribe(
-  //       result => {
-  //         floodMap.gJSON = geoJSON(result, {
-  //           style: {
-  //             color: floodMap.color,
-  //             weight: 2,
-  //             opacity: 0.65
-  //           }
-  //         });
-  //         floodMap.downloaded = true;
-  //       },
-  //       error => {
-  //         console.log(error);
-  //       }
-  //     );
-  //   });
-  // }
   onEachFeature(feature, layer) {
     if (feature.properties) {
       console.log(feature);
       layer.bindPopup(feature.properties);
     }
   }
+  downloadLocationsLayers(cityID) {
+    return from(this.storage.getItem('ciyLtayers-id' + String(cityID)))
+      .pipe(catchError(
+        error => this.loadLocationsLayers(cityID)));
+  }
+  loadLocationsLayers(cityID) {
+    const parameter = new HttpParams()
+      .set('cityID', cityID);
+
+    return this.http.get(this.env.API_URL + 'data/getlocationslayers', {
+      headers: {
+        Authorization: 'Basic ' + this.authService.token,
+        'x-access-token': this.authService.token.token
+      },
+      params: parameter
+    })
+      .pipe(
+        tap(data => {
+          this.storage.setItem('ciyLtayers-id' + String(cityID), data).catch(error => {
+            console.log('Error storing Item');
+          });
+          return data;
+        })
+      );
+  }
   getAllMaps() {
+    var smallIcon = new L.Icon({
+      iconRetinaUrl: 'assets/icon/marker-icon-4.png',
+      iconUrl: 'assets/icon/marker-icon-4.png',
+      shadowUrl: 'assets/marker-shadow.png',
+      iconSize: [12, 13],
+      iconAnchor: [12, 13],
+      popupAnchor: [1, -34],
+      shadowSize: [20, 20]
+    });
     this.cities.forEach(city => {
-      if (city.layers.length > 0) {
-        city.layers.forEach(layer => {
-          this.getLayer(city.schemaName, layer.queryName).subscribe(
-            result => {
-              layer.gJSON = geoJSON(result, {
+      this.downloadLocationsLayers(city.id).subscribe(
+        result => {
+          result.forEach(
+            layer => {
+              let geoJSONVar: L.GeoJSON;
+              geoJSONVar = geoJSON(layer.geojson, {
                 style: {
                   color: layer.color,
-                  weight: 2,
-                  opacity: 0.45
+                  fill: false,
+                  weight: 0.30,
+                  opacity: 1
                 },
-                onEachFeature: this.onEachFeature
+                onEachFeature: (feature, layer: L.GeoJSON) => {
+                  let message: string = '';
+                  let value: string = '';
+                  const vals2Omit = [
+                    'Espesor', 'Color',
+                    'ColorRelleno', 'Opacidad'
+                  ];
+                  if (feature.properties) {
+                    Object.keys(feature.properties).forEach(key => {
+                      if (vals2Omit.indexOf(key) == -1) {
+                        value = (feature.properties[key] == 'null') ? 'Sin datos' : feature.properties[key];
+                        message += '<b>' + key + ':</b>' + '  ' + value + '<br />';
+                      }
+                    });
+                    layer.bindPopup(message);
+                    if (feature.properties.Espesor) {
+                      layer.setStyle({ weight: feature.properties.Espesor });
+                    }
+                    if (feature.properties.Color) {
+                      layer.setStyle({ color: feature.properties.Color });
+                    }
+                    if (feature.properties.ColorRelleno) {
+                      layer.setStyle({ fillColor: feature.properties.ColorRelleno, fill: true });
+                    }
+                    if (feature.properties.Opacidad) {
+                      layer.setStyle({ fillOpacity: feature.properties.Opacidad });
+                    }
+                  }
+                },
+                pointToLayer: (feature, latlng) => {
+                  return L.marker(latlng, {
+                    icon: smallIcon
+                  });
+                }
               });
-              layer.downloaded = true;
-            },
-            error => {
-              console.log(error);
-            }
-          );
-        });
-      }
+
+              let layerThreats = [];
+              if (layer.amenazas) {
+                layer.amenazas.forEach(amenaza => {
+                  layerThreats.push(amenaza.nombre);
+                });
+              } else {
+                layerThreats.push('Ninguna');
+              }
+              city.layers.push({
+                id: layer.id_capa,
+                layerName: layer.nombre,
+                queryName: layer.nom_tabla,
+                color: layer.color,
+                description: layer.descripcion,
+                gJSON: geoJSONVar,
+                datum: layer.datum,
+                type: layer.rel_asociacion,
+                downloaded: true,
+                threadType: layerThreats,
+                fixed: layer.fijar_capa
+              });
+            });
+        },
+        error => {
+
+        },
+        () => {
+
+        }
+      );
+      // if (city.layers.length > 0) {
+      //   city.layers.forEach(layer => {
+      //     this.getLayer(city.schemaName, layer.queryName).subscribe(
+      //       result => {
+      //         layer.gJSON = geoJSON(result, {
+      //           style: {
+      //             color: layer.color,
+      //             weight: 2,
+      //             opacity: 0.90
+      //           },
+      //           onEachFeature: (feature, layer) => {
+      //             let message: string = '';
+      //             let value: string = '';
+      //             if (feature.properties) {
+      //               Object.keys(feature.properties).forEach(key => {
+      //                 value = (feature.properties[key] == 'null') ? 'Sin datos' : feature.properties[key];
+      //                 message += '<b>' + key + ':</b>' + '  ' + value + '<br />';
+      //               });
+      //               layer.bindPopup(message);
+      //             }
+      //           },
+      //           pointToLayer: (feature, latlng) => {
+      //             return L.marker(latlng, {
+      //               icon: smallIcon
+      //             });
+      //           }
+      //         });
+      //         layer.downloaded = true;
+      //       },
+      //       error => {
+      //         console.log(error);
+      //       }
+      //     );
+      //   });
+      // }
     });
     // this.getNonThreadMaps();
     // this.getSeismMaps();

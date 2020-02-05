@@ -44,7 +44,11 @@ export class LoginPage implements OnInit {
       error => {
         this.activateLoginButton = true;
         console.log(error);
-        this.alertService.presentToast('Error inicio de sesión: ' + error.error);
+        let message = error.error;
+        if (String(error.message).includes('Unknown Error')) {
+          message = 'No se puede contactar al servidor de Aplicación';
+        }
+        this.alertService.presentToast('Error inicio de sesión: ' + message);
       },
       () => {
         this.dismissLogin();
