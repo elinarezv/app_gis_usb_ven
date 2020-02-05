@@ -1,22 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuController, NavController, Events } from '@ionic/angular';
-import { Map, tileLayer, Layer, control, marker, icon, geoJSON } from 'leaflet';
-import * as L from 'leaflet';
-import 'leaflet.locatecontrol';
-import { AuthService } from 'src/app/services/auth.service';
-import { AlertService } from 'src/app/services/alert.service';
+import { MenuController, Events } from '@ionic/angular';
 import { MappingService } from 'src/app/services/mapping.service';
 
 import { AlertController } from '@ionic/angular';
-import { from } from 'rxjs';
-import { ConditionalExpr } from '@angular/compiler';
 
-// import { Platform } from '@ionic/angular';
-// import { Router } from '@angular/router';
-// import { map } from 'rxjs/operators';
-// import { observable } from 'rxjs';
-// import { NgForm } from '@angular/forms';
-// import { Capabilities } from 'protractor';
+import { Map, control } from 'leaflet';
+import * as L from 'leaflet';
+import 'leaflet.locatecontrol';
+import 'leaflet.pattern';
+
 
 @Component({
   selector: 'app-home',
@@ -41,9 +33,6 @@ export class HomePage implements OnInit {
 
   constructor(
     private menu: MenuController,
-    private navCtrl: NavController,
-    private authService: AuthService,
-    private alertService: AlertService,
     public alertController: AlertController,
     private mappingService: MappingService,
     public events: Events

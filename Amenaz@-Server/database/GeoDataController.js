@@ -63,6 +63,7 @@ router.get('/getLocationsLayers', VerifyToken, (req, res, next) => {
                         SELECT  capa.id AS id_capa, capa.nom_tabla, capa.nombre, \
                           capa.descripcion, capa.rel_asociacion, capa.color, \
                           capa.datum, am_array(capa.id) AS amenazas, capa.fijar_capa,  \
+                          capa.dotted, capa.stripe, \
                           get_geojson(ciudad.esquema,capa.nom_tabla) AS geojson \
                         FROM public.ciudades AS ciudad \
                         INNER JOIN public.capas AS capa \

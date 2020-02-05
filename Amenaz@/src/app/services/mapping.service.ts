@@ -13,6 +13,7 @@ import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 
 import * as L from 'leaflet';
 import { Map, tileLayer, marker, icon, GeoJSON, geoJSON, LatLngExpression, TileLayer, Marker } from 'leaflet';
+import 'leaflet.pattern';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 
 import { Events } from '@ionic/angular';
@@ -241,61 +242,24 @@ export class MappingService {
         })
       );
   }
+  setIcon(fileName: string) {
+    return new L.Icon({
+      iconRetinaUrl: 'assets/icon/' + fileName,
+      iconUrl: 'assets/icon/' + fileName,
+      shadowUrl: 'assets/marker-shadow.png',
+      iconSize: [12, 13],
+      iconAnchor: [12, 13],
+      popupAnchor: [1, -34],
+      shadowSize: [20, 20]
+    });
+  }
   getAllMaps() {
-    var level1 = new L.Icon({
-      iconRetinaUrl: 'assets/icon/level-1.png',
-      iconUrl: 'assets/icon/level-1.png',
-      shadowUrl: 'assets/marker-shadow.png',
-      iconSize: [12, 13],
-      iconAnchor: [12, 13],
-      popupAnchor: [1, -34],
-      shadowSize: [20, 20]
-    });
-    var level2 = new L.Icon({
-      iconRetinaUrl: 'assets/icon/level-2.png',
-      iconUrl: 'assets/icon/level-2.png',
-      shadowUrl: 'assets/marker-shadow.png',
-      iconSize: [12, 13],
-      iconAnchor: [12, 13],
-      popupAnchor: [1, -34],
-      shadowSize: [20, 20]
-    });
-    var level3 = new L.Icon({
-      iconRetinaUrl: 'assets/icon/level-3.png',
-      iconUrl: 'assets/icon/level-3.png',
-      shadowUrl: 'assets/marker-shadow.png',
-      iconSize: [12, 13],
-      iconAnchor: [12, 13],
-      popupAnchor: [1, -34],
-      shadowSize: [20, 20]
-    });
-    var level4 = new L.Icon({
-      iconRetinaUrl: 'assets/icon/level-4.png',
-      iconUrl: 'assets/icon/level-4.png',
-      shadowUrl: 'assets/marker-shadow.png',
-      iconSize: [12, 13],
-      iconAnchor: [12, 13],
-      popupAnchor: [1, -34],
-      shadowSize: [20, 20]
-    });
-    var level5 = new L.Icon({
-      iconRetinaUrl: 'assets/icon/level-5.png',
-      iconUrl: 'assets/icon/level-5.png',
-      shadowUrl: 'assets/marker-shadow.png',
-      iconSize: [12, 13],
-      iconAnchor: [12, 13],
-      popupAnchor: [1, -34],
-      shadowSize: [20, 20]
-    });
-    var smallIcon = new L.Icon({
-      iconRetinaUrl: 'assets/icon/marker-icon-4.png',
-      iconUrl: 'assets/icon/marker-icon-4.png',
-      shadowUrl: 'assets/marker-shadow.png',
-      iconSize: [12, 13],
-      iconAnchor: [12, 13],
-      popupAnchor: [1, -34],
-      shadowSize: [20, 20]
-    });
+    var level1 = this.setIcon('level-1.png');
+    var level2 = this.setIcon('level-2.png');
+    var level3 = this.setIcon('level-3.png');
+    var level4 = this.setIcon('level-4.png');
+    var level5 = this.setIcon('level-5.png');
+    var smallIcon = this.setIcon('marker-icon-4.png');
     this.cities.forEach(city => {
       this.downloadLocationsLayers(city.id).subscribe(
         result => {
@@ -396,46 +360,7 @@ export class MappingService {
 
         }
       );
-      // if (city.layers.length > 0) {
-      //   city.layers.forEach(layer => {
-      //     this.getLayer(city.schemaName, layer.queryName).subscribe(
-      //       result => {
-      //         layer.gJSON = geoJSON(result, {
-      //           style: {
-      //             color: layer.color,
-      //             weight: 2,
-      //             opacity: 0.90
-      //           },
-      //           onEachFeature: (feature, layer) => {
-      //             let message: string = '';
-      //             let value: string = '';
-      //             if (feature.properties) {
-      //               Object.keys(feature.properties).forEach(key => {
-      //                 value = (feature.properties[key] == 'null') ? 'Sin datos' : feature.properties[key];
-      //                 message += '<b>' + key + ':</b>' + '  ' + value + '<br />';
-      //               });
-      //               layer.bindPopup(message);
-      //             }
-      //           },
-      //           pointToLayer: (feature, latlng) => {
-      //             return L.marker(latlng, {
-      //               icon: smallIcon
-      //             });
-      //           }
-      //         });
-      //         layer.downloaded = true;
-      //       },
-      //       error => {
-      //         console.log(error);
-      //       }
-      //     );
-      //   });
-      // }
     });
-    // this.getNonThreadMaps();
-    // this.getSeismMaps();
-    // this.getLandSlideMaps();
-    // this.getFloodThreadMaps();
   }
   checkGPSPermission() {
     this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(
