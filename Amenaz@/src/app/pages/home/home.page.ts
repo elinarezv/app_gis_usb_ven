@@ -186,11 +186,13 @@ export class HomePage implements OnInit {
     // Add all non-thread layers
     this.mappingService.baseMap.addTo(this.mappingService.map);
     L.control.locate({ setView: 'untilPanOrZoom', flyTo: true }).addTo(this.mappingService.map);
-    //this.mappingService.map.locate({ setView: true, watch: true });
-    //L.control.
-
-
-    //this.mappingService.map.addControl(this.mappingService.searchControProvider);
+    const nodeList = document.querySelectorAll<HTMLElement>(
+      '.leaflet-control-locate.leaflet-bar.leaflet-control .leaflet-bar-part.leaflet-bar-part-single span'
+    );
+    Array.from(nodeList).forEach(el => {
+      el.classList.remove('fa-map-marker');
+      el.classList.add('fa-crosshairs');
+    });
     this.centerOnCity();
     this.presentAlert();
   }

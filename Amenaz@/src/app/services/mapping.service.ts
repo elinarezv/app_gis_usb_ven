@@ -242,6 +242,51 @@ export class MappingService {
       );
   }
   getAllMaps() {
+    var level1 = new L.Icon({
+      iconRetinaUrl: 'assets/icon/level-1.png',
+      iconUrl: 'assets/icon/level-1.png',
+      shadowUrl: 'assets/marker-shadow.png',
+      iconSize: [12, 13],
+      iconAnchor: [12, 13],
+      popupAnchor: [1, -34],
+      shadowSize: [20, 20]
+    });
+    var level2 = new L.Icon({
+      iconRetinaUrl: 'assets/icon/level-2.png',
+      iconUrl: 'assets/icon/level-2.png',
+      shadowUrl: 'assets/marker-shadow.png',
+      iconSize: [12, 13],
+      iconAnchor: [12, 13],
+      popupAnchor: [1, -34],
+      shadowSize: [20, 20]
+    });
+    var level3 = new L.Icon({
+      iconRetinaUrl: 'assets/icon/level-3.png',
+      iconUrl: 'assets/icon/level-3.png',
+      shadowUrl: 'assets/marker-shadow.png',
+      iconSize: [12, 13],
+      iconAnchor: [12, 13],
+      popupAnchor: [1, -34],
+      shadowSize: [20, 20]
+    });
+    var level4 = new L.Icon({
+      iconRetinaUrl: 'assets/icon/level-4.png',
+      iconUrl: 'assets/icon/level-4.png',
+      shadowUrl: 'assets/marker-shadow.png',
+      iconSize: [12, 13],
+      iconAnchor: [12, 13],
+      popupAnchor: [1, -34],
+      shadowSize: [20, 20]
+    });
+    var level5 = new L.Icon({
+      iconRetinaUrl: 'assets/icon/level-5.png',
+      iconUrl: 'assets/icon/level-5.png',
+      shadowUrl: 'assets/marker-shadow.png',
+      iconSize: [12, 13],
+      iconAnchor: [12, 13],
+      popupAnchor: [1, -34],
+      shadowSize: [20, 20]
+    });
     var smallIcon = new L.Icon({
       iconRetinaUrl: 'assets/icon/marker-icon-4.png',
       iconUrl: 'assets/icon/marker-icon-4.png',
@@ -294,6 +339,27 @@ export class MappingService {
                   }
                 },
                 pointToLayer: (feature, latlng) => {
+                  if (feature.properties.Afectacion === '1') {
+                    return L.marker(latlng, {
+                      icon: level1
+                    });
+                  } else if (feature.properties.Afectacion === '2') {
+                    return L.marker(latlng, {
+                      icon: level2
+                    });
+                  } else if (feature.properties.Afectacion === '3') {
+                    return L.marker(latlng, {
+                      icon: level3
+                    });
+                  } else if (feature.properties.Afectacion === '4') {
+                    return L.marker(latlng, {
+                      icon: level4
+                    });
+                  } else if (feature.properties.Afectacion === '5') {
+                    return L.marker(latlng, {
+                      icon: level5
+                    });
+                  }
                   return L.marker(latlng, {
                     icon: smallIcon
                   });
