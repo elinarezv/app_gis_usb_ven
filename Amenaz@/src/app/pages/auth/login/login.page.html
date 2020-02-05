@@ -1,31 +1,31 @@
-    <ion-header>
-        <ion-toolbar>
-            <ion-buttons slot="end">
-                <ion-button (click)="dismissLogin()">
-                    <ion-icon slot="icon-only" name="close"></ion-icon>
-                </ion-button>
-            </ion-buttons>
-        </ion-toolbar>
-      <ion-toolbar>
-            <ion-title>Login</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content padding>
-      <form #form="ngForm" (ngSubmit)="login(form)" method="post">
-        <ion-item>
-          <ion-label position="floating">Email</ion-label>
-          <ion-input ngModel type="email" name="email"></ion-input>
-        </ion-item>
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissLogin()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-title>Ingrese sus datos</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content padding>
+  <form #form="ngForm" (ngSubmit)="login(form)" method="post">
+    <ion-item>
+      <ion-label position="floating">Correo electrónico</ion-label>
+      <ion-input ngModel type="email" name="email"></ion-input>
+    </ion-item>
 
-        <ion-item>
-          <ion-label position="floating">Contraseña</ion-label>
-          <ion-input ngModel type="password" name="password"></ion-input>
-        </ion-item>
+    <ion-item>
+      <ion-label position="floating">Contraseña</ion-label>
+      <ion-input ngModel type="password" name="password"></ion-input>
+    </ion-item>
 
-        <p text-right>¿Olvidó la contraseña?</p>
+    <p text-right>¿Olvidó la contraseña?</p>
 
-        <ion-button type="submit" expand="full" color="primary">Iniciar sesión</ion-button>
-      </form>
-      <p text-center>¿No tiene una cuenta?</p>
-      <ion-button expand="full" color="secondary" (click)="registerModal()">Registrarse</ion-button>
-    </ion-content>
+    <ion-button type="submit" expand="full" color="primary">Iniciar sesión</ion-button>
+  </form>
+  <p text-center>¿No tiene una cuenta?</p>
+  <ion-button expand="full" color="secondary" (click)="registerModal()">Registrarse</ion-button>
+</ion-content>
