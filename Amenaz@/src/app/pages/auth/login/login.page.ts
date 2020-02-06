@@ -49,7 +49,7 @@ export class LoginPage implements OnInit {
           message = 'No se puede contactar al servidor de Aplicación';
         }
         if (String(error.message).includes('Unauthorized')) {
-          message = 'Contraseña inválida';
+          message = 'Error de inicio de sesión: Datos inválidos';
         }
         this.alertService.presentToast('Error inicio de sesión: ' + message);
       },
