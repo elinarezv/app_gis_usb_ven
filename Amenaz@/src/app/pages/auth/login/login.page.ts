@@ -48,7 +48,7 @@ export class LoginPage implements OnInit {
         if (String(error.message).includes('Unknown Error')) {
           message = 'No se puede contactar al servidor de Aplicación';
         }
-        if (String(error.message).includes('Unauthorized')) {
+        if (String(error.message).includes('Unauthorized') || String(error.message).includes('404 Not Found')) {
           message = 'Error de inicio de sesión: Datos inválidos';
         }
         this.alertService.presentToast('Error inicio de sesión: ' + message);
