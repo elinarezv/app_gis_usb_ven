@@ -50,13 +50,9 @@
                     [class.invalid-email]="!accountForm.controls.email.valid && (accountForm.controls.email.dirty || usernameTaken)">
                 </ion-input>
             </ion-item>
-            <ion-item
-                *ngIf="!accountForm.controls.email.valid  && (accountForm.controls.email.dirty || submitAttempt) && !usernameTaken">
-                <p>Por favor ingrese un correo válido.</p>
-            </ion-item>
-            <ion-item
-                *ngIf="!accountForm.controls.email.valid  && (accountForm.controls.email.dirty || submitAttempt) && usernameTaken">
-                <p>Este correo ya está siendo utilizado. Por favor revise sus datos o inicie sesión. </p>
+            <ion-item *ngIf="!accountForm.controls.email.valid  && (accountForm.controls.email.dirty || submitAttempt)">
+                <p *ngIf="!this.usernameValidator.userTaken">Por favor ingrese un correo válido.</p>
+                <p *ngIf="this.usernameValidator.userTaken">Este correo ya está siendo utilizado....</p>
             </ion-item>
 
             <ion-item>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuController, Events } from '@ionic/angular';
+import { MenuController, Events, Platform } from '@ionic/angular';
 import { MappingService } from 'src/app/services/mapping.service';
 
 import { AlertController } from '@ionic/angular';
@@ -30,12 +30,14 @@ export class HomePage implements OnInit {
   overlayMaps = {};
   baseLayerMap: any;
   areMarkersActive: boolean;
+  backButtonSubscription;
 
   constructor(
     private menu: MenuController,
     public alertController: AlertController,
     private mappingService: MappingService,
-    public events: Events
+    public events: Events,
+    private platform: Platform
   ) {
     this.menu.enable(true);
     this.addedLayerControl = false;
@@ -120,6 +122,14 @@ export class HomePage implements OnInit {
         console.log('Cities Loaded Event called');
         this.putCityMarkers();
       });
+  }
+  ionViewWillEnter() {
+    this.backButtonSubscription = this.platform.backButton.subscribe(async () => {
+      navigator['app'].exitApp();
+    });
+  }
+  ionViewDidLeave() {
+    this.backButtonSubscription.unsubscribe();
   }
   allowLayerControl() {
     this.mappingService.nonThreadMaps.forEach(val => {

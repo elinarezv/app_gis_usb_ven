@@ -93,6 +93,18 @@ router.get('/user', VerifyToken, function (req, res, next) {
   });
 });
 
+router.get('/userNameValidation', function (req, res) {
+  const userEmail = req.query.email;
+  console.log(userEmail);
+  pool.query('SELECT * FROM public.users WHERE email = $1', [userEmail], (err, user) => {
+    if (err) return res.status(500).send('Ha habido un problema al buscar en la BD.');
+    if (user.rowCount == 0) {
+      return res.status(200).send({ message: 'Usuario no encontrado.' });
+    }
+    res.status(404).send({ message: 'Usuario encontrado.' });
+  });
+});
+
 router.get('/logout', VerifyToken, function (req, res, next) {
   const id = parseInt(req.userId);
   userLogout = {

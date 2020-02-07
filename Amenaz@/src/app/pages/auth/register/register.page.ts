@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertService } from 'src/app/services/alert.service';
 import { ReactiveFormsModule } from '@angular/forms';
+import { UsernameValidator } from 'src/app/validators/username';
 
 
 
@@ -27,7 +28,8 @@ export class RegisterPage implements OnInit {
     private authService: AuthService,
     private navCtrl: NavController,
     private alertService: AlertService,
-    public formBuilder: FormBuilder
+    public formBuilder: FormBuilder,
+    private usernameValidator: UsernameValidator
   ) {
     this.accountForm = formBuilder.group({
       firstname: ['', Validators.compose([
@@ -48,7 +50,7 @@ export class RegisterPage implements OnInit {
         Validators.minLength(3),
         Validators.pattern(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/),
         Validators.required
-      ])],
+      ]), usernameValidator.verifyEmail.bind(usernameValidator)],
       password: [''],
       notifications: ['']
     });
@@ -73,7 +75,7 @@ export class RegisterPage implements OnInit {
   }
   register() {
     this.termAccept = false;
-    this.alertService.presentToast('Conectando al servidor...');
+    this.alertService.presentToast('Conectando al servidor...', 800);
     this.authService
       .register(
         this.accountForm.controls.firstname.value,
@@ -100,7 +102,8 @@ export class RegisterPage implements OnInit {
           this.alertService.presentToast(data['message']);
         },
         error => {
-          this.termAccept = true;
+          this.termAccept = false;
+          this.alertService.presentToast(error['error']);
           console.log(error);
         },
         () => { }

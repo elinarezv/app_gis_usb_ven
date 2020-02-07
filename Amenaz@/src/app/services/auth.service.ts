@@ -71,6 +71,17 @@ export class AuthService {
       headers: headers
     });
   }
+  verifyUsername(userEmail: string) {
+    console.log('User: ' + userEmail);
+    return this.http.get(this.env.API_URL + 'auth/userNameValidation', {
+      params: new HttpParams().set('email', userEmail)
+    })
+      .pipe(
+        tap(data => {
+          return data
+        })
+      );
+  }
   logout() {
     const headers = new HttpHeaders({
       Authorization: 'Basic' + ' ' + this.token,

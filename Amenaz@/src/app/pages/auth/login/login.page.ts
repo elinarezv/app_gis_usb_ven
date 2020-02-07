@@ -35,7 +35,7 @@ export class LoginPage implements OnInit {
   }
   login(form: NgForm) {
     this.activateLoginButton = false;
-    this.alertService.presentToast('Iniciando sesión en servidor...');
+    this.alertService.presentToast('Iniciando sesión en servidor...', 800);
     this.authService.login(form.value.email, form.value.password).subscribe(
       data => {
         this.events.publish('user-login', data);
@@ -48,8 +48,8 @@ export class LoginPage implements OnInit {
         if (String(error.message).includes('Unknown Error')) {
           message = 'No se puede contactar al servidor de Aplicación';
         }
-        if (String(error.message).includes('Unauthorized') || String(error.message).includes('404 Not Found')) {
-          message = 'Error de inicio de sesión: Datos inválidos';
+        if (String(error.message).includes('Unauthorized') || String(error.message).includes('404 Not Found') || String(error.message).includes('500 Internal Server Error')) {
+          message = 'Datos inválidos';
         }
         this.alertService.presentToast('Error inicio de sesión: ' + message);
       },
