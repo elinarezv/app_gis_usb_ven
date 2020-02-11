@@ -90,13 +90,14 @@ export class MappingService {
     private http: HttpClient,
     public events: Events
   ) {
-    // Add OSM Base Map  --  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}'
-    // Arcgis Canvas Light baseMap 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}'
-    // 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-    this.baseMap = tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-      id: 'mapId',
-      attribution: 'www.usb.ve MIT License'
-    });
+    this.baseMap = tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+      {
+        id: 'mapId',
+        attribution: 'www.usb.ve MIT License',
+        maxZoom: 16
+      }
+    );
 
     // Fix Leaflet bug with markers
     this.iconRetinaUrl = 'assets/marker-icon-2x.png';
@@ -111,13 +112,17 @@ export class MappingService {
       popupAnchor: [1, -34],
       tooltipAnchor: [16, -28],
       shadowSize: [41, 41]
-    })
+    });
 
     // Define Cities for App
     this.cities.push({
       id: 0,
-      name: 'Visión del Proyecto', location: [8.031, -65.346],
-      marker: undefined, zoomLevel: 5, layers: [], schemaName: ''
+      name: 'Visión del Proyecto',
+      location: [8.031, -65.346],
+      marker: undefined,
+      zoomLevel: 5,
+      layers: [],
+      schemaName: ''
     });
 
     this.searchProvider = new OpenStreetMapProvider();
@@ -143,7 +148,9 @@ export class MappingService {
       () => {
         // Add Marker of City with GeoInformation
         this.cities.forEach(city => {
-          city.marker = marker(city.location, { icon: iconVar }).bindPopup(city.name).openPopup();
+          city.marker = marker(city.location, { icon: iconVar })
+            .bindPopup(city.name)
+            .openPopup();
         });
         this.gotGeoposition = false;
         this.getAllMaps();
@@ -152,17 +159,16 @@ export class MappingService {
     );
   }
   downloadLocations() {
-    return from(this.storage.getItem("cities"))
-      .pipe(catchError(
-        error => this.loadLocations()));
+    return from(this.storage.getItem('cities')).pipe(catchError(error => this.loadLocations()));
   }
   loadLocations() {
-    return this.http.get(this.env.API_URL + 'data/getlocations', {
-      headers: {
-        Authorization: 'Basic ' + this.authService.token,
-        'x-access-token': this.authService.token.token
-      }
-    })
+    return this.http
+      .get(this.env.API_URL + 'data/getlocations', {
+        headers: {
+          Authorization: 'Basic ' + this.authService.token,
+          'x-access-token': this.authService.token.token
+        }
+      })
       .pipe(
         tap(data => {
           this.storage.setItem('cities', data).catch(error => {
@@ -188,9 +194,7 @@ export class MappingService {
     this.isSearchMarkerSet = true;
   }
   getGeoJSON(schemaName: string, layerName: string) {
-    const parameter = new HttpParams()
-      .set('cityName', schemaName)
-      .set('layerName', layerName);
+    const parameter = new HttpParams().set('cityName', schemaName).set('layerName', layerName);
     return this.http
       .get(this.env.API_URL + 'data/getlayer', {
         headers: {
@@ -218,21 +222,21 @@ export class MappingService {
     }
   }
   downloadLocationsLayers(cityID) {
-    return from(this.storage.getItem('ciyLtayers-id' + String(cityID)))
-      .pipe(catchError(
-        error => this.loadLocationsLayers(cityID)));
+    return from(this.storage.getItem('ciyLtayers-id' + String(cityID))).pipe(
+      catchError(error => this.loadLocationsLayers(cityID))
+    );
   }
   loadLocationsLayers(cityID) {
-    const parameter = new HttpParams()
-      .set('cityID', cityID);
+    const parameter = new HttpParams().set('cityID', cityID);
 
-    return this.http.get(this.env.API_URL + 'data/getlocationslayers', {
-      headers: {
-        Authorization: 'Basic ' + this.authService.token,
-        'x-access-token': this.authService.token.token
-      },
-      params: parameter
-    })
+    return this.http
+      .get(this.env.API_URL + 'data/getlocationslayers', {
+        headers: {
+          Authorization: 'Basic ' + this.authService.token,
+          'x-access-token': this.authService.token.token
+        },
+        params: parameter
+      })
       .pipe(
         tap(data => {
           this.storage.setItem('ciyLtayers-id' + String(cityID), data).catch(error => {
@@ -263,102 +267,94 @@ export class MappingService {
     this.cities.forEach(city => {
       this.downloadLocationsLayers(city.id).subscribe(
         result => {
-          result.forEach(
-            layer => {
-              let geoJSONVar: L.GeoJSON;
-              geoJSONVar = geoJSON(layer.geojson, {
-                style: {
-                  color: layer.color,
-                  fill: false,
-                  weight: 0.30,
-                  opacity: 1
-                },
-                onEachFeature: (feature, layer: L.GeoJSON) => {
-                  let message: string = '';
-                  let value: string = '';
-                  const vals2Omit = [
-                    'Espesor', 'Color',
-                    'ColorRelleno', 'Opacidad'
-                  ];
-                  if (feature.properties) {
-                    Object.keys(feature.properties).forEach(key => {
-                      if (vals2Omit.indexOf(key) == -1) {
-                        value = (feature.properties[key] == 'null') ? 'Sin datos' : feature.properties[key];
-                        message += '<b>' + key + ':</b>' + '  ' + value + '<br />';
-                      }
-                    });
-                    layer.bindPopup(message);
-                    if (feature.properties.Espesor) {
-                      layer.setStyle({ weight: feature.properties.Espesor });
+          result.forEach(layer => {
+            let geoJSONVar: L.GeoJSON;
+            geoJSONVar = geoJSON(layer.geojson, {
+              style: {
+                color: layer.color,
+                fill: false,
+                weight: 0.3,
+                opacity: 1
+              },
+              onEachFeature: (feature, layer: L.GeoJSON) => {
+                let message: string = '';
+                let value: string = '';
+                const vals2Omit = ['Espesor', 'Color', 'ColorRelleno', 'Opacidad'];
+                if (feature.properties) {
+                  Object.keys(feature.properties).forEach(key => {
+                    if (vals2Omit.indexOf(key) == -1) {
+                      value = feature.properties[key] == 'null' ? 'Sin datos' : feature.properties[key];
+                      message += '<b>' + key + ':</b>' + '  ' + value + '<br />';
                     }
-                    if (feature.properties.Color) {
-                      layer.setStyle({ color: feature.properties.Color });
-                    }
-                    if (feature.properties.ColorRelleno) {
-                      layer.setStyle({ fillColor: feature.properties.ColorRelleno, fill: true });
-                    }
-                    if (feature.properties.Opacidad) {
-                      layer.setStyle({ fillOpacity: feature.properties.Opacidad });
-                    }
+                  });
+                  layer.bindPopup(message);
+                  if (feature.properties.Espesor) {
+                    layer.setStyle({ weight: feature.properties.Espesor });
                   }
-                },
-                pointToLayer: (feature, latlng) => {
-                  if (feature.properties.Afectacion === '1') {
-                    return L.marker(latlng, {
-                      icon: level1
-                    });
-                  } else if (feature.properties.Afectacion === '2') {
-                    return L.marker(latlng, {
-                      icon: level2
-                    });
-                  } else if (feature.properties.Afectacion === '3') {
-                    return L.marker(latlng, {
-                      icon: level3
-                    });
-                  } else if (feature.properties.Afectacion === '4') {
-                    return L.marker(latlng, {
-                      icon: level4
-                    });
-                  } else if (feature.properties.Afectacion === '5') {
-                    return L.marker(latlng, {
-                      icon: level5
-                    });
+                  if (feature.properties.Color) {
+                    layer.setStyle({ color: feature.properties.Color });
                   }
+                  if (feature.properties.ColorRelleno) {
+                    layer.setStyle({ fillColor: feature.properties.ColorRelleno, fill: true });
+                  }
+                  if (feature.properties.Opacidad) {
+                    layer.setStyle({ fillOpacity: feature.properties.Opacidad });
+                  }
+                }
+              },
+              pointToLayer: (feature, latlng) => {
+                if (feature.properties.Afectacion === '1') {
                   return L.marker(latlng, {
-                    icon: smallIcon
+                    icon: level1
+                  });
+                } else if (feature.properties.Afectacion === '2') {
+                  return L.marker(latlng, {
+                    icon: level2
+                  });
+                } else if (feature.properties.Afectacion === '3') {
+                  return L.marker(latlng, {
+                    icon: level3
+                  });
+                } else if (feature.properties.Afectacion === '4') {
+                  return L.marker(latlng, {
+                    icon: level4
+                  });
+                } else if (feature.properties.Afectacion === '5') {
+                  return L.marker(latlng, {
+                    icon: level5
                   });
                 }
-              });
-
-              let layerThreats = [];
-              if (layer.amenazas) {
-                layer.amenazas.forEach(amenaza => {
-                  layerThreats.push(amenaza.nombre);
+                return L.marker(latlng, {
+                  icon: smallIcon
                 });
-              } else {
-                layerThreats.push('Ninguna');
               }
-              city.layers.push({
-                id: layer.id_capa,
-                layerName: layer.nombre,
-                queryName: layer.nom_tabla,
-                color: layer.color,
-                description: layer.descripcion,
-                gJSON: geoJSONVar,
-                datum: layer.datum,
-                type: layer.rel_asociacion,
-                downloaded: true,
-                threadType: layerThreats,
-                fixed: layer.fijar_capa
-              });
             });
-        },
-        error => {
 
+            let layerThreats = [];
+            if (layer.amenazas) {
+              layer.amenazas.forEach(amenaza => {
+                layerThreats.push(amenaza.nombre);
+              });
+            } else {
+              layerThreats.push('Ninguna');
+            }
+            city.layers.push({
+              id: layer.id_capa,
+              layerName: layer.nombre,
+              queryName: layer.nom_tabla,
+              color: layer.color,
+              description: layer.descripcion,
+              gJSON: geoJSONVar,
+              datum: layer.datum,
+              type: layer.rel_asociacion,
+              downloaded: true,
+              threadType: layerThreats,
+              fixed: layer.fijar_capa
+            });
+          });
         },
-        () => {
-
-        }
+        error => {},
+        () => {}
       );
     });
   }

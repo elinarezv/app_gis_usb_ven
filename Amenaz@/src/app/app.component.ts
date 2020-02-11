@@ -65,18 +65,21 @@ export class AppComponent {
         this.email = data.email;
       });
   }
-  gotoWebsite() {
-    const browser = this.iab.create('https://www.lsigma.ea.usb.ve/');
-    browser.show();
-  }
-  config() {
-    this.navCtrl.navigateForward('/myaccount');
+  gotoWebsite(url: string, setRoot: boolean = false) {
+    if (!url || url == '') return;
+    if (url.includes('http')) {
+      const browser = this.iab.create(url);
+      browser.show();
+    } else {
+      if (setRoot) {
+        this.navCtrl.navigateRoot(url);
+      } else {
+        this.navCtrl.navigateForward(url);
+      }
+    }
   }
   share() {
     this.socialShare.share("https://play.google.com/store/apps/details?id=com.android.chrome&hl=en_us");
-  }
-  about() {
-    this.navCtrl.navigateForward('/credits');
   }
   logout() {
     this.authService.logout().subscribe(

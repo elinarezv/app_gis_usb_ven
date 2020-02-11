@@ -11,34 +11,40 @@ import * as L from 'leaflet';
 @Component({
   selector: 'app-myaccount',
   templateUrl: './myaccount.page.html',
-  styleUrls: ['./myaccount.page.scss'],
+  styleUrls: ['./myaccount.page.scss']
 })
-
 export class MyaccountPage implements OnInit {
   public accountForm: FormGroup;
   public submitAttempt: boolean = false;
   public formDataChanged: boolean = false;
 
-  constructor(public formBuilder: FormBuilder,
+  constructor(
+    public formBuilder: FormBuilder,
     private authService: AuthService,
     private navCtrl: NavController,
     private alertService: AlertService,
     private mappingService: MappingService
   ) {
     this.accountForm = formBuilder.group({
-      firstname: ['', Validators.compose([
-        Validators.maxLength(30),
-        Validators.minLength(2),
-        Validators.pattern('[a-zA-Z ]*'),
-        Validators.required
-      ])],
-      lastname: ['', Validators.compose([
-        Validators.maxLength(30),
-        Validators.minLength(2),
-        Validators.pattern('[a-zA-Z ]*'),
-        Validators.required
-      ])],
-      address: [''],
+      firstname: [
+        '',
+        Validators.compose([
+          Validators.maxLength(30),
+          Validators.minLength(2),
+          Validators.pattern('[a-zA-Z ]*'),
+          Validators.required
+        ])
+      ],
+      lastname: [
+        '',
+        Validators.compose([
+          Validators.maxLength(30),
+          Validators.minLength(2),
+          Validators.pattern('[a-zA-Z ]*'),
+          Validators.required
+        ])
+      ],
+      address: ['']
     });
     this.accountForm.controls.firstname.setValue(this.authService.token.firstname);
     this.accountForm.controls.lastname.setValue(this.authService.token.lastname);
@@ -62,37 +68,42 @@ export class MyaccountPage implements OnInit {
           this.formDataChanged = false;
           console.log(error);
         },
-        () => { }
+        () => {}
       );
   }
   setBaseMap(baseMap: string) {
     if (baseMap === 'esri-vial') {
       this.mappingService.map.removeLayer(this.mappingService.baseMap);
-      this.mappingService.baseMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      const urlMap = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
+      this.mappingService.baseMap = L.tileLayer(urlMap, {
         id: 'mapId',
-        attribution: 'www.usb.ve MIT License'
+        attribution: 'www.usb.ve MIT License',
+        maxZoom: 16
       });
-      //this.mappingService.map.addLayer(this.mappingService.baseMap);
+      // this.mappingService.map.addLayer(this.mappingService.baseMap);
     } else if (baseMap === 'osm') {
       this.mappingService.map.removeLayer(this.mappingService.baseMap);
       this.mappingService.baseMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         id: 'mapId',
         attribution: 'www.usb.ve MIT License'
+        // maxZoom: 16
       });
-      //this.mappingService.map.addLayer(this.mappingService.baseMap);
+      // this.mappingService.map.addLayer(this.mappingService.baseMap);
     } else {
       this.mappingService.map.removeLayer(this.mappingService.baseMap);
-      this.mappingService.baseMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-        id: 'mapId',
-        attribution: 'www.usb.ve MIT License'
-      });
-      //this.mappingService.map.addLayer(this.mappingService.baseMap);
+      this.mappingService.baseMap = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+        {
+          id: 'mapId',
+          attribution: 'www.usb.ve MIT License',
+          maxZoom: 16
+        }
+      );
+      // this.mappingService.map.addLayer(this.mappingService.baseMap);
     }
   }
   formChanged() {
     this.formDataChanged = true;
   }
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }
