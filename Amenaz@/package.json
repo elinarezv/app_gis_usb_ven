@@ -1,7 +1,7 @@
 {
   "name": "APP-riesgo",
   "version": "0.0.1",
-  "author": "Ionic Framework",
+  "author": "Elio Linarez Villamizar",
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
@@ -43,6 +43,7 @@
     "leaflet": "^1.6.0",
     "leaflet-geosearch": "^2.7.0",
     "leaflet-polylinedecorator": "^1.6.0",
+    "leaflet.defaultextent": "0.0.3",
     "leaflet.locatecontrol": "^0.70.0",
     "leaflet.pattern": "^0.1.0",
     "rxjs": "~6.5.1",

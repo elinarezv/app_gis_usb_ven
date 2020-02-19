@@ -1,78 +1,85 @@
 <ion-header>
-    <ion-toolbar mode="ios">
-        <ion-title>Amenaz@s</ion-title>
-        <ion-buttons slot="start">
-            <ion-menu-button></ion-menu-button>
-        </ion-buttons>
-        <ion-buttons slot="end" *ngIf="botomToolbarActive">
-            <ion-button (click)='toggleSearchBar()'>
-                <ion-icon name="search"></ion-icon>
-            </ion-button>
-        </ion-buttons>
-    </ion-toolbar>
+  <ion-toolbar mode="ios">
+    <ion-title>Amenaz@s</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end" *ngIf="botomToolbarActive">
+      <ion-button (click)="toggleSearchBar()">
+        <ion-icon name="search"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
     <ion-toolbar>
-        <ion-toolbar>
-            <ion-buttons slot="start">
-                <ion-button (click)='previousCity(item)'>
-                    <ion-icon name="arrow-round-back"></ion-icon>
-                </ion-button>
-            </ion-buttons>
-            <ion-buttons slot="end">
-                <ion-button (click)='nextCity(item)'>
-                    <ion-icon name="arrow-round-forward"></ion-icon>
-                </ion-button>
-            </ion-buttons>
-            <ion-title>
-                <h4>{{actualCityName}}</h4>
-            </ion-title>
-        </ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-button (click)="previousCity()">
+          <ion-icon name="arrow-round-back"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-buttons slot="end">
+        <ion-button (click)="nextCity()">
+          <ion-icon name="arrow-round-forward"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title>
+        <h4>{{actualCityName}}</h4>
+      </ion-title>
     </ion-toolbar>
-    <ion-toolbar *ngIf="searchBarActive">
-        <ion-searchbar autocomplete='on' placeholder="Buscar lugar o dirección" debounce="500"
-            (ionInput)="getPlaces($event)"></ion-searchbar>
-        <ion-list *ngIf="arePlacesAvailable">
-            <ion-item *ngFor="let place of mappingService.searchPlaces"><button (click)="clickPlace(place)">
-                    {{ place.label }} </button></ion-item>
-        </ion-list>
-    </ion-toolbar>
+  </ion-toolbar>
+  <ion-toolbar *ngIf="searchBarActive">
+    <ion-searchbar
+      autocomplete="on"
+      placeholder="Buscar lugar o dirección"
+      debounce="500"
+      (ionInput)="getPlaces($event)"
+    ></ion-searchbar>
+    <ion-list *ngIf="arePlacesAvailable">
+      <ion-item *ngFor="let place of mappingService.searchPlaces"
+        ><button (click)="clickPlace(place)">
+          {{ place.label }}
+        </button></ion-item
+      >
+    </ion-list>
+  </ion-toolbar>
 </ion-header>
 <ion-content>
-    <div id="mapId" style="width: 100%; height: 100%"></div>
+  <div id="mapId" style="width: 100%; height: 100%"></div>
 </ion-content>
 <ion-footer>
-    <ion-toolbar *ngIf="botomToolbarActive && threatToolbarActive">
-        <ion-buttons slot="start">
-            <ion-button (click)='previousThreat(item)'>
-                <ion-icon name="arrow-round-back"></ion-icon>
-            </ion-button>
-        </ion-buttons>
-        <ion-buttons slot="end">
-            <ion-button (click)='nextThreat(item)'>
-                <ion-icon name="arrow-round-forward"></ion-icon>
-            </ion-button>
-        </ion-buttons>
-        <ion-title>
-            {{actualThreatName}}
-        </ion-title>
-    </ion-toolbar>
-    <div class="toolbar" *ngIf="botomToolbarActive">
-        <button class="toolbar-element" type="button" (click)="location()">
-            <ion-icon class="icon" name="compass"></ion-icon>
-            <div class="label">
-                Ubicación
-            </div>
-        </button>
-        <button class="toolbar-element" type="button" (click)="generalInfo()">
-            <ion-icon class=" icon" name="stats"></ion-icon>
-            <div class="label">
-                Datos Generales
-            </div>
-        </button>
-        <button class="toolbar-element" type="button" (click)="threats()">
-            <ion-icon class=" icon" name="nuclear"></ion-icon>
-            <div class="label">
-                Amenazas
-            </div>
-        </button>
-    </div>
+  <ion-toolbar *ngIf="botomToolbarActive && threatToolbarActive">
+    <ion-buttons slot="start">
+      <ion-button (click)="previousThreat()">
+        <ion-icon name="arrow-round-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="nextThreat()">
+        <ion-icon name="arrow-round-forward"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      {{actualThreatName}}
+    </ion-title>
+  </ion-toolbar>
+  <div class="toolbar" *ngIf="botomToolbarActive">
+    <button class="toolbar-element" type="button" (click)="location()">
+      <ion-icon class="icon" name="compass"></ion-icon>
+      <div class="label">
+        Ubicación
+      </div>
+    </button>
+    <button class="toolbar-element" type="button" (click)="generalInfo()">
+      <ion-icon class=" icon" name="stats"></ion-icon>
+      <div class="label">
+        Datos Generales
+      </div>
+    </button>
+    <button class="toolbar-element" type="button" (click)="threats()">
+      <ion-icon class=" icon" name="nuclear"></ion-icon>
+      <div class="label">
+        Amenazas
+      </div>
+    </button>
+  </div>
 </ion-footer>

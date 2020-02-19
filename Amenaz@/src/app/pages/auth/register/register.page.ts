@@ -4,17 +4,13 @@ import { LoginPage } from '../login/login.page';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertService } from 'src/app/services/alert.service';
-import { ReactiveFormsModule } from '@angular/forms';
 import { UsernameValidator } from 'src/app/validators/username';
-
-
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.page.html',
   styleUrls: ['./register.page.scss']
 })
-
 export class RegisterPage implements OnInit {
   public actNotify: boolean = true;
   public termAccept: boolean = false;
@@ -32,31 +28,43 @@ export class RegisterPage implements OnInit {
     private usernameValidator: UsernameValidator
   ) {
     this.accountForm = formBuilder.group({
-      firstname: ['', Validators.compose([
-        Validators.maxLength(30),
-        Validators.minLength(2),
-        Validators.pattern('[a-zA-Z ]*'),
-        Validators.required
-      ])],
-      lastname: ['', Validators.compose([
-        Validators.maxLength(30),
-        Validators.minLength(2),
-        Validators.pattern('[a-zA-Z ]*'),
-        Validators.required
-      ])],
+      firstname: [
+        '',
+        Validators.compose([
+          Validators.maxLength(30),
+          Validators.minLength(2),
+          Validators.pattern('[a-zA-Z ]*'),
+          Validators.required
+        ])
+      ],
+      lastname: [
+        '',
+        Validators.compose([
+          Validators.maxLength(30),
+          Validators.minLength(2),
+          Validators.pattern('[a-zA-Z ]*'),
+          Validators.required
+        ])
+      ],
       address: [''],
-      email: ['', Validators.compose([
-        Validators.maxLength(80),
-        Validators.minLength(3),
-        Validators.pattern(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/),
-        Validators.required
-      ]), usernameValidator.verifyEmail.bind(usernameValidator)],
+      email: [
+        '',
+        Validators.compose([
+          Validators.maxLength(80),
+          Validators.minLength(3),
+          Validators.pattern(
+            /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          ),
+          Validators.required
+        ]),
+        usernameValidator.verifyEmail.bind(usernameValidator)
+      ],
       password: [''],
       notifications: ['']
     });
   }
 
-  ngOnInit() { }
+  ngOnInit() {}
   dismissRegister() {
     this.modalController.dismiss();
   }
@@ -88,7 +96,7 @@ export class RegisterPage implements OnInit {
       .subscribe(
         data => {
           this.authService.login(this.accountForm.controls.email.value, this.accountForm.controls.password.value).subscribe(
-            data => { },
+            data => {},
             error => {
               this.submitAttempt = true;
               this.termAccept = true;
@@ -106,7 +114,7 @@ export class RegisterPage implements OnInit {
           this.alertService.presentToast(error['error']);
           console.log(error);
         },
-        () => { }
+        () => {}
       );
   }
 }
