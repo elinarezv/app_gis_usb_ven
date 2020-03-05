@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IonRadioGroup } from '@ionic/angular';
 
 import { AuthService } from '../../services/auth.service';
 import { AlertService } from '../../services/alert.service';
@@ -14,6 +15,8 @@ import * as L from 'leaflet';
   styleUrls: ['./myaccount.page.scss']
 })
 export class MyaccountPage implements OnInit {
+  @ViewChild('basemapRadioGroup', { static: true }) radioGroup: IonRadioGroup;
+
   public accountForm: FormGroup;
   public submitAttempt: boolean = false;
   public formDataChanged: boolean = false;
@@ -72,25 +75,26 @@ export class MyaccountPage implements OnInit {
       );
   }
   setBaseMap(baseMap: string) {
+    this.mappingService.map.removeLayer(this.mappingService.baseMap);
     if (baseMap === 'esri-vial') {
-      this.mappingService.map.removeLayer(this.mappingService.baseMap);
       const urlMap = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
       this.mappingService.baseMap = L.tileLayer(urlMap, {
         id: 'mapId',
         attribution: 'www.usb.ve MIT License',
         maxZoom: 16
       });
-      // this.mappingService.map.addLayer(this.mappingService.baseMap);
-    } else if (baseMap === 'osm') {
-      this.mappingService.map.removeLayer(this.mappingService.baseMap);
-      this.mappingService.baseMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        id: 'mapId',
-        attribution: 'www.usb.ve MIT License'
-        // maxZoom: 16
-      });
-      // this.mappingService.map.addLayer(this.mappingService.baseMap);
+      this.mappingService.baseMapName = 'esri-vial';
+    } else if (baseMap === 'esri-sat') {
+      this.mappingService.baseMap = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+          id: 'mapId',
+          attribution: 'www.usb.ve MIT License'
+          // maxZoom: 16
+        }
+      );
+      this.mappingService.baseMapName = 'esri-sat';
     } else {
-      this.mappingService.map.removeLayer(this.mappingService.baseMap);
       this.mappingService.baseMap = L.tileLayer(
         'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
         {
@@ -99,11 +103,14 @@ export class MyaccountPage implements OnInit {
           maxZoom: 16
         }
       );
-      // this.mappingService.map.addLayer(this.mappingService.baseMap);
+      this.mappingService.baseMapName = 'esri-dark';
     }
   }
   formChanged() {
     this.formDataChanged = true;
   }
   ngOnInit() {}
+  ionViewDidEnter() {
+    this.radioGroup.value = this.mappingService.baseMapName;
+  }
 }

@@ -1,0 +1,36 @@
+ion-toolbar {
+  color: white;
+  --background: #d40000;
+  ion-title {
+    font-size: large;
+  }
+}
+
+.toolbar {
+  color: black;
+  background-color: transparent;
+}
+
+/* ---------------------------------- */
+
+.toolbar {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  flex-direction: row;
+  justify-content: space-around;
+  align-content: center;
+  flex-wrap: nowrap;
+}
+
+.toolbar > .toolbar-element {
+  flex-grow: unset;
+  max-width: 200px;
+  max-height: 200px;
+}
+
+p {
+  margin-left: 20px;
+  margin-right: 15px;
+  padding: 5px;
+}

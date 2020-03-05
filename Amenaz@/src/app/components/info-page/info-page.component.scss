@@ -1,0 +1,15 @@
+ion-toolbar {
+  color: white;
+  --background: #d40000;
+  ion-title {
+    font-size: large;
+  }
+}
+ion-content {
+  h6 {
+    font-size: medium;
+  }
+  padding: 5px;
+  font-size: medium;
+  text-align: justify;
+}

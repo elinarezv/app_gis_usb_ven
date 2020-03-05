@@ -2,31 +2,19 @@
   <ion-split-pane>
     <ion-menu>
       <ion-header>
-        <div class="user_data">
-          <ion-toolbar>
-            <div class="user_profile">
-            </div>
-          </ion-toolbar>
-        </div>
-        <div class="user_data">
-          <div>
-            {{userName}}
-          </div>
-          <div>
-            {{email}}
-          </div>
-        </div>
+        <ion-item>
+          <ion-avatar slot="start">
+            <img [src]="partnerProfileImageURL" />
+          </ion-avatar>
+          <ion-label>
+            {{ userName }} <br />
+            {{ email }}
+          </ion-label>
+        </ion-item>
       </ion-header>
       <ion-content>
         <ion-list>
           <ion-menu-toggle>
-            <ion-item (click)="gotoWebsite('/home', true)">
-              <ion-icon slot="start" name="home"></ion-icon>
-              <ion-label>
-                Inicio
-              </ion-label>
-            </ion-item>
-
             <ion-item (click)="gotoWebsite('https://www.lsigma.ea.usb.ve/')">
               <ion-icon slot="start" name="globe"></ion-icon>
               <ion-label>

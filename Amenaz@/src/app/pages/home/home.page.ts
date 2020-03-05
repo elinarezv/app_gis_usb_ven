@@ -1,13 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuController, Events, Platform } from '@ionic/angular';
+import { MenuController, Events, Platform, ModalController, AlertController, NavController, NavParams } from '@ionic/angular';
 import { MappingService } from 'src/app/services/mapping.service';
-
-import { AlertController } from '@ionic/angular';
+import { InfoPageComponent } from 'src/app/components/info-page/info-page.component';
 
 import * as L from 'leaflet';
-import 'leaflet.defaultextent';
+import 'leaflet-easybutton';
 import 'leaflet.locatecontrol';
 import 'leaflet.pattern';
+import { NavigationExtras } from '@angular/router';
+
+type ThreatsButton = {
+  title: string;
+  iconName: string;
+  pushed: boolean;
+};
 
 @Component({
   selector: 'app-home',
@@ -16,11 +22,12 @@ import 'leaflet.pattern';
 })
 export class HomePage implements OnInit {
   addedLayerControl: boolean;
-  arePlacesAvailable: boolean;
+  areCitiesAvailable: boolean;
   isMarkerActive: boolean;
   actualCity: any;
   actualCityName: string;
   actualCityThreats: string[];
+  threatsOnBar: ThreatsButton[] = [];
   botomToolbarActive: boolean;
   searchBarActive: boolean;
   threatToolbarActive: boolean;
@@ -30,20 +37,23 @@ export class HomePage implements OnInit {
   baseLayerMap: any;
   areMarkersActive: boolean;
   backButtonSubscription;
+  selectedItem: string;
 
   constructor(
     private menu: MenuController,
     public alertController: AlertController,
-    private mappingService: MappingService,
+    public mappingService: MappingService,
     public events: Events,
-    private platform: Platform
+    private platform: Platform,
+    private modalController: ModalController,
+    private navController: NavController
   ) {
     this.menu.enable(true);
     this.addedLayerControl = false;
-    this.arePlacesAvailable = false;
+    this.areCitiesAvailable = false;
     this.isMarkerActive = false;
     this.actualCity = 0;
-    this.actualCityName = 'Visión del Proyecto';
+    this.actualCityName = 'País';
     this.botomToolbarActive = false;
     this.searchBarActive = false;
     this.threatToolbarActive = false;
@@ -51,8 +61,45 @@ export class HomePage implements OnInit {
     this.actualCityThreats = [];
     this.layerControl = null;
     this.areMarkersActive = false;
+    this.events.subscribe('cities-loaded', () => {
+      this.areCitiesAvailable = true;
+      this.putCityMarkers();
+    });
   }
-  ionViewDidLoad() {}
+  changeCity(event) {
+    console.log('ID: ' + event.target.value);
+
+    this.actualCity = this.mappingService.cities.indexOf(this.mappingService.cities.find(i => i.id === event.target.value));
+    const navigationExtras: NavigationExtras = { state: { actualCity: event.target.value } };
+    this.navController.navigateForward('/city', navigationExtras);
+    // this.jumToCity();
+  }
+  changeCityBlur(event) {
+    console.log('Blur ID: ' + event.target.value);
+    if (this.mappingService.cities.find(i => i.id === event.target.value) !== undefined) {
+      this.actualCity = this.mappingService.cities.indexOf(this.mappingService.cities.find(i => i.id === event.target.value));
+      const navigationExtras: NavigationExtras = { state: { actualCity: event.target.value } };
+      this.navController.navigateForward('/city', navigationExtras);
+    }
+  }
+  jumToCity() {
+    this.actualCityName = this.mappingService.cities[this.actualCity].name;
+    if (this.layerControl !== null && this.layerControl !== undefined) {
+      this.layerControl.remove();
+      this.layerControl = null;
+    }
+    if (this.baseLayerMap !== undefined && this.baseLayerMap !== null) {
+      this.mappingService.map.removeLayer(this.baseLayerMap.gJSON);
+    }
+    this.removeLayerControl();
+    this.botomToolbarActive = false;
+    this.searchBarActive = false;
+    this.threatToolbarActive = false;
+    this.actualThreatName = '';
+    this.actualCityThreats = [];
+    this.threatsOnBar = [];
+    this.centerOnCity();
+  }
   removeLayerControl() {
     Object.keys(this.overlayMaps).forEach(key => {
       this.mappingService.map.removeLayer(this.overlayMaps[key]);
@@ -71,61 +118,18 @@ export class HomePage implements OnInit {
       this.layerControl = undefined;
     }
   }
-  nextCity() {
-    if (this.actualCity === this.mappingService.cities.length - 1) {
-      this.actualCity = 0;
-    } else {
-      this.actualCity += 1;
-    }
-    this.actualCityName = this.mappingService.cities[this.actualCity].name;
-    if (this.layerControl !== null && this.layerControl !== undefined) {
-      this.layerControl.remove();
-      this.layerControl = null;
-    }
-    if (this.baseLayerMap !== undefined && this.baseLayerMap !== null) {
-      this.mappingService.map.removeLayer(this.baseLayerMap.gJSON);
-    }
-    this.removeLayerControl();
-    this.botomToolbarActive = false;
-    this.searchBarActive = false;
-    this.threatToolbarActive = false;
-    this.actualThreatName = '';
-    this.actualCityThreats = [];
-    this.centerOnCity();
-  }
-  previousCity() {
-    if (this.actualCity === 0) {
-      this.actualCity = this.mappingService.cities.length - 1;
-    } else {
-      this.actualCity -= 1;
-    }
-    this.actualCityName = this.mappingService.cities[this.actualCity].name;
-    if (this.layerControl !== null && this.layerControl !== undefined) {
-      this.layerControl.remove();
-      this.layerControl = null;
-    }
-    if (this.baseLayerMap !== undefined && this.baseLayerMap !== null) {
-      this.mappingService.map.removeLayer(this.baseLayerMap.gJSON);
-    }
-    this.removeLayerControl();
-    this.botomToolbarActive = false;
-    this.searchBarActive = false;
-    this.threatToolbarActive = false;
-    this.actualThreatName = '';
-    this.actualCityThreats = [];
-    this.centerOnCity();
-  }
-  ionViewDidEnter() {
-    this.mainScreenMap();
-    this.events.subscribe('cities-loaded', () => {
-      console.log('Cities Loaded Event called');
-      this.putCityMarkers();
-    });
-  }
   ionViewWillEnter() {
     this.backButtonSubscription = this.platform.backButton.subscribe(async () => {
       navigator['app'].exitApp();
     });
+  }
+  ionViewDidEnter() {
+    this.selectedItem = '0';
+    this.mainScreenMap();
+  }
+  ionViewWillLeave() {
+    this.addedLayerControl = false;
+    this.mappingService.map.remove();
   }
   ionViewDidLeave() {
     this.backButtonSubscription.unsubscribe();
@@ -146,7 +150,7 @@ export class HomePage implements OnInit {
   }
   async presentAlert() {
     const alert = await this.alertController.create({
-      header: 'Visión del Proyecto',
+      header: 'País',
       message:
         'APP Movil SIG proporciona una visión general de los peligros para una ubicación determinada, que deberían tenerse \
       en cuenta en el diseño y la ejecución de un proyecto para promover la resiliencia frente a los desastres y al \
@@ -163,50 +167,60 @@ export class HomePage implements OnInit {
   }
   putCityMarkers() {
     this.mappingService.cities.forEach(city => {
-      if (city.name !== 'Visión del Proyecto') {
-        city.marker.addTo(this.mappingService.map);
-      }
+      city.marker.addTo(this.mappingService.map);
     });
     this.areMarkersActive = true;
   }
   removeCitiMarkers() {
     if (this.areMarkersActive) {
       this.mappingService.cities.forEach(city => {
-        if (city.name !== 'Visión del Proyecto') {
-          city.marker.removeFrom(this.mappingService.map);
-        }
+        city.marker.removeFrom(this.mappingService.map);
       });
       this.areMarkersActive = false;
     }
   }
   mainScreenMap() {
     // Center Map on Venezuela
-    this.mappingService.map = new L.Map('mapId').setView(
-      this.mappingService.cities[0].location,
-      this.mappingService.cities[0].zoomLevel
+    this.mappingService.map = new L.Map('mapId', { zoomControl: false }).setView(
+      this.mappingService.initialView.location,
+      this.mappingService.initialView.zoomLevel
     );
     // Add all non-thread layers
     this.mappingService.baseMap.addTo(this.mappingService.map);
+    // Home button
+    L.easyButton('fa-home fa-lg', () => {
+      this.mappingService.map.setView(this.mappingService.initialView.location, this.mappingService.initialView.zoomLevel);
+    }).addTo(this.mappingService.map);
+    L.easyButton('fa-search fa-lg', () => {
+      this.mappingService.map.setView(this.mappingService.initialView.location, this.mappingService.initialView.zoomLevel);
+    }).addTo(this.mappingService.map);
+
     L.control.locate({ setView: 'untilPanOrZoom', flyTo: true }).addTo(this.mappingService.map);
-    const nodeList = document.querySelectorAll<HTMLElement>(
+    let nodeList = document.querySelectorAll<HTMLElement>(
       '.leaflet-control-locate.leaflet-bar.leaflet-control .leaflet-bar-part.leaflet-bar-part-single span'
     );
     Array.from(nodeList).forEach(el => {
       el.classList.remove('fa-map-marker');
       el.classList.add('fa-crosshairs');
     });
-    // L.control.defaultExtent().addTo(this.mappingService.map);
-    // DefaultExtent.addTo(this.mappingService.map);
-    // L.Control.DefaultExtent().addTo(this.mappingService.map);
+
+    nodeList = document.querySelectorAll<HTMLElement>(
+      '.easy-button-button.leaflet-bar-part.leaflet-interactive.unnamed-state-active'
+    );
+    Array.from(nodeList).forEach(el => {
+      el.style.width = '30px';
+      el.style.height = '30px';
+    });
+
     this.centerOnCity();
-    this.presentAlert();
   }
   loadThreatLayers(layerType: string) {
     this.mappingService.cities
       .find(x => x.name === this.actualCityName)
       .layers.forEach(layer => {
         if (layer.fixed && layerType !== 'Ninguna') {
-          layer.gJSON.setStyle({ color: '#000000', fill: false });
+          layer.gJSON.setStyle({ color: layer.color, fill: false });
+          // layer.gJSON.setStyle({ color: '#000000', fill: false });
           layer.gJSON.addTo(this.mappingService.map);
         }
         if (layer.fixed && layerType === 'Ninguna') {
@@ -215,6 +229,12 @@ export class HomePage implements OnInit {
         layer.threadType.forEach(threat => {
           if (this.actualCityThreats.find(x => x === threat) === undefined && threat !== 'Ninguna' && threat !== '') {
             this.actualCityThreats.push(threat);
+            this.threatsOnBar.push({
+              title: threat,
+              iconName: '/assets/icon/' + String(threat).replace(' ', '') + '_negro.svg',
+              pushed: false
+            });
+            console.log(this.threatsOnBar);
           }
           if (threat === layerType) {
             this.overlayMaps[layer.layerName] = layer.gJSON;
@@ -224,41 +244,20 @@ export class HomePage implements OnInit {
       });
     // Load layers with 'Ninguna' on ThreatType
     if (this.overlayMaps) {
-      this.layerControl = L.control.layers(null, this.overlayMaps);
-      this.layerControl.addTo(this.mappingService.map);
+      Object.keys(this.overlayMaps).forEach(key => {
+        this.mappingService.map.addLayer(this.overlayMaps[key]);
+      });
+      // this.layerControl = L.control.layers(null, this.overlayMaps);
+      // this.layerControl.addTo(this.mappingService.map);
       this.actualThreatName = layerType;
     }
   }
+  loadThreatBar() {}
   centerOnCity() {
     // this.mappingService.map.flyTo(this.mappingService.cities[this.actualCity].location,
     // this.mappingService.cities[this.actualCity].zoomLevel);
-    this.mappingService.map.setView(
-      this.mappingService.cities[this.actualCity].location,
-      this.mappingService.cities[this.actualCity].zoomLevel
-    );
-    if (this.mappingService.cities[this.actualCity].name !== 'Visión del Proyecto') {
-      // Load Project's Area Layer
-      this.mappingService.cities
-        .find(x => x.name === this.actualCityName)
-        .layers.forEach(layer => {
-          layer.threadType.forEach(threat => {
-            if (threat === '') {
-              this.baseLayerMap = layer;
-              this.baseLayerMap.gJSON.addTo(this.mappingService.map);
-            }
-          });
-        });
-      this.removeCitiMarkers();
-      this.loadThreatLayers('Ninguna');
-      this.botomToolbarActive = true;
-    } else {
-      this.putCityMarkers();
-      this.botomToolbarActive = false;
-      this.searchBarActive = false;
-      this.threatToolbarActive = false;
-      this.actualThreatName = '';
-      this.actualCityThreats = [];
-    }
+    this.mappingService.map.setView(this.mappingService.initialView.location, this.mappingService.initialView.zoomLevel);
+    this.putCityMarkers();
   }
   toggleSearchBar() {
     this.searchBarActive = !this.searchBarActive;
@@ -267,7 +266,7 @@ export class HomePage implements OnInit {
     const input = ev.target.value;
     if (input && input.trim() !== '') {
       this.mappingService.searchPlaces = [];
-      this.arePlacesAvailable = true;
+      this.areCitiesAvailable = true;
       this.mappingService.searchProvider.search({ query: input }).then(results => {
         results.forEach(result => {
           this.mappingService.searchPlaces.push(result);
@@ -293,11 +292,7 @@ export class HomePage implements OnInit {
       this.isMarkerActive = true;
     }
     this.mappingService.searchPlaces = [];
-    this.arePlacesAvailable = false;
-  }
-  ionViewWillLeave() {
-    this.addedLayerControl = false;
-    this.mappingService.map.remove();
+    this.areCitiesAvailable = false;
   }
   ngOnInit() {}
   async generalInfo() {
@@ -375,6 +370,28 @@ export class HomePage implements OnInit {
       }
     }
   }
+  loadThreat(threat: string) {
+    console.log(this.threatsOnBar);
+    this.removeLayerControl();
+    if (!this.threatsOnBar.find(x => x.title === threat).pushed) {
+      // Release all others buttons
+      // change all other icons to black
+      // put this icon to color
+      this.threatsOnBar.forEach(t => {
+        if (t.title !== threat) {
+          t.pushed = false;
+          t.iconName = '/assets/icon/' + String(t.title).replace(' ', '') + '_negro.svg';
+        } else {
+          t.pushed = true;
+          t.iconName = '/assets/icon/' + String(t.title).replace(' ', '') + '_color.svg';
+        }
+      });
+      this.loadThreatLayers(threat);
+    } else {
+      this.loadThreatLayers('Ninguna');
+    }
+  }
+
   nextThreat() {
     let index = this.actualCityThreats.indexOf(this.actualThreatName);
     if (index === this.actualCityThreats.length - 1) {
@@ -404,5 +421,33 @@ export class HomePage implements OnInit {
     } else {
       this.actualThreatName = 'No hay datos';
     }
+  }
+  async showInfo(titleString: string, bodyString: string) {
+    const infoModal = await this.modalController.create({
+      component: InfoPageComponent,
+      componentProps: {
+        title: titleString,
+        body: bodyString
+      },
+      cssClass: 'info-custom-modal-css'
+    });
+    return await infoModal.present();
+  }
+  clickFab() {
+    this.menu.enable(false);
+    if (this.actualCity === 0) {
+      const title = 'Información del Proyecto';
+      const body =
+        'Appmenazas proporciona una visión general de los peligros para una ubicación determinada, que deberían tenerse \
+      en cuenta en el diseño y la ejecución de un proyecto para promover la resiliencia frente a los desastres y al \
+      clima. La herramienta indica la probabilidad de que los distintos peligros naturales afecten a áreas del proyecto \
+      (muy baja, baja, media y elevada) y da orientación sobre cómo reducir los impactos de estos peligros y dónde \
+      encontrar información. Los niveles de peligro indicados se basan en los datos de peligros publicados y \
+      proporcionados por una serie de organizaciones privadas, académicas y públicas. \
+      Los usuarios y los posibles asociados pueden realizar consultas a los administradores de la aplicación y \
+      proveerles información adicional para la herramienta, usando el formulario de comentarios de Appmenazas.';
+      this.showInfo(title, '<hr />' + body);
+    }
+    this.menu.enable(true);
   }
 }

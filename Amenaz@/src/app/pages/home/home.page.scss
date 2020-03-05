@@ -1,44 +1,56 @@
+ion-toolbar {
+  color: white;
+  --background: #d40000;
+  ion-title {
+    font-size: large;
+  }
+}
 .alert {
-    background-image: url('/assets/') !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-    background-size: cover !important;
-  }
+  background-image: url('/assets/') !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+}
 
-  .toolbar {
-    color: black;
-    background-color: transparent;
-  }
+.toolbar {
+  color: black;
+  background-color: transparent;
+}
 
-  /* ---------------------------------- */
+/* ---------------------------------- */
 
-  .toolbar {
-    display: flex;
-    margin: 0;
-    padding: 0;
-    flex-direction: row;
-    justify-content: space-around;
-    align-content: center;
-    flex-wrap: nowrap;
-  }
+.toolbar {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  flex-direction: row;
+  justify-content: space-around;
+  align-content: center;
+  flex-wrap: nowrap;
+}
 
-  .toolbar > .toolbar-element {
-    flex-grow: 1;
-    padding: 5px;
-  }
+.toolbar > .toolbar-element {
+  flex-grow: 1;
+  padding: 5px;
+}
 
-  button {
-    background-color: transparent;
-    border: 0;
-  }
+button {
+  background-color: transparent;
+  border: 0;
+}
 
-  .icon {
-    background-color: transparent;
-    width: 32px;
-    height: 32px;
-  }
+.icon {
+  background-color: transparent;
+  width: 32px;
+  height: 32px;
+}
 
-  .list-at-top {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
+.list-at-top {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.easy-button-button.leaflet-bar-part.leaflet-interactive.unnamed-state-active {
+  width: 30px;
+  height: 30px;
+}

@@ -1,10 +1,10 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar mode="ios">
+    <ion-title>Configuración</ion-title>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>Configuración</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -15,28 +15,31 @@
 
     <ion-list lines="inset">
       <form [formGroup]="accountForm">
-
         <ion-item>
           <ion-label position="floating">Nombres</ion-label>
-          <ion-input formControlName="firstname" type="text"
+          <ion-input
+            formControlName="firstname"
+            type="text"
             [class.invalid]="!accountForm.controls.firstname.valid && (accountForm.controls.firstname.dirty || submitAttempt)"
-            (ionChange)="formChanged()">
+            (ionChange)="formChanged()"
+          >
           </ion-input>
         </ion-item>
-        <ion-item
-          *ngIf="!accountForm.controls.firstname.valid  && (accountForm.controls.firstname.dirty || submitAttempt)">
+        <ion-item *ngIf="!accountForm.controls.firstname.valid  && (accountForm.controls.firstname.dirty || submitAttempt)">
           <p>Por favor ingrese un nombre válido.</p>
         </ion-item>
 
         <ion-item>
           <ion-label position="floating">Apellidos</ion-label>
-          <ion-input formControlName="lastname" type="text"
+          <ion-input
+            formControlName="lastname"
+            type="text"
             [class.invalid]="!accountForm.controls.lastname.valid && (accountForm.controls.lastname.dirty || submitAttempt)"
-            (ionChange)="formChanged()">
+            (ionChange)="formChanged()"
+          >
           </ion-input>
         </ion-item>
-        <ion-item
-          *ngIf="!accountForm.controls.lastname.valid  && (accountForm.controls.lastname.dirty || submitAttempt)">
+        <ion-item *ngIf="!accountForm.controls.lastname.valid  && (accountForm.controls.lastname.dirty || submitAttempt)">
           <p>Por favor ingrese un apellido válido.</p>
         </ion-item>
 
@@ -44,7 +47,6 @@
           <ion-label position="floating">Dirección</ion-label>
           <ion-textarea formControlName="address" (ionChange)="formChanged()"></ion-textarea>
         </ion-item>
-
       </form>
     </ion-list>
     <ion-button expand="full" color="primary" [disabled]="!formDataChanged" (click)="save()">Cambiar datos</ion-button>
@@ -52,19 +54,19 @@
   <div>
     <h2>Otros ajustes</h2>
     <ion-list>
-      <ion-radio-group>
+      <ion-radio-group name="basemap-radio-group" allow-empty-selection="false" #basemapRadioGroup>
         <ion-list-header>
           <ion-label>Mapa cartográfico base</ion-label>
         </ion-list-header>
 
         <ion-item>
-          <ion-label>Esri Oscuro</ion-label>
-          <ion-radio slot="start" value="esri-dark" (ionSelect)="setBaseMap('esri-dark')" checked></ion-radio>
+          <ion-label>Esri Oscuro (Predeterminado)</ion-label>
+          <ion-radio slot="start" value="esri-dark" (ionSelect)="setBaseMap('esri-dark')"></ion-radio>
         </ion-item>
 
         <ion-item>
-          <ion-label>OpenStreet Map</ion-label>
-          <ion-radio slot="start" value="osm" (ionSelect)="setBaseMap('osm')"></ion-radio>
+          <ion-label>Esri Satelital</ion-label>
+          <ion-radio slot="start" value="esri-sat" (ionSelect)="setBaseMap('esri-sat')"></ion-radio>
         </ion-item>
 
         <ion-item>

@@ -18,37 +18,7 @@ import { OpenStreetMapProvider } from 'leaflet-geosearch';
 
 import { Events } from '@ionic/angular';
 
-type LayerType = {
-  id: number;
-  layerName: string;
-  queryName: string;
-  threadType: string[];
-  gJSON: GeoJSON;
-  color: string;
-  downloaded: boolean;
-  description: string;
-  datum: string;
-  type: string;
-  fixed?: boolean;
-};
-
-type City = {
-  id: number;
-  name: string;
-  location: LatLngExpression;
-  marker: Marker;
-  zoomLevel: any;
-  layers: LayerType[];
-  schemaName: string;
-};
-
-interface DBCity {
-  id: number;
-  nombre: string;
-  esquema: string;
-  latitud: number;
-  longitud: number;
-}
+import { City, DBCity, LayerType } from 'src/app/models/mapping';
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +27,7 @@ export class MappingService {
   iconRetinaUrl: string;
   iconUrl: string;
   shadowUrl: string;
+  initialView: City;
   cities: City[] = [];
   privateData: any;
 
@@ -64,6 +35,7 @@ export class MappingService {
   searchMarker: any;
   map: Map;
   baseMap: TileLayer;
+  baseMapName: string;
   threadBaseMap: TileLayer;
   nonThreadMaps: LayerType[] = [];
   seismThreadMaps: LayerType[] = [];
@@ -94,10 +66,12 @@ export class MappingService {
       'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
       {
         id: 'mapId',
-        attribution: 'www.usb.ve MIT License',
+        attribution: 'www.usb.ve Licencia GPLv3 y CC',
         maxZoom: 16
       }
     );
+
+    this.baseMapName = 'esri-dark';
 
     // Fix Leaflet bug with markers
     this.iconRetinaUrl = 'assets/marker-icon-2x.png';
@@ -115,15 +89,15 @@ export class MappingService {
     });
 
     // Define Cities for App
-    this.cities.push({
+    this.initialView = {
       id: 0,
-      name: 'Visión del Proyecto',
+      name: 'País',
       location: [8.031, -65.346],
       marker: undefined,
       zoomLevel: 5,
       layers: [],
       schemaName: ''
-    });
+    };
 
     this.searchProvider = new OpenStreetMapProvider();
     this.searchPlaces = [];
@@ -279,7 +253,7 @@ export class MappingService {
               onEachFeature: (feature, layer: L.GeoJSON) => {
                 let message: string = '';
                 let value: string = '';
-                const vals2Omit = ['Espesor', 'Color', 'ColorRelleno', 'Opacidad'];
+                const vals2Omit = ['Espesor', 'Color', 'ColorRelleno', 'Opacidad', 'Segmentada'];
                 if (feature.properties) {
                   Object.keys(feature.properties).forEach(key => {
                     if (vals2Omit.indexOf(key) == -1) {
@@ -299,6 +273,9 @@ export class MappingService {
                   }
                   if (feature.properties.Opacidad) {
                     layer.setStyle({ fillOpacity: feature.properties.Opacidad });
+                  }
+                  if (feature.properties.Segmentada) {
+                    layer.setStyle({ dashArray: '10 5' });
                   }
                 }
               },
