@@ -1,5 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { MenuController, Events, Platform, ModalController, AlertController, NavController, NavParams } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  MenuController,
+  Events,
+  Platform,
+  ModalController,
+  AlertController,
+  NavController,
+  NavParams,
+  IonSelect
+} from '@ionic/angular';
 import { MappingService } from 'src/app/services/mapping.service';
 import { InfoPageComponent } from 'src/app/components/info-page/info-page.component';
 
@@ -8,6 +17,7 @@ import 'leaflet-easybutton';
 import 'leaflet.locatecontrol';
 import 'leaflet.pattern';
 import { NavigationExtras } from '@angular/router';
+import { from } from 'rxjs';
 
 type ThreatsButton = {
   title: string;
@@ -21,6 +31,8 @@ type ThreatsButton = {
   styleUrls: ['./home.page.scss']
 })
 export class HomePage implements OnInit {
+  @ViewChild('cityselector', { read: false, static: false }) citySelectorRef: IonSelect;
+
   addedLayerControl: boolean;
   areCitiesAvailable: boolean;
   isMarkerActive: boolean;
@@ -67,20 +79,18 @@ export class HomePage implements OnInit {
     });
   }
   changeCity(event) {
-    console.log('ID: ' + event.target.value);
-
-    this.actualCity = this.mappingService.cities.indexOf(this.mappingService.cities.find(i => i.id === event.target.value));
-    const navigationExtras: NavigationExtras = { state: { actualCity: event.target.value } };
-    this.navController.navigateForward('/city', navigationExtras);
-    // this.jumToCity();
+    if (event.target.value !== 0 && event.target.value !== '0' && event.target.value !== '') {
+      this.gotoCity(event.target.value);
+    }
   }
   changeCityBlur(event) {
-    console.log('Blur ID: ' + event.target.value);
-    if (this.mappingService.cities.find(i => i.id === event.target.value) !== undefined) {
-      this.actualCity = this.mappingService.cities.indexOf(this.mappingService.cities.find(i => i.id === event.target.value));
-      const navigationExtras: NavigationExtras = { state: { actualCity: event.target.value } };
-      this.navController.navigateForward('/city', navigationExtras);
-    }
+    // if (event.target.value ===)
+    console.log(event);
+  }
+  gotoCity(cityID: number) {
+    this.actualCity = this.mappingService.cities.indexOf(this.mappingService.cities.find(i => i.id === cityID));
+    const navigationExtras: NavigationExtras = { state: { actualCity: cityID } };
+    this.navController.navigateForward('/city', navigationExtras);
   }
   jumToCity() {
     this.actualCityName = this.mappingService.cities[this.actualCity].name;
@@ -126,6 +136,9 @@ export class HomePage implements OnInit {
   ionViewDidEnter() {
     this.selectedItem = '0';
     this.mainScreenMap();
+    if (this.citySelectorRef) {
+      this.citySelectorRef.value = '';
+    }
   }
   ionViewWillLeave() {
     this.addedLayerControl = false;
@@ -437,15 +450,42 @@ export class HomePage implements OnInit {
     this.menu.enable(false);
     if (this.actualCity === 0) {
       const title = 'Información del Proyecto';
-      const body =
-        'Appmenazas proporciona una visión general de los peligros para una ubicación determinada, que deberían tenerse \
-      en cuenta en el diseño y la ejecución de un proyecto para promover la resiliencia frente a los desastres y al \
-      clima. La herramienta indica la probabilidad de que los distintos peligros naturales afecten a áreas del proyecto \
-      (muy baja, baja, media y elevada) y da orientación sobre cómo reducir los impactos de estos peligros y dónde \
-      encontrar información. Los niveles de peligro indicados se basan en los datos de peligros publicados y \
-      proporcionados por una serie de organizaciones privadas, académicas y públicas. \
-      Los usuarios y los posibles asociados pueden realizar consultas a los administradores de la aplicación y \
-      proveerles información adicional para la herramienta, usando el formulario de comentarios de Appmenazas.';
+      const body = `
+      <div class="logo">
+        <img src="/assets/logo.png" style="height: 100px;" />
+      </div>
+      <ion-title>¡Bienvenido(a) a Appmenazas!</ion-title>
+      <p>
+        Gracias por utilizar Appmenazas V1.0, una aplicación creada con la intención de socializar información existente sobre los
+        distintos tipos y niveles de exposición a amenazas de origen natural, que han sido identificados para diversas ciudades
+        venezolanas.
+      </p>
+      <p>
+        Con esta herramienta usted podrá conocer datos disponibles sobre el nivel de exposición específico a diversos tipos de
+        amenazas de origen natural, que han sido estimados para cada lugar de su ciudad, así como algunas recomendaciones generales
+        que podrían minimizar sus niveles de riesgo en ese respectivo lugar.
+      </p>
+      <ion-title>Descarga de responsabilidad</ion-title>
+      <p>
+        Todos los datos que son presentados en los distintos módulos de esta aplicación son extraídos de estudios rigurosos, que han
+        sido publicados por investigadores y especialistas destacados de distintas disciplinas, vinculadas a la caracterización de
+        escenarios de riesgos socionaturales urbanos. Estas fuentes originales pueden ser descargadas desde la aplicación.
+      </p>
+      <p>
+        Los datos generales y las recomendaciones que se brindan para cada espacio urbano que es consultado en esta herramienta, deben
+        ser asumidos como indicaciones generales y NO OFICIALES, puesto que han sido elaborados exclusivamente con intención
+        divulgativa.
+      </p>
+      <p>
+        En ningún caso los datos que aquí se suministran sobre una localización urbana particular deben ser asumidos como sustitutos
+        validos de los estudios técnicos detallados, que pudieran requerirse para caracterizar profesional e íntegramente los niveles
+        de amenaza/riesgos establecidos para dicho espacio.
+      </p>
+      <p>
+        Se declara en función de lo anterior que, el equipo de desarrollo de Appmenazas 1.0 se exime de toda responsabilidad que
+        pudiera devenir producto de aseveraciones hechas en esta aplicación que contravengan total o parcialmente opiniones de
+        terceros.
+      </p>`;
       this.showInfo(title, '<hr />' + body);
     }
     this.menu.enable(true);

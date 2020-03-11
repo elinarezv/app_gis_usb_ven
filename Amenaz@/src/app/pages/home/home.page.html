@@ -6,10 +6,10 @@
     </ion-buttons>
   </ion-toolbar>
   <ion-list lines="full">
-    <ion-item *ngIf="areCitiesAvailable">
+    <ion-item>
       <img src="/assets/logo.png" style="height: 32px; padding-right: 20px;" />
       <ion-label>Localidad:</ion-label>
-      <ion-select selectedText="Seleccione..." slot="end" interface="popover" (ionChange)="changeCity($event)">
+      <ion-select placeholder="Seleccione" slot="end" interface="popover" (ionChange)="changeCity($event)" #cityselector>
         <ion-select-option *ngFor="let city of mappingService.cities" [value]="city.id"> {{city.name}} </ion-select-option>
       </ion-select>
     </ion-item>

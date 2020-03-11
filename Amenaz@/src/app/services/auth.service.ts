@@ -17,10 +17,7 @@ export class AuthService {
   userEmail: string;
   userAddress: string;
 
-  constructor(private http: HttpClient,
-    private storage: NativeStorage,
-    private env: EnvService
-  ) { }
+  constructor(private http: HttpClient, private storage: NativeStorage, private env: EnvService) {}
   isLogged() {
     return this.isLoggedIn;
   }
@@ -30,7 +27,7 @@ export class AuthService {
   setToken(newToken: any) {
     this.token = newToken;
   }
-  login(email: String, password: String) {
+  login(email: string, password: string) {
     return this.http.post(this.env.API_URL + 'auth/login', { email: email, password: password }).pipe(
       tap(token => {
         this.storage.setItem('token', token).then(
@@ -73,12 +70,13 @@ export class AuthService {
   }
   verifyUsername(userEmail: string) {
     console.log('User: ' + userEmail);
-    return this.http.get(this.env.API_URL + 'auth/userNameValidation', {
-      params: new HttpParams().set('email', userEmail)
-    })
+    return this.http
+      .get(this.env.API_URL + 'auth/userNameValidation', {
+        params: new HttpParams().set('email', userEmail)
+      })
       .pipe(
         tap(data => {
-          return data
+          return data;
         })
       );
   }

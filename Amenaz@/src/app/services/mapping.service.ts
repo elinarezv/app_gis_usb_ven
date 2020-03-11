@@ -105,6 +105,9 @@ export class MappingService {
     this.downloadLocations().subscribe(
       (result: DBCity[]) => {
         result.forEach((city: DBCity) => {
+          if (!city.zoom) {
+            city.zoom = 13;
+          }
           this.cities.push({
             id: city.id,
             name: city.nombre,
@@ -112,7 +115,7 @@ export class MappingService {
             location: [city.latitud, city.longitud],
             marker: undefined,
             layers: [],
-            zoomLevel: 13
+            zoomLevel: city.zoom
           });
         });
       },

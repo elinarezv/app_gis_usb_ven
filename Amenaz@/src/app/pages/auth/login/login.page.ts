@@ -43,7 +43,6 @@ export class LoginPage implements OnInit {
       },
       error => {
         this.activateLoginButton = true;
-        console.log(error);
         let message = error.message;
         if (String(error.message).includes('Unknown Error')) {
           message = 'No se puede contactar al servidor de Aplicación';

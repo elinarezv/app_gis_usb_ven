@@ -1,11 +1,11 @@
 <ion-header>
   <ion-toolbar mode="ios">
-    <ion-title> {{this.actualCity.name}} </ion-title>
+    <ion-title> <img src="/assets/logo2.png" style="height: 32px; padding-right: 20px;" /> {{this.actualCity.name}} </ion-title>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end" (click)="legendPopover($event)">
-      <ion-button> <ion-icon slot="icon-only" name="more"></ion-icon> </ion-button>
+      <ion-button> <img style="max-width: 24px;" src="/assets/legend.svg" /> </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -15,19 +15,27 @@
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
     <ion-fab-list side="top">
-      <ion-fab-button *ngIf="actualThreatName !== ''" color="danger" size="small" translucent="true" (click)="clickMoreInfo()">
+      <ion-fab-button
+        *ngIf="actualThreatName !== ''"
+        color="danger"
+        size="small"
+        translucent="true"
+        data-desc="Más información"
+        (click)="clickMoreInfo()"
+      >
         <ion-icon name="information-circle"></ion-icon>
       </ion-fab-button>
       <ion-fab-button
         *ngIf="actualThreatName !== ''"
         color="danger"
         size="small"
+        data-desc="Recomendaciones"
         translucent="true"
         (click)="clickRecomendations()"
       >
         <ion-icon name="list"></ion-icon>
       </ion-fab-button>
-      <ion-fab-button color="danger" size="small" translucent="true" (click)="clickInfo()">
+      <ion-fab-button color="danger" size="small" translucent="true" data-desc="Descripción" (click)="clickInfo()">
         <ion-icon name="book"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>
@@ -38,7 +46,7 @@
   <div id="threats-toolbar" class="toolbar">
     <button class="toolbar-element" type="button" (click)="loadThreat('Aludes')">
       <img id="Aludes" class="icon" src="/assets/icon/Aludes_gris.svg" />
-      <div class="label">Aludes Torrenciales</div>
+      <div class="label">Aludes torrenciales</div>
     </button>
     <button class="toolbar-element" type="button" (click)="loadThreat('Inundaciones')">
       <img id="Inundaciones" class="icon" src="/assets/icon/Inundaciones_gris.svg" />
@@ -54,7 +62,7 @@
     </button>
     <button class="toolbar-element" type="button" (click)="loadThreat('Mov. en masa')">
       <img id="Mov. en masa" class="icon" src="/assets/icon/Mov. en masa_gris.svg" />
-      <div class="label">Movimientos en Masa</div>
+      <div class="label">Movimientos en masa</div>
     </button>
   </div>
 </ion-footer>

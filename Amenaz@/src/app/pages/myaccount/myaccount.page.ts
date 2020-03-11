@@ -80,7 +80,7 @@ export class MyaccountPage implements OnInit {
       const urlMap = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
       this.mappingService.baseMap = L.tileLayer(urlMap, {
         id: 'mapId',
-        attribution: 'www.usb.ve MIT License',
+        attribution: 'www.usb.ve Licencia GPLv3 y CC',
         maxZoom: 16
       });
       this.mappingService.baseMapName = 'esri-vial';
@@ -89,8 +89,8 @@ export class MyaccountPage implements OnInit {
         'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         {
           id: 'mapId',
-          attribution: 'www.usb.ve MIT License'
-          // maxZoom: 16
+          attribution: 'www.usb.ve Licencia GPLv3 y CC',
+          maxZoom: 16
         }
       );
       this.mappingService.baseMapName = 'esri-sat';
@@ -99,7 +99,7 @@ export class MyaccountPage implements OnInit {
         'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
         {
           id: 'mapId',
-          attribution: 'www.usb.ve MIT License',
+          attribution: 'www.usb.ve Licencia GPLv3 y CC',
           maxZoom: 16
         }
       );

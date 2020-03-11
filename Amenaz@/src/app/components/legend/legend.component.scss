@@ -44,16 +44,8 @@
   border: 1px;
   border-color: black;
 }
-.legend-item__line {
-  width: 40px;
-  height: 1px;
-  background: #ccc;
-  flex-shrink: 0;
-  border: 0.5px;
-  border-style: dashed none none;
-  border-color: rgb(0, 112, 255);
-}
-.legend-item__line2 {
+
+.legend-item__rio {
   width: 40px;
   height: 1px;
   background: #ccc;
@@ -63,10 +55,37 @@
   border-color: rgb(0, 112, 255);
 }
 
-.legend-item__icon1 {
+.legend-item__aludes_alta {
   width: 40px;
   height: 20px;
   background: rgb(255, 85, 0);
+  flex-shrink: 0;
+  border: 0.5px;
+  border-style: solid;
+  border-color: black;
+}
+.legend-item__aludes_media {
+  width: 40px;
+  height: 20px;
+  background: rgb(255, 211, 127);
+  flex-shrink: 0;
+  border: 0.5px;
+  border-style: solid;
+  border-color: black;
+}
+.legend-item__aludes_baja {
+  width: 40px;
+  height: 20px;
+  background: rgb(255, 255, 190);
+  flex-shrink: 0;
+  border: 0.5px;
+  border-style: solid;
+  border-color: black;
+}
+.legend-item__aludes_nula {
+  width: 40px;
+  height: 20px;
+  background: rgb(255, 255, 255);
   flex-shrink: 0;
   border: 0.5px;
   border-style: solid;
@@ -98,6 +117,24 @@
   border: 0.5px;
   border-style: solid;
   border-color: black;
+}
+.legend-item__aurbana {
+  width: 40px;
+  height: 20px;
+  background: transparent;
+  flex-shrink: 0;
+  border: 0.5px;
+  border-style: solid;
+  border-color: rgb(255, 255, 0);
+}
+.legend-item__polig_urbana {
+  width: 40px;
+  height: 20px;
+  background: transparent;
+  flex-shrink: 0;
+  border: 0.5px;
+  border-style: solid;
+  border-color: rgb(255, 255, 0);
 }
 .legend-item__text {
   padding-left: 8px;

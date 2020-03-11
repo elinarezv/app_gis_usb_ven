@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, MenuController, NavController, Platform } from '@ionic/angular';
+import { ModalController, MenuController, NavController, Platform, Events } from '@ionic/angular';
 import { RegisterPage } from '../auth/register/register.page';
 import { LoginPage } from '../auth/login/login.page';
 import { AuthService } from 'src/app/services/auth.service';
@@ -16,16 +16,22 @@ export class LandingPage implements OnInit {
     private menu: MenuController,
     private authService: AuthService,
     private navCtrl: NavController,
-    private platform: Platform
+    private platform: Platform,
+    public events: Events
   ) {
     this.menu.enable(false);
   }
   ionViewWillEnter() {
-    this.authService.getToken().then(() => {
-      if (this.authService.isLoggedIn) {
-        this.navCtrl.navigateRoot('/home');
+    this.authService.getToken().then(
+      data => {
+        this.events.publish('user-login', data);
+      },
+      () => {
+        if (this.authService.isLoggedIn) {
+          this.navCtrl.navigateRoot('/home');
+        }
       }
-    });
+    );
     this.backButtonSubscription = this.platform.backButton.subscribe(async () => {
       navigator['app'].exitApp();
     });
@@ -33,7 +39,7 @@ export class LandingPage implements OnInit {
   ionViewDidLeave() {
     this.backButtonSubscription.unsubscribe();
   }
-  ngOnInit() { }
+  ngOnInit() {}
   async register() {
     const registerModal = await this.modalController.create({
       component: RegisterPage

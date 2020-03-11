@@ -43,3 +43,11 @@ div#component-body {
   position: absolute;
   display: block;
 }
+
+@font-face {
+  font-family: 'Monserrat';
+  src: url('/assets/fonts/monserrat_classic.woff2') format('woff2');
+}
+* {
+  font-family: 'Monserrat';
+}

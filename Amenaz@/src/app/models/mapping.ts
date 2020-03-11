@@ -30,4 +30,5 @@ export interface DBCity {
   esquema: string;
   latitud: number;
   longitud: number;
+  zoom?: number;
 }
