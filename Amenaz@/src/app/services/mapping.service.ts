@@ -14,11 +14,12 @@ import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 import * as L from 'leaflet';
 import { Map, tileLayer, marker, icon, GeoJSON, geoJSON, LatLngExpression, TileLayer, Marker } from 'leaflet';
 import 'leaflet.pattern';
-import { OpenStreetMapProvider } from 'leaflet-geosearch';
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 
 import { Events } from '@ionic/angular';
 
 import { City, DBCity, LayerType } from 'src/app/models/mapping';
+import { Button } from 'protractor';
 
 @Injectable({
   providedIn: 'root'
@@ -49,6 +50,7 @@ export class MappingService {
   gotGeoposition: boolean;
 
   searchProvider: OpenStreetMapProvider;
+  searchControl: GeoSearchControl;
   searchPlaces: any[];
   isSearchMarkerSet: boolean;
 
@@ -100,6 +102,13 @@ export class MappingService {
     };
 
     this.searchProvider = new OpenStreetMapProvider();
+    this.searchControl = new GeoSearchControl({
+      provider: this.searchProvider,
+      style: 'bar',
+      autoComplete: true, // optional: true|false  - default true
+      autoCompleteDelay: 250 // optional: number      - default 250
+    });
+
     this.searchPlaces = [];
     this.isSearchMarkerSet = false;
     this.downloadLocations().subscribe(

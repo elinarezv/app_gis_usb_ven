@@ -16,6 +16,7 @@ import * as L from 'leaflet';
 import 'leaflet-easybutton';
 import 'leaflet.locatecontrol';
 import 'leaflet.pattern';
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import { NavigationExtras } from '@angular/router';
 import { from } from 'rxjs';
 
@@ -207,6 +208,9 @@ export class HomePage implements OnInit {
     L.easyButton('fa-search fa-lg', () => {
       this.mappingService.map.setView(this.mappingService.initialView.location, this.mappingService.initialView.zoomLevel);
     }).addTo(this.mappingService.map);
+
+    // Add search provider to map
+    this.mappingService.searchControl.addTo(this.mappingService.map);
 
     L.control.locate({ setView: 'untilPanOrZoom', flyTo: true }).addTo(this.mappingService.map);
     let nodeList = document.querySelectorAll<HTMLElement>(
