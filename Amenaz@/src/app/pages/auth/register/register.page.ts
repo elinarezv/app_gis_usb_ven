@@ -9,7 +9,7 @@ import { UsernameValidator } from 'src/app/validators/username';
 @Component({
   selector: 'app-register',
   templateUrl: './register.page.html',
-  styleUrls: ['./register.page.scss']
+  styleUrls: ['./register.page.scss'],
 })
 export class RegisterPage implements OnInit {
   public actNotify: boolean = true;
@@ -28,25 +28,6 @@ export class RegisterPage implements OnInit {
     private usernameValidator: UsernameValidator
   ) {
     this.accountForm = formBuilder.group({
-      firstname: [
-        '',
-        Validators.compose([
-          Validators.maxLength(30),
-          Validators.minLength(2),
-          Validators.pattern('[a-zA-Z ]*'),
-          Validators.required
-        ])
-      ],
-      lastname: [
-        '',
-        Validators.compose([
-          Validators.maxLength(30),
-          Validators.minLength(2),
-          Validators.pattern('[a-zA-Z ]*'),
-          Validators.required
-        ])
-      ],
-      address: [''],
       email: [
         '',
         Validators.compose([
@@ -55,12 +36,12 @@ export class RegisterPage implements OnInit {
           Validators.pattern(
             /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
           ),
-          Validators.required
+          Validators.required,
         ]),
-        usernameValidator.verifyEmail.bind(usernameValidator)
+        usernameValidator.verifyEmail.bind(usernameValidator),
       ],
       password: [''],
-      notifications: ['']
+      notifications: [''],
     });
   }
 
@@ -71,7 +52,7 @@ export class RegisterPage implements OnInit {
   async loginModal() {
     this.dismissRegister();
     const loginModal = await this.modalController.create({
-      component: LoginPage
+      component: LoginPage,
     });
     return await loginModal.present();
   }
@@ -85,19 +66,12 @@ export class RegisterPage implements OnInit {
     this.termAccept = false;
     this.alertService.presentToast('Conectando al servidor...', 800);
     this.authService
-      .register(
-        this.accountForm.controls.firstname.value,
-        this.accountForm.controls.lastname.value,
-        this.accountForm.controls.address.value,
-        this.accountForm.controls.email.value,
-        this.accountForm.controls.password.value,
-        String(this.actNotify)
-      )
+      .register(this.accountForm.controls.email.value, this.accountForm.controls.password.value, String(this.actNotify))
       .subscribe(
-        data => {
+        (data) => {
           this.authService.login(this.accountForm.controls.email.value, this.accountForm.controls.password.value).subscribe(
-            data => {},
-            error => {
+            (data) => {},
+            (error) => {
               this.submitAttempt = true;
               this.termAccept = true;
               console.log(error);
@@ -109,7 +83,7 @@ export class RegisterPage implements OnInit {
           );
           this.alertService.presentToast(data['message']);
         },
-        error => {
+        (error) => {
           this.termAccept = false;
           this.alertService.presentToast(error['error']);
           console.log(error);

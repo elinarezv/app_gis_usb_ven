@@ -11,7 +11,7 @@ const pool = new Pool({
   host: 'localhost',
   database: 'amenazasdb',
   password: 'Anaporatumacaya',
-  port: 5432
+  port: 5432,
 });
 
 const APK_city = 'merida';
@@ -25,34 +25,35 @@ var VerifyToken = require('./VerifyToken');
 
 router.post('/register', function (req, res) {
   var hashedPassword = bcrypt.hashSync(req.body.password, 8);
-  const { fName, lName, addr, email, password, notifications } = req.body;
+  const { email, password, notifications } = req.body;
   console.log('INSERTING USER...');
-  console.log('With: ' + fName + ',' + lName + ',' + addr + ',' + email + ',' + hashedPassword + ',' + notifications);
+  console.log('With: ' + email + ',' + hashedPassword + ',' + notifications);
   pool.query(
-    'INSERT INTO public.users (firstname, lastname, address, email, password, notifications) VALUES ($1, $2, $3, $4, $5, $6)',
-    [fName, lName, addr, email, hashedPassword, notifications],
+    'INSERT INTO public.users (email, password, notifications) VALUES ($1, $2, $3)',
+    [email, hashedPassword, notifications],
     (err, user) => {
       if (err) {
         console.log(err);
-        return res.status(500).send('Ha habido un problema al registrar el usuario.');
+        return res.status(500).send('Error al registrar el usuario.');
       }
 
       pool.query('SELECT * FROM public.users WHERE email = $1', [email], (err, user) => {
-        if (err) return res.status(500).send({ message: 'Ha habido un problema al consultar la BD.' });
+        if (err) return res.status(500).send({ message: 'Error al consultar la BD.' });
         if (user.rowCount == 0) {
           return res.status(404).send({ message: 'Usuario no encontrado.' });
         }
         var token = jwt.sign({ id: user.rows[0].id }, config.secret, {
           algorithm: 'HS256',
-          expiresIn: 31536000 // expires in 1 year
+          expiresIn: 31536000, // expires in 1 year
         });
 
         res.status(200).send({
-          auth: true, token: token,
+          auth: true,
+          token: token,
           email: user.rows[0].email,
           firstname: user.rows[0].firstname,
           lastname: user.rows[0].lastname,
-          address: user.rows[0].address
+          address: user.rows[0].address,
         });
       });
     }
@@ -74,7 +75,7 @@ router.post('/userUpdate', VerifyToken, function (req, res, next) {
       }
       userUpdated = {
         id: id,
-        message: 'Actualización de datos satisfactoria.'
+        message: 'Actualización de datos satisfactoria.',
       };
       res.status(200).send(userUpdated);
     }
@@ -109,7 +110,7 @@ router.get('/logout', VerifyToken, function (req, res, next) {
   const id = parseInt(req.userId);
   userLogout = {
     id: id,
-    message: 'Cierre de sesión satisfactorio'
+    message: 'Cierre de sesión satisfactorio',
   };
   res.status(200).send(JSON.stringify(userLogout));
 });
@@ -136,7 +137,7 @@ router.post('/login', function (req, res) {
 
     var token = jwt.sign({ id: user.rows[0].id }, config.secret, {
       algorithm: 'HS256',
-      expiresIn: 31536000 // expires in 1 year
+      expiresIn: 31536000, // expires in 1 year
     });
 
     res.status(200).send({
@@ -145,7 +146,7 @@ router.post('/login', function (req, res) {
       email: user.rows[0].email,
       firstname: user.rows[0].firstname,
       lastname: user.rows[0].lastname,
-      address: user.rows[0].address
+      address: user.rows[0].address,
     });
   });
 });

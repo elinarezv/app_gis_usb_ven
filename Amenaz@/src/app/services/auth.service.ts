@@ -7,7 +7,7 @@ import { EnvService } from './env.service';
 import { User } from '../models/user';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   isLoggedIn = false;
@@ -29,12 +29,12 @@ export class AuthService {
   }
   login(email: string, password: string) {
     return this.http.post(this.env.API_URL + 'auth/login', { email: email, password: password }).pipe(
-      tap(token => {
+      tap((token) => {
         this.storage.setItem('token', token).then(
           () => {
             console.log('Token Stored');
           },
-          error => console.error('Error storing token', error)
+          (error) => console.error('Error storing token', error)
         );
         this.token = token;
         this.isLoggedIn = true;
@@ -42,40 +42,31 @@ export class AuthService {
       })
     );
   }
-  register(fName: string, lName: string, addr: string, email: string, password: string, notifications: string) {
-    const body = new HttpParams()
-      .set('fName', fName)
-      .set('lName', lName)
-      .set('addr', addr)
-      .set('email', email)
-      .set('password', password)
-      .set('notifications', notifications);
+  register(email: string, password: string, notifications: string) {
+    const body = new HttpParams().set('email', email).set('password', password).set('notifications', notifications);
     return this.http.post(this.env.API_URL + 'auth/register', body.toString(), {
-      headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
+      headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded'),
     });
   }
   update(fName: string, lName: string, addr: string) {
     const headers = new HttpHeaders({
       Authorization: 'Basic' + ' ' + this.token,
       'x-access-token': this.token.token,
-      'Content-type': 'application/x-www-form-urlencoded'
+      'Content-type': 'application/x-www-form-urlencoded',
     });
-    const body = new HttpParams()
-      .set('fName', fName)
-      .set('lName', lName)
-      .set('addr', addr);
+    const body = new HttpParams().set('fName', fName).set('lName', lName).set('addr', addr);
     return this.http.post(this.env.API_URL + 'auth/userUpdate', body.toString(), {
-      headers: headers
+      headers: headers,
     });
   }
   verifyUsername(userEmail: string) {
     console.log('User: ' + userEmail);
     return this.http
       .get(this.env.API_URL + 'auth/userNameValidation', {
-        params: new HttpParams().set('email', userEmail)
+        params: new HttpParams().set('email', userEmail),
       })
       .pipe(
-        tap(data => {
+        tap((data) => {
           return data;
         })
       );
@@ -83,10 +74,10 @@ export class AuthService {
   logout() {
     const headers = new HttpHeaders({
       Authorization: 'Basic' + ' ' + this.token,
-      'x-access-token': this.token.token
+      'x-access-token': this.token.token,
     });
     return this.http.get(this.env.API_URL + 'auth/logout', { headers: headers }).pipe(
-      tap(data => {
+      tap((data) => {
         this.storage.remove('token');
         this.isLoggedIn = false;
         delete this.token;
@@ -96,19 +87,19 @@ export class AuthService {
   }
   user() {
     const headers = new HttpHeaders({
-      Authorization: this.token['token_type'] + ' ' + this.token['access_token']
+      Authorization: this.token['token_type'] + ' ' + this.token['access_token'],
     });
     return this.http
       .get<User>(this.env.API_URL + 'auth/user', { headers: headers })
       .pipe(
-        tap(user => {
+        tap((user) => {
           return user;
         })
       );
   }
   getToken() {
     return this.storage.getItem('token').then(
-      data => {
+      (data) => {
         this.token = data;
         if (this.token != null) {
           this.isLoggedIn = true;
@@ -116,7 +107,7 @@ export class AuthService {
           this.isLoggedIn = false;
         }
       },
-      error => {
+      (error) => {
         this.token = null;
         this.isLoggedIn = false;
       }

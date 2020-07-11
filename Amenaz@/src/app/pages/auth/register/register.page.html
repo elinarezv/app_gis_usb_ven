@@ -1,74 +1,50 @@
 <ion-header>
-    <ion-toolbar>
-        <ion-buttons slot="end">
-            <ion-button (click)="dismissRegister()">
-                <ion-icon slot="icon-only" name="close"></ion-icon>
-            </ion-button>
-        </ion-buttons>
-    </ion-toolbar>
-    <ion-toolbar>
-        <ion-title>Crear cuenta</ion-title>
-    </ion-toolbar>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissRegister()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-title>Crear cuenta</ion-title>
+  </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
-    <p *ngIf="submitAttempt" style="color: #ea6153;">Por favor revise los datos en los campos.</p>
+  <p *ngIf="submitAttempt" style="color: #ea6153;">Por favor revise los datos en los campos.</p>
 
-    <ion-list lines="inset">
-        <form [formGroup]="accountForm">
+  <ion-list lines="inset">
+    <form [formGroup]="accountForm">
+      <ion-item>
+        <ion-label position="floating">Correo electrónico</ion-label>
+        <ion-input
+          formControlName="email"
+          type="text"
+          [class.invalid]="!accountForm.controls.email.valid && (accountForm.controls.email.dirty || submitAttempt)"
+          [class.invalid-email]="!accountForm.controls.email.valid && (accountForm.controls.email.dirty || usernameTaken)"
+        >
+        </ion-input>
+      </ion-item>
+      <ion-item *ngIf="!accountForm.controls.email.valid  && (accountForm.controls.email.dirty || submitAttempt)">
+        <p *ngIf="!this.usernameValidator.userTaken">Por favor ingrese un correo válido.</p>
+        <p *ngIf="this.usernameValidator.userTaken">Este correo ya está siendo utilizado....</p>
+      </ion-item>
 
-            <ion-item>
-                <ion-label position="floating">Nombres</ion-label>
-                <ion-input formControlName="firstname" type="text"
-                    [class.invalid]="!accountForm.controls.firstname.valid && (accountForm.controls.firstname.dirty || submitAttempt)">
-                </ion-input>
-            </ion-item>
-            <ion-item
-                *ngIf="!accountForm.controls.firstname.valid  && (accountForm.controls.firstname.dirty || submitAttempt)">
-                <p>Por favor ingrese un nombre válido.</p>
-            </ion-item>
+      <ion-item>
+        <ion-label position="floating">Contraseña</ion-label>
+        <ion-input formControlName="password" type="text"> </ion-input>
+      </ion-item>
 
-            <ion-item>
-                <ion-label position="floating">Apellidos</ion-label>
-                <ion-input formControlName="lastname" type="text"
-                    [class.invalid]="!accountForm.controls.lastname.valid && (accountForm.controls.lastname.dirty || submitAttempt)">
-                </ion-input>
-            </ion-item>
-            <ion-item
-                *ngIf="!accountForm.controls.lastname.valid  && (accountForm.controls.lastname.dirty || submitAttempt)">
-                <p>Por favor ingrese un apellido válido.</p>
-            </ion-item>
+      <ion-item>
+        <ion-label class="reduce-font-size">Acepto Términos y Condiciones</ion-label>
+        <ion-checkbox slot="end" [checked]="termAccept" (ionChange)="notifyTermsCond()"></ion-checkbox>
+      </ion-item>
 
-            <ion-item>
-                <ion-label position="floating">Dirección</ion-label>
-                <ion-textarea formControlName="address"></ion-textarea>
-            </ion-item>
-
-            <ion-item>
-                <ion-label position="floating">Correo electrónico</ion-label>
-                <ion-input formControlName="email" type="text"
-                    [class.invalid]="!accountForm.controls.email.valid && (accountForm.controls.email.dirty || submitAttempt)"
-                    [class.invalid-email]="!accountForm.controls.email.valid && (accountForm.controls.email.dirty || usernameTaken)">
-                </ion-input>
-            </ion-item>
-            <ion-item *ngIf="!accountForm.controls.email.valid  && (accountForm.controls.email.dirty || submitAttempt)">
-                <p *ngIf="!this.usernameValidator.userTaken">Por favor ingrese un correo válido.</p>
-                <p *ngIf="this.usernameValidator.userTaken">Este correo ya está siendo utilizado....</p>
-            </ion-item>
-
-            <ion-item>
-                <ion-label position="floating">Contraseña</ion-label>
-                <ion-input formControlName="password" type="text"> </ion-input>
-            </ion-item>
-
-            <ion-item>
-                <ion-label class="reduce-font-size">Acepto Términos y Condiciones</ion-label>
-                <ion-checkbox slot="end" [checked]="termAccept" (ionChange)="notifyTermsCond()"></ion-checkbox>
-            </ion-item>
-
-            <ion-button [disabled]="!termAccept" type="submit" expand="full" color="primary" (click)="register()">Crear
-                cuenta</ion-button>
-        </form>
-    </ion-list>
-    <p text-center>¿Ya está registrado?</p>
-    <ion-button expand="full" color="secondary" (click)="loginModal()">Iniciar sesión</ion-button>
+      <ion-button [disabled]="!termAccept" type="submit" expand="full" color="primary" (click)="register()"
+        >Crear cuenta</ion-button
+      >
+    </form>
+  </ion-list>
+  <p text-center>¿Ya está registrado?</p>
+  <ion-button expand="full" color="secondary" (click)="loginModal()">Iniciar sesión</ion-button>
 </ion-content>

@@ -12,25 +12,25 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
-  styleUrls: ['app.component.scss']
+  styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
   public appPages = [
     {
       title: 'Sitio Web',
       url: '/home',
-      icon: 'home'
+      icon: 'home',
     },
     {
       title: 'Configuración',
       url: '/myaccount',
-      icon: 'settings'
+      icon: 'settings',
     },
     {
       title: 'Acerca de',
       url: '/credits',
-      icon: 'information-circle'
-    }
+      icon: 'information-circle',
+    },
   ];
   public userName = '';
   public email = '';
@@ -55,17 +55,25 @@ export class AppComponent {
       // To show the Status Bar must replace styleDfault with styleLightContent
       // this.statusBar.styleDefault();
       this.statusBar.styleLightContent();
-      this.splashScreen.hide();
-      this.authService.getToken();
+      setTimeout(() => {
+        this.splashScreen.hide();
+      }, 10000);
     });
-    this.events.subscribe('user-login', data => {
-      this.userName = data.firstname + ' ' + data.lastname;
+    this.authService.getToken().then(() => {
+      if (this.authService.isLoggedIn) {
+        this.navCtrl.navigateRoot('/home');
+      }
+    });
+    this.events.subscribe('user-login', (data) => {
+      // this.userName = data.firstname + ' ' + data.lastname;
       this.email = data.email;
-      this.partnerProfileImageURL = this.getInitials(this.userName);
+      // this.partnerProfileImageURL = this.getInitials(this.userName);
     });
   }
   gotoWebsite(url: string, setRoot: boolean = false) {
-    if (!url || url == '') return;
+    if (!url || url === '') {
+      return;
+    }
     if (url.includes('http')) {
       const browser = this.iab.create(url);
       browser.show();
@@ -82,10 +90,10 @@ export class AppComponent {
   }
   logout() {
     this.authService.logout().subscribe(
-      data => {
+      (data) => {
         this.alertService.presentToast(data['message']);
       },
-      error => {
+      (error) => {
         console.log(error);
       },
       () => {

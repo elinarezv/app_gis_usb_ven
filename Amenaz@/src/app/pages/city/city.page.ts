@@ -4,14 +4,14 @@ import { MappingService } from 'src/app/services/mapping.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as L from 'leaflet';
 import { withLatestFrom } from 'rxjs/operators';
-import { ModalController, MenuController, PopoverController, Events } from '@ionic/angular';
+import { ModalController, MenuController, PopoverController, Events, AlertController } from '@ionic/angular';
 import { InfoPageComponent } from 'src/app/components/info-page/info-page.component';
 import { LegendComponent } from 'src/app/components/legend/legend.component';
 
 @Component({
   selector: 'app-city',
   templateUrl: './city.page.html',
-  styleUrls: ['./city.page.scss']
+  styleUrls: ['./city.page.scss'],
 })
 export class CityPage implements OnInit {
   public actualCity: City;
@@ -25,15 +25,16 @@ export class CityPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private modalController: ModalController,
+    public alertController: AlertController,
     private menu: MenuController,
     private popoverController: PopoverController,
     private event: Events
   ) {
     this.actualCity = undefined;
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       if (this.router.getCurrentNavigation().extras.state) {
         this.actualCity = this.mappingService.cities.find(
-          x => x.id === this.router.getCurrentNavigation().extras.state.actualCity
+          (x) => x.id === this.router.getCurrentNavigation().extras.state.actualCity
         );
       }
     });
@@ -63,14 +64,14 @@ export class CityPage implements OnInit {
     let nodeList = document.querySelectorAll<HTMLElement>(
       '.leaflet-control-locate.leaflet-bar.leaflet-control .leaflet-bar-part.leaflet-bar-part-single span'
     );
-    Array.from(nodeList).forEach(el => {
+    Array.from(nodeList).forEach((el) => {
       el.classList.remove('fa-map-marker');
       el.classList.add('fa-crosshairs');
     });
     nodeList = document.querySelectorAll<HTMLElement>(
       '.easy-button-button.leaflet-bar-part.leaflet-interactive.unnamed-state-active'
     );
-    Array.from(nodeList).forEach(el => {
+    Array.from(nodeList).forEach((el) => {
       el.style.width = '30px';
       el.style.height = '30px';
     });
@@ -82,9 +83,9 @@ export class CityPage implements OnInit {
       event: ev,
       componentProps: {
         threat: this.actualThreatName,
-        city: this.actualCity.name
+        city: this.actualCity.name,
       },
-      cssClass: 'popover_class'
+      cssClass: 'popover_class',
     });
 
     /** Sync event from popover component */
@@ -96,7 +97,7 @@ export class CityPage implements OnInit {
   }
 
   loadThreatLayers(layerType: string) {
-    this.actualCity.layers.forEach(layer => {
+    this.actualCity.layers.forEach((layer) => {
       if (layer.fixed) {
         if (layerType !== 'Ninguna') {
           layer.gJSON.setStyle({ color: layer.color, fill: false });
@@ -106,7 +107,7 @@ export class CityPage implements OnInit {
         }
         layer.gJSON.addTo(this.mappingService.map);
       }
-      layer.threadType.forEach(threat => {
+      layer.threadType.forEach((threat) => {
         if (this.actualCityThreats.indexOf(threat) === -1 && threat !== 'Ninguna' && threat !== '') {
           this.actualCityThreats.push(threat);
           const tIcon = document.getElementById(threat) as HTMLImageElement;
@@ -120,7 +121,7 @@ export class CityPage implements OnInit {
     });
   }
   removeThreatLayers() {
-    this.actualCity.layers.forEach(layer => {
+    this.actualCity.layers.forEach((layer) => {
       if (!layer.fixed) {
         this.mappingService.map.removeLayer(layer.gJSON);
       }
@@ -128,8 +129,8 @@ export class CityPage implements OnInit {
   }
   centerOnCity() {
     this.mappingService.map.setView(this.actualCity.location, this.actualCity.zoomLevel);
-    this.actualCity.layers.forEach(layer => {
-      layer.threadType.forEach(threat => {
+    this.actualCity.layers.forEach((layer) => {
+      layer.threadType.forEach((threat) => {
         if (threat === '') {
           this.baseLayerMap = layer;
           this.baseLayerMap.gJSON.addTo(this.mappingService.map);
@@ -141,7 +142,7 @@ export class CityPage implements OnInit {
   loadThreat(threatName: string) {
     if (this.actualCityThreats.indexOf(threatName) > -1) {
       this.removeThreatLayers();
-      this.actualCityThreats.forEach(threat => {
+      this.actualCityThreats.forEach((threat) => {
         const tIcon = document.getElementById(threat) as HTMLImageElement;
         if (threatName === threat) {
           if (threatName !== this.actualThreatName) {
@@ -157,17 +158,30 @@ export class CityPage implements OnInit {
           tIcon.src = tIcon.src.replace('_color', '_rojo');
         }
       });
+    } else {
+      this.presentAlertNoThreat();
     }
   }
+
+  async presentAlertNoThreat() {
+    const alert = await this.alertController.create({
+      header: 'Notificación',
+      message: 'Esta ciudad no posee amenazas de este tipo.',
+      buttons: ['Aceptar'],
+    });
+
+    await alert.present();
+  }
+
   ngOnInit() {}
   async showInfo(titleString: string, bodyString: string) {
     const infoModal = await this.modalController.create({
       component: InfoPageComponent,
       componentProps: {
         title: titleString,
-        body: bodyString
+        body: bodyString,
       },
-      cssClass: 'info-custom-modal-css'
+      cssClass: 'info-custom-modal-css',
     });
     return await infoModal.present();
   }
@@ -406,11 +420,11 @@ export class CityPage implements OnInit {
           sobre este tipo de amenazas.</p> <p>&nbsp;</p> \
           <p>&nbsp;</p> \
           <h6><strong>Si deseas mayor información sobre amenazas de aludes torrenciales locales, visita:</strong></h6> \
-          <a href="http://159.90.200.233/amenazasurbanas/DocumentosYFotos/Documentos/Chacao/QdasCHACAO.pdf"> \
+          <a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Chacao/QdasCHACAO.pdf"> \
           CIGIR (2009). “Material de socialización sobre amenazas asociadas a cuencas del municipio Chacao”; \
           adaptado de López JL. IMF-UCV (2004). Convenio CIGIR-IPCA </a></p> \
           <h6><strong>Sobre protocolos de actuación ante aludes torrenciales, visita:</strong></h6> \
-          <a href="http://159.90.200.233/amenazasurbanas/DocumentosYFotos/Documentos/Merida/Landslide_SPN.pdf"> \
+          <a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Merida/Landslide_SPN.pdf"> \
           Recomendaciones de la Cruz Roja Americana ante deslizamientos.</a></p>';
         } else if (this.actualThreatName === 'Inundaciones') {
           body =
@@ -501,7 +515,7 @@ export class CityPage implements OnInit {
             <p>&nbsp;</p> \
             <p>&nbsp;</p> \
             <h6><strong>Si deseas mayor información sobre riesgo sísmico de Chacao, visita:</strong></h6> \
-            <a href="http://159.90.200.233/amenazasurbanas/DocumentosYFotos/Documentos/Chacao/Schmitz.pdf"> \
+            <a href="https://www.researchgate.net/publication/236147665_Principales_resultados_y_recomendaciones_del_proyecto_de_microzonificacion_sismica_de_Caracas"> \
             Shmitz et al. (2009). “Resultados y recomendaciones del proyecto de Microzonificación Sísmica de Caracas”. Caracas </a></p> \
             <h6><strong>Sobre protocolos de actuación ante riesgo sísmico, visita:</strong></h6> \
             <a href="https://www.youtube.com/watch?v=n_7lfodHSYI"> \
@@ -680,7 +694,7 @@ export class CityPage implements OnInit {
            <p>&nbsp;</p>
           <p>&nbsp;</p>
           <h6>Si deseas mayor informaci&oacute;n sobre tsunamis de Cuman&aacute;, visita:</h6>
-          <p><a href="http://159.90.200.233/amenazasurbanas/DocumentosYFotos/Documentos/Cumana/52a_Guevara.pdf">
+          <p><a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Cumana/52a_Guevara.pdf">
           Guevara, M. (2014). Simulaci&oacute;n num&eacute;rica del tsunami asociado al terremoto del 17 de enero de
            1929 en la ciudad de Cuman&aacute;, una contribuci&oacute;n a los estudios de riesgo en las costas venezolanas.
             Tesis de grado. Maestr&iacute;a en Geof&iacute;sica. Facultad de Ingenier&iacute;a, Universidad
@@ -737,7 +751,7 @@ export class CityPage implements OnInit {
            deslizamientos. Es importante identificar las zonas seguras de su comunidad.</p><p>&nbsp;</p>
            <p>&nbsp;</p>
           <h6>Si deseas mayor informaci&oacute;n sobre protocolos de actuaci&oacute;n ante movimientos en masa, visita:</h6>
-          <p><a href="http://159.90.200.233/amenazasurbanas/DocumentosYFotos/Documentos/Cumana/Landslide_SPN.pdf">
+          <p><a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Merida/Landslide_SPN.pdf">
           Recomendaciones de la Cruz Roja Americana ante deslizamientos</a></p>`;
         }
       } else if (this.actualCity.name === 'Mérida') {
@@ -753,7 +767,7 @@ export class CityPage implements OnInit {
           <p>&nbsp;</p>
           <p>&nbsp;</p>
           <h6>Si deseas mayor informaci&oacute;n sobre inundaciones locales  , visita:</h6>
-          <p><a href="http://159.90.200.233/amenazasurbanas/DocumentosYFotos/Documentos/Merida/Linayo_Ferrer.pdf">
+          <p><a href="https://www.academia.edu/42028784/Merida_ciudad_segura">
           Ferrer C., Linayo A. (2009). Mérida: Ciudad Segura. Mérida, Venezuela. Talleres Gráficos Universitarios</a>&nbsp;</p>
           <p><strong><u>&nbsp;</u></strong></p>
           <h6>Sobre protocolos de actuaci&oacute;n ante inundaciones, visita:</h6>
@@ -795,13 +809,13 @@ export class CityPage implements OnInit {
            <p>&nbsp;</p>
            <p>&nbsp;</p>
           <h6>Si deseas mayor informaci&oacute;n sobre movimientos en masa locales, visita:</h6>
-          <p><a href="http://159.90.200.233/amenazasurbanas/DocumentosYFotos/Documentos/Merida/Linayo_Ferrer.pdf">
+          <p><a href="https://www.academia.edu/42028784/Merida_ciudad_segura">
           Ferrer C., Linayo A. (2009). M&eacute;rida: Ciudad Segura. M&eacute;rida, Venezuela. Talleres Gr&aacute;ficos
           Universitarios</a></p>
           <h6>Sobre protocolos de actuaci&oacute;n ante movimientos en masa, visita:</h6>
           <p><a href="https://www.youtube.com/watch?v=2kTluSZeML8&amp;feature=youtu.be">Video: Prevenci&oacute;n y
            mitigaci&oacute;n. Deslizamientos y derrumbes. Colecci&oacute;n Defensa Civil Venezuela </a></p>
-          <p><a href="http://159.90.200.233/amenazasurbanas/DocumentosYFotos/Documentos/Cumana/Landslide_SPN.pdf">
+          <p><a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Merida/Landslide_SPN.pdf">
           Recomendaciones de la Cruz Roja Americana ante deslizamientos</a></p>`;
         } else if (this.actualThreatName === 'Sismicidad') {
           body = `<h6><strong>Microzonificaci&oacute;n s&iacute;smica</strong></h6>
@@ -841,7 +855,7 @@ export class CityPage implements OnInit {
           <p>&nbsp;</p>
           <p>&nbsp;</p>
           <p><strong>Si deseas mayor informaci&oacute;n sobre riesgo s&iacute;smico de M&eacute;rida, visita:</strong></p>
-          <p><a href="http://159.90.200.233/amenazasurbanas/DocumentosYFotos/Documentos/Merida/Lafaille.pdf">Laffaille J.
+          <p><a href="https://www.academia.edu/42028700/MERIDA_ciudad_de_4_rios_y_4_terremotos">Laffaille J.
            (2009). M&eacute;rida: Ciudad de cuatro r&iacute;os y cuatro terremotos. M&eacute;rida, Venezuela.
            Talleres Gr&aacute;ficos Universitarios</a></p>
           <p><strong>Sobre protocolos de actuaci&oacute;n ante riesgo s&iacute;smico, visita:</strong></p>
@@ -885,7 +899,7 @@ export class CityPage implements OnInit {
             </ul>
             <p style="padding-left: 30px;"><a title="CIGIR (2009). &ldquo;Material de socializaci&oacute;n sobre amenazas asociadas a
               cuencas del municipio Chacao&rdquo;; adaptado de L&oacute;pez JL. IMF-UCV (2004). Convenio CIGIR-IPCA.&nbsp;"
-               href="http://159.90.200.233/amenazasurbanas/DocumentosYFotos/Documentos/Chacao/QdasCHACAO.pdf">
+               href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Chacao/QdasCHACAO.pdf">
                CIGIR (2009). &ldquo;Material de socializaci&oacute;n sobre amenazas asociadas a cuencas del municipio Chacao&rdquo;;
                adaptado de L&oacute;pez JL. IMF-UCV (2004). Convenio CIGIR-IPCA.&nbsp;</a></p>`;
         } else if (this.actualThreatName === 'Inundaciones') {
@@ -911,16 +925,13 @@ export class CityPage implements OnInit {
           Microzonificaci&oacute;n s&iacute;smica de Caracas. Editores: Michael Schmitz y Andre Singer. Ministerio del Poder Popular
            para Educaci&oacute;n Universitaria, Ciencia y Tecnolog&iacute;a. Fondo Nacional de Ciencia, Tecnolog&iacute;a e
             Innovaci&oacute;n.</p>
-          <p style="padding-left: 30px;">L&oacute;pez, O., Hern&aacute;ndez, J., J&aacute;come, J., Schmitz, M., Marinilli, A.,
+          <p style="padding-left: 30px;"> <a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Chacao/17a_Lopez.pdf" >
+          L&oacute;pez, O., Hern&aacute;ndez, J., J&aacute;come, J., Schmitz, M., Marinilli, A.,
            Coronel, G., Morillo, M. y M&aacute;rquez, B. (2017). Proyecto de actualizaci&oacute;n de la Norma para Construcciones
             Sismorresistentes, COVENIN 1756. Subcomit&eacute; T&eacute;cnico de Normalizaci&oacute;n de Sismorresistencia.
              Fundaci&oacute;n Centro Nacional de Investigaci&oacute;n y Certificaci&oacute;n en Vivienda, H&aacute;bitat y
               Desarrollo Urbano (CENVIH), Fundaci&oacute;n Venezolana de Investigaciones Sismol&oacute;gicas (FUNVISIS),
-               Instituto de Materiales y Modelos Estructurales (IMME - UCV).
-          <u> <a href="http://159.90.200.233/amenazasurbanas/DocumentosYFotos/Documentos/Cumana/22a_Lopez.pdf" /></u></p>
-          <p style="padding-left: 30px;">Singer, A., Zambrano, A., Oropeza, J., Tagliaferro, M. (2007). Mapa geol&oacute;gico
-           del Cuaternario y de las fallas cuaternarias del valle de Caracas. Escala 1:25.000. Proyecto de Microzonificaci&oacute;n
-            S&iacute;smica de Caracas. Fundaci&oacute;n Venezolana de Investigaciones Sismol&oacute;gicas (FUNVISIS).</p>`;
+               Instituto de Materiales y Modelos Estructurales (IMME - UCV).</a></p>`;
         } else if (this.actualThreatName === 'Sismicidad') {
           body = `<ul>
           <li><strong>A quien consultar en su localidad:</strong></li>
@@ -940,7 +951,7 @@ export class CityPage implements OnInit {
           <li><strong>Autores consultados:</strong></li>
           </ul>
           <p style="padding-left: 30px;">
-           <a href="http://159.90.200.233/amenazasurbanas/DocumentosYFotos/Documentos/Chacao/Schmitz.pdf"><strong>
+           <a href="https://www.researchgate.net/publication/236147665_Principales_resultados_y_recomendaciones_del_proyecto_de_microzonificacion_sismica_de_Caracas"><strong>
            Shmitz et all. (2009). &ldquo;Resultados y recomendaciones del proyecto de
            Microzonificaci&oacute;n S&iacute;smica de Caracas&rdquo;. Caracas. </strong></a></p>`;
         }
@@ -1035,7 +1046,7 @@ export class CityPage implements OnInit {
           <ul>
           <li><strong>Autores consultados:</strong></li>
           </ul>
-          <p style="padding-left: 30px;"><a href="http://159.90.200.233/amenazasurbanas/DocumentosYFotos/Documentos/Merida/Linayo_Ferrer.pdf">Ferrer C., Linayo A. (2009). M&eacute;rida: Ciudad Segura. M&eacute;rida, Venezuela. Talleres Gr&aacute;ficos Universitarios</a>.&nbsp;</p>`;
+          <p style="padding-left: 30px;"><a href="https://www.academia.edu/42028784/Merida_ciudad_segura">Ferrer C., Linayo A. (2009). M&eacute;rida: Ciudad Segura. M&eacute;rida, Venezuela. Talleres Gr&aacute;ficos Universitarios</a>.&nbsp;</p>`;
         } else if (this.actualThreatName === 'Sismicidad') {
           body = `<ul>
           <li><strong>A quien consultar en su localidad:</strong></li>
@@ -1060,18 +1071,9 @@ export class CityPage implements OnInit {
           <li><strong>Autores consultados</strong></li>
           </ul>
           <p style="padding-left: 30px;">
-          <a href="http://159.90.200.233/amenazasurbanas/DocumentosYFotos/Documentos/Merida/Linayo_Ferrer.pdf">
+          <a href="https://www.academia.edu/42028784/Merida_ciudad_segura">
           Ferrer C., Linayo A. (2009). M&eacute;rida: Ciudad Segura. M&eacute;rida, Venezuela. Talleres Gr&aacute;ficos
-          Universitarios</a>.</p>
-          <p style="padding-left: 30px;">Centro de Sismolog&iacute;a &ldquo;Luis Daniel Beauperthuy Urich&rdquo; de la
-          Universidad de Oriente (UDO). NO EXISTE DOCUMENTO</p>
-          <p style="padding-left: 30px;">Viete H. (2012). Evaluaci&oacute;n geol&oacute;gica con fines de Microzonificaci&oacute;n
-           S&iacute;smica de la regi&oacute;n de Cuman&aacute;, edo. Sucre. Informe T&eacute;cnico. CEDI-FUNVISIS. Caracas.</p>
-          <p style="padding-left: 30px;">
-          <a href="http://159.90.200.233/amenazasurbanas/DocumentosYFotos/Documentos/Cumana/52a_Guevara.pdf">
-          Guevara, M. (2014). Simulaci&oacute;n num&eacute;rica del tsunami asociado al terremoto del 17 de enero de 1929 en
-           la ciudad de Cuman&aacute;, una contribuci&oacute;n a los estudios de riesgo en las costas venezolanas. Tesis de
-            grado. Maestr&iacute;a en Geof&iacute;sica. Facultad de Ingenier&iacute;a, Universidad Central de Venezuela</a></p>`;
+          Universitarios</a>.</p>`;
         } else if (this.actualThreatName === 'Mov. en masa') {
           body = `<ul>
           <li><strong>A quien consultar en su localidad:</strong></li>
@@ -1095,7 +1097,7 @@ export class CityPage implements OnInit {
           <li><strong>Autores consultados:</strong></li>
           </ul>
           <p style="padding-left: 30px;">
-          <a href="http://159.90.200.233/amenazasurbanas/DocumentosYFotos/Documentos/Merida/Linayo_Ferrer.pdf">
+          <a href="https://www.academia.edu/42028784/Merida_ciudad_segura">
           Ferrer C., Linayo A. (2009). M&eacute;rida: Ciudad Segura. M&eacute;rida, Venezuela. Talleres Gr&aacute;ficos
            Universitarios.&nbsp;</a></p>`;
         }
@@ -1109,9 +1111,9 @@ export class CityPage implements OnInit {
       component: InfoPageComponent,
       componentProps: {
         title: titleString,
-        body: bodyString
+        body: bodyString,
       },
-      cssClass: 'legend-custom-modal-css'
+      cssClass: 'legend-custom-modal-css',
     });
     return await infoModal.present();
   }

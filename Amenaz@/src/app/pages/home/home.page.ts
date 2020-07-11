@@ -7,7 +7,7 @@ import {
   AlertController,
   NavController,
   NavParams,
-  IonSelect
+  IonSelect,
 } from '@ionic/angular';
 import { MappingService } from 'src/app/services/mapping.service';
 import { InfoPageComponent } from 'src/app/components/info-page/info-page.component';
@@ -29,7 +29,7 @@ type ThreatsButton = {
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
-  styleUrls: ['./home.page.scss']
+  styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
   @ViewChild('cityselector', { read: false, static: false }) citySelectorRef: IonSelect;
@@ -89,7 +89,7 @@ export class HomePage implements OnInit {
     console.log(event);
   }
   gotoCity(cityID: number) {
-    this.actualCity = this.mappingService.cities.indexOf(this.mappingService.cities.find(i => i.id === cityID));
+    this.actualCity = this.mappingService.cities.indexOf(this.mappingService.cities.find((i) => i.id === cityID));
     const navigationExtras: NavigationExtras = { state: { actualCity: cityID } };
     this.navController.navigateForward('/city', navigationExtras);
   }
@@ -112,12 +112,12 @@ export class HomePage implements OnInit {
     this.centerOnCity();
   }
   removeLayerControl() {
-    Object.keys(this.overlayMaps).forEach(key => {
+    Object.keys(this.overlayMaps).forEach((key) => {
       this.mappingService.map.removeLayer(this.overlayMaps[key]);
     });
     this.mappingService.cities
-      .find(x => x.name === this.actualCityName)
-      .layers.forEach(layer => {
+      .find((x) => x.name === this.actualCityName)
+      .layers.forEach((layer) => {
         if (layer.fixed && this.botomToolbarActive) {
           this.mappingService.map.removeLayer(layer.gJSON);
         }
@@ -149,7 +149,7 @@ export class HomePage implements OnInit {
     this.backButtonSubscription.unsubscribe();
   }
   allowLayerControl() {
-    this.mappingService.nonThreadMaps.forEach(val => {
+    this.mappingService.nonThreadMaps.forEach((val) => {
       if (!val.downloaded) {
         return false;
       }
@@ -174,20 +174,20 @@ export class HomePage implements OnInit {
       proporcionados por una serie de organizaciones privadas, académicas y públicas. \
       Los usuarios y los posibles asociados pueden realizar consultas a los administradores de la aplicación y \
       proveerles información adicional para la herramienta, usando el formulario de comentarios de AppMóvilSIG..',
-      buttons: ['Aceptar']
+      buttons: ['Aceptar'],
     });
 
     await alert.present();
   }
   putCityMarkers() {
-    this.mappingService.cities.forEach(city => {
+    this.mappingService.cities.forEach((city) => {
       city.marker.addTo(this.mappingService.map);
     });
     this.areMarkersActive = true;
   }
   removeCitiMarkers() {
     if (this.areMarkersActive) {
-      this.mappingService.cities.forEach(city => {
+      this.mappingService.cities.forEach((city) => {
         city.marker.removeFrom(this.mappingService.map);
       });
       this.areMarkersActive = false;
@@ -210,13 +210,13 @@ export class HomePage implements OnInit {
     }).addTo(this.mappingService.map);
 
     // Add search provider to map
-    this.mappingService.searchControl.addTo(this.mappingService.map);
+    // this.mappingService.searchControl.addTo(this.mappingService.map);
 
     L.control.locate({ setView: 'untilPanOrZoom', flyTo: true }).addTo(this.mappingService.map);
     let nodeList = document.querySelectorAll<HTMLElement>(
       '.leaflet-control-locate.leaflet-bar.leaflet-control .leaflet-bar-part.leaflet-bar-part-single span'
     );
-    Array.from(nodeList).forEach(el => {
+    Array.from(nodeList).forEach((el) => {
       el.classList.remove('fa-map-marker');
       el.classList.add('fa-crosshairs');
     });
@@ -224,7 +224,7 @@ export class HomePage implements OnInit {
     nodeList = document.querySelectorAll<HTMLElement>(
       '.easy-button-button.leaflet-bar-part.leaflet-interactive.unnamed-state-active'
     );
-    Array.from(nodeList).forEach(el => {
+    Array.from(nodeList).forEach((el) => {
       el.style.width = '30px';
       el.style.height = '30px';
     });
@@ -233,8 +233,8 @@ export class HomePage implements OnInit {
   }
   loadThreatLayers(layerType: string) {
     this.mappingService.cities
-      .find(x => x.name === this.actualCityName)
-      .layers.forEach(layer => {
+      .find((x) => x.name === this.actualCityName)
+      .layers.forEach((layer) => {
         if (layer.fixed && layerType !== 'Ninguna') {
           layer.gJSON.setStyle({ color: layer.color, fill: false });
           // layer.gJSON.setStyle({ color: '#000000', fill: false });
@@ -243,13 +243,13 @@ export class HomePage implements OnInit {
         if (layer.fixed && layerType === 'Ninguna') {
           layer.gJSON.setStyle({ color: layer.color, fill: false });
         }
-        layer.threadType.forEach(threat => {
-          if (this.actualCityThreats.find(x => x === threat) === undefined && threat !== 'Ninguna' && threat !== '') {
+        layer.threadType.forEach((threat) => {
+          if (this.actualCityThreats.find((x) => x === threat) === undefined && threat !== 'Ninguna' && threat !== '') {
             this.actualCityThreats.push(threat);
             this.threatsOnBar.push({
               title: threat,
               iconName: '/assets/icon/' + String(threat).replace(' ', '') + '_negro.svg',
-              pushed: false
+              pushed: false,
             });
             console.log(this.threatsOnBar);
           }
@@ -261,7 +261,7 @@ export class HomePage implements OnInit {
       });
     // Load layers with 'Ninguna' on ThreatType
     if (this.overlayMaps) {
-      Object.keys(this.overlayMaps).forEach(key => {
+      Object.keys(this.overlayMaps).forEach((key) => {
         this.mappingService.map.addLayer(this.overlayMaps[key]);
       });
       // this.layerControl = L.control.layers(null, this.overlayMaps);
@@ -284,8 +284,8 @@ export class HomePage implements OnInit {
     if (input && input.trim() !== '') {
       this.mappingService.searchPlaces = [];
       this.areCitiesAvailable = true;
-      this.mappingService.searchProvider.search({ query: input }).then(results => {
-        results.forEach(result => {
+      this.mappingService.searchProvider.search({ query: input }).then((results) => {
+        results.forEach((result) => {
           this.mappingService.searchPlaces.push(result);
         });
       });
@@ -301,10 +301,7 @@ export class HomePage implements OnInit {
     this.mappingService.setSearchMarker(Number(place.y), Number(place.x));
     if (this.mappingService.isSearchMarkerSet) {
       console.log('Adding to map');
-      this.mappingService.searchMarker
-        .addTo(this.mappingService.map)
-        .bindPopup(place.label)
-        .openPopup();
+      this.mappingService.searchMarker.addTo(this.mappingService.map).bindPopup(place.label).openPopup();
       this.mappingService.map.flyTo([Number(place.y), Number(place.x)], 11);
       this.isMarkerActive = true;
     }
@@ -333,7 +330,7 @@ export class HomePage implements OnInit {
     const alert = await this.alertController.create({
       header: 'Información General',
       message: messageString,
-      buttons: ['Aceptar']
+      buttons: ['Aceptar'],
     });
 
     await alert.present();
@@ -368,7 +365,7 @@ export class HomePage implements OnInit {
     const alert = await this.alertController.create({
       header: 'Ubicación',
       message: messageString,
-      buttons: ['Aceptar']
+      buttons: ['Aceptar'],
     });
     await alert.present();
   }
@@ -390,11 +387,11 @@ export class HomePage implements OnInit {
   loadThreat(threat: string) {
     console.log(this.threatsOnBar);
     this.removeLayerControl();
-    if (!this.threatsOnBar.find(x => x.title === threat).pushed) {
+    if (!this.threatsOnBar.find((x) => x.title === threat).pushed) {
       // Release all others buttons
       // change all other icons to black
       // put this icon to color
-      this.threatsOnBar.forEach(t => {
+      this.threatsOnBar.forEach((t) => {
         if (t.title !== threat) {
           t.pushed = false;
           t.iconName = '/assets/icon/' + String(t.title).replace(' ', '') + '_negro.svg';
@@ -444,9 +441,9 @@ export class HomePage implements OnInit {
       component: InfoPageComponent,
       componentProps: {
         title: titleString,
-        body: bodyString
+        body: bodyString,
       },
-      cssClass: 'info-custom-modal-css'
+      cssClass: 'info-custom-modal-css',
     });
     return await infoModal.present();
   }
