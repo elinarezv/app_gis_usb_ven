@@ -48,6 +48,11 @@ export class AuthService {
       headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded'),
     });
   }
+  recover(email: string) {
+    return this.http.get(this.env.API_URL + 'account/recover', {
+      params: new HttpParams().set('userEmail', email),
+    });
+  }
   update(fName: string, lName: string, addr: string) {
     const headers = new HttpHeaders({
       Authorization: 'Basic' + ' ' + this.token,

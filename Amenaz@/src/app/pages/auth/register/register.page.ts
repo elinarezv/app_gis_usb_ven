@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertService } from 'src/app/services/alert.service';
 import { UsernameValidator } from 'src/app/validators/username';
+import { RecoverPage } from '../recover/recover.page';
 
 @Component({
   selector: 'app-register',

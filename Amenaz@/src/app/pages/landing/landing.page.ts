@@ -6,7 +6,7 @@ import { AuthService } from 'src/app/services/auth.service';
 @Component({
   selector: 'app-landing',
   templateUrl: './landing.page.html',
-  styleUrls: ['./landing.page.scss']
+  styleUrls: ['./landing.page.scss'],
 })
 export class LandingPage implements OnInit {
   backButtonSubscription;
@@ -22,16 +22,14 @@ export class LandingPage implements OnInit {
     this.menu.enable(false);
   }
   ionViewWillEnter() {
-    this.authService.getToken().then(
-      data => {
-        this.events.publish('user-login', data);
-      },
-      () => {
-        if (this.authService.isLoggedIn) {
-          this.navCtrl.navigateRoot('/home');
-        }
+    this.authService.getToken().then(() => {
+      if (this.authService.isLoggedIn) {
+        this.navCtrl.navigateRoot('/home');
       }
-    );
+    });
+    // data => {
+    //     this.events.publish('user-login', data);
+    //   },
     this.backButtonSubscription = this.platform.backButton.subscribe(async () => {
       navigator['app'].exitApp();
     });
@@ -42,13 +40,13 @@ export class LandingPage implements OnInit {
   ngOnInit() {}
   async register() {
     const registerModal = await this.modalController.create({
-      component: RegisterPage
+      component: RegisterPage,
     });
     return await registerModal.present();
   }
   async login() {
     const loginModal = await this.modalController.create({
-      component: LoginPage
+      component: LoginPage,
     });
     return await loginModal.present();
   }

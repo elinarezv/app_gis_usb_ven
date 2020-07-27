@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissRecover()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-title>Recuperar contraseña</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <p *ngIf="submitAttempt" style="color: #ea6153;">Por favor revise los datos en los campos.</p>
+
+  <ion-list lines="inset">
+    <form [formGroup]="recoverForm">
+      <ion-item>
+        <ion-label position="floating">Correo electrónico</ion-label>
+        <ion-input
+          formControlName="email"
+          type="text"
+          [class.invalid]="!recoverForm.controls.email.valid && (recoverForm.controls.email.dirty || submitAttempt)"
+          [class.invalid-email]="!recoverForm.controls.email.valid && (recoverForm.controls.email.dirty || usernameTaken)"
+        >
+        </ion-input>
+      </ion-item>
+
+      <div style="padding-top: 50px;"></div>
+
+      <ion-button type="submit" expand="full" color="primary" (click)="recoverPassword()">Recuperar contraseña</ion-button>
+    </form>
+  </ion-list>
+  <p text-right>¿No tiene una cuenta?</p>
+  <ion-button expand="full" color="secondary" (click)="registerModal()">Registrarse</ion-button>
+</ion-content>

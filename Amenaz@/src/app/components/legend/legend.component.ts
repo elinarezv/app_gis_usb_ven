@@ -6,7 +6,7 @@ interface Segment {}
 @Component({
   selector: 'app-legend',
   templateUrl: './legend.component.html',
-  styleUrls: ['./legend.component.scss']
+  styleUrls: ['./legend.component.scss'],
 })
 export class LegendComponent implements OnInit {
   public threat: string;
@@ -103,7 +103,7 @@ export class LegendComponent implements OnInit {
                         </div>
                         <br />`;
       }
-      htmlContent += `<label style="font-weight: bold;">Municipio Chacao</label>
+      htmlContent += `<label style="font-weight: bold;">Área de estudio</label>
                       <div style="display: flex; align-items: center;">
                           <div style="width: 40px; height: 20px; background: transparent;
                           flex-shrink: 0; border: 1px; border-style: solid; border-color: rgb(255, 255, 0);"></div>
@@ -207,13 +207,13 @@ export class LegendComponent implements OnInit {
                         </div>
                         <br />`;
       }
-      htmlContent += `<label style="font-weight: bold;">Municipio Sucre</label>
+      htmlContent += `<label style="font-weight: bold;">Área de estudio</label>
                       <div style="display: flex; align-items: center;">
                           <div style="width: 40px; height: 20px; background: transparent;
                           flex-shrink: 0; border: 1px; border-style: solid; border-color: rgb(255, 255, 0);"></div>
                       </div>`;
     } else if (this.city === 'Mérida') {
-      if (this.threat === 'Inundaciones') {
+      if (this.threat === 'Aludes') {
         htmlContent += `<label style="font-weight: bold;">Hidrografía</label>
                         <div style="display: flex; align-items: center;">
                             <div style="width: 40px; height: 1px; background: transparent;
@@ -285,19 +285,21 @@ export class LegendComponent implements OnInit {
                         <div style="display: flex; align-items: center;">
                             <div style="width: 40px; height: 20px; background: rgb(255, 255, 255);
                             flex-shrink: 0; border: 0.5px; border-style: solid; border-color: black;"></div>
-                            <span style="padding-left: 8px;">Por definir</span>
+                            <span style="padding-left: 8px;">Sin relleno</span>
                         </div>
                         <br />`;
       }
-      htmlContent += `<label style="font-weight: bold;">Municipio Libertador</label>
+      if (this.threat !== 'Aludes' && this.threat !== 'Mov. en masa' && this.threat !== 'Sismicidad'){
+            htmlContent += `<label style="font-weight: bold;">Zona de protección del río Albarregas</label>
+                            <div style="display: flex; align-items: center;">
+                                <div style="width: 40px; height: 20px; background: transparent;
+                                flex-shrink: 0; border: 1px; border-style: solid; border-color: rgb(0, 112, 255);"></div>
+                            </div>`;
+      }
+      htmlContent += `<label style="font-weight: bold;">Área de estudio</label>
                       <div style="display: flex; align-items: center;">
                           <div style="width: 40px; height: 20px; background: transparent;
                           flex-shrink: 0; border: 1px; border-style: solid; border-color: rgb(255, 255, 0);"></div>
-                      </div>`;
-      htmlContent += `<label style="font-weight: bold;">Poligonal urbana</label>
-                      <div style="display: flex; align-items: center;">
-                          <div style="width: 40px; height: 20px; background: transparent;
-                          flex-shrink: 0; border: 1px; border-style: solid; border-color: rgb(255, 0, 0);"></div>
                       </div>`;
     }
 

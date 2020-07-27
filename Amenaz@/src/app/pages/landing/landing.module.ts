@@ -7,15 +7,17 @@ import { IonicModule } from '@ionic/angular';
 import { LandingPage } from './landing.page';
 import { LoginPage } from '../auth/login/login.page';
 import { RegisterPage } from '../auth/register/register.page';
+import { RecoverPage } from '../auth/recover/recover.page';
+
 const routes: Routes = [
   {
     path: '',
-    component: LandingPage
-  }
+    component: LandingPage,
+  },
 ];
 @NgModule({
   imports: [CommonModule, ReactiveFormsModule, FormsModule, IonicModule, RouterModule.forChild(routes)],
-  declarations: [LandingPage, LoginPage, RegisterPage],
-  entryComponents: [LoginPage, RegisterPage]
+  declarations: [LandingPage, LoginPage, RegisterPage, RecoverPage],
+  entryComponents: [LoginPage, RegisterPage, RecoverPage],
 })
-export class LandingPageModule { }
+export class LandingPageModule {}

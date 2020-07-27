@@ -3,6 +3,13 @@ import { City, DBCity, LayerType } from 'src/app/models/mapping';
 import { MappingService } from 'src/app/services/mapping.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as L from 'leaflet';
+import * as esri from 'esri-leaflet';
+import * as Geocoding from 'esri-leaflet-geocoder';
+import 'leaflet-easybutton';
+import 'leaflet.locatecontrol';
+import 'leaflet.pattern';
+import '../../../assets/js/leaflet-polygon.fillPattern';
+
 import { withLatestFrom } from 'rxjs/operators';
 import { ModalController, MenuController, PopoverController, Events, AlertController } from '@ionic/angular';
 import { InfoPageComponent } from 'src/app/components/info-page/info-page.component';
@@ -19,6 +26,8 @@ export class CityPage implements OnInit {
   private actualCityThreats: any[] = [];
   private threatsLayers: any[] = [];
   public actualThreatName = '';
+  private searchControl;
+  private resultsLayersGroup;
 
   constructor(
     private mappingService: MappingService,
@@ -52,14 +61,42 @@ export class CityPage implements OnInit {
       this.actualCity.zoomLevel
     );
     // Add all non-thread layers
+    // this.mappingService.baseMap.addTo(this.mappingService.map);
     this.mappingService.baseMap.addTo(this.mappingService.map);
+    if (this.mappingService.baseMapLabels) {
+      this.mappingService.baseMapLabels.addTo(this.mappingService.map);
+    }
+
+    this.searchControl = Geocoding.geosearch({
+      position: 'topleft',
+      collapseAfterResult: true,
+      expanded: false,
+      placeholder: 'Escriba un lugar a buscar...',
+      useMapBounds: true,
+    });
+
     // Home button
     L.easyButton('fa-home fa-lg', () => {
       this.mappingService.map.setView(this.actualCity.location, this.actualCity.zoomLevel);
+      this.resultsLayersGroup.clearLayers();
     }).addTo(this.mappingService.map);
-    L.easyButton('fa-search fa-lg', () => {
-      this.mappingService.map.setView(this.actualCity.location, this.actualCity.zoomLevel);
-    }).addTo(this.mappingService.map);
+
+    // L.easyButton('fa-search fa-lg', () => {
+    //   this.mappingService.map.setView(this.actualCity.location, this.actualCity.zoomLevel);
+    // }).addTo(this.mappingService.map);
+
+    this.searchControl.addTo(this.mappingService.map);
+
+    // create an empty layer group to store the results and add it to the map
+    this.resultsLayersGroup = L.layerGroup().addTo(this.mappingService.map);
+    // listen for the results event and add every result to the map
+    this.searchControl.on('results', (data) => {
+      this.resultsLayersGroup.clearLayers();
+      for (let i = data.results.length - 1; i >= 0; i--) {
+        this.resultsLayersGroup.addLayer(L.marker(data.results[i].latlng));
+      }
+    });
+
     L.control.locate({ setView: 'untilPanOrZoom', flyTo: true }).addTo(this.mappingService.map);
     let nodeList = document.querySelectorAll<HTMLElement>(
       '.leaflet-control-locate.leaflet-bar.leaflet-control .leaflet-bar-part.leaflet-bar-part-single span'
@@ -75,6 +112,7 @@ export class CityPage implements OnInit {
       el.style.width = '30px';
       el.style.height = '30px';
     });
+    this.mappingService.stripes.addTo(this.mappingService.map);
     this.centerOnCity();
   }
   async legendPopover(ev: any) {
@@ -342,7 +380,7 @@ export class CityPage implements OnInit {
              deslizamientos, etc.). Tambi&eacute;n se se&ntilde;alan que un 35% (75 eventos) de sus eventos adversos urbanos
               est&aacute;n asociados a amenazas tecnol&oacute;gicas (incendios, fugas de materiales peligrosos, etc).</p>
         <p><img src="/assets/ME-1.jpg" alt="Fuente: Diario Frontera 03-11-2001" /></p>`;
-      } else if (this.actualThreatName === 'Inundaciones') {
+      } else if (this.actualThreatName === 'Aludes') {
         title = 'Contexto de amenaza';
         body = `<p>El &aacute;rea metropolitana de M&eacute;rida es atravesada por diversos cursos de agua que desembocan en
         la cuenca media del r&iacute;o Chama. Entre estos afluentes h&iacute;dricos destacan hacia el flanco norte de la ciudad
@@ -396,40 +434,41 @@ export class CityPage implements OnInit {
       if (this.actualCity.name === 'Chacao') {
         if (this.actualThreatName === 'Aludes') {
           body =
-            '<h6><strong>Amenazas por Aludes Torrenciales</strong></h6> \
-            <h6>Nivel de amenaza: <strong>ALTA</strong></h6> \
+            '<p><strong>A continuación se presentan las recomendaciones sugeridas para espacios localizados \
+            en cada una de las 4 zonas de amenazas por Aludes torrenciales, identificados en el municipio \
+            Chacao:</strong></p> \
+            <h6><strong>Para lugares en áreas de amenaza ALTA:</strong></h6> \
           <p> <img src="/assets/one.png" style="padding: 0 15px; float: left; height: 32px;"/> \
-          Se recomienda hacer seguimiento \
-          permanente a servicios de pronóstico meteorológico y considerar el posible traslado temporal en caso \
-          de declaración de alertas meteorológicas asociadas a lluvias de gran intensidad. Se recomienda que se \
-          mantengan protocolos familiares y comunitarios de preparación y actuación en caso de aludes torrenciales. </p> \
-          <h6>Nivel de amenaza: <strong>MEDIA</strong></h6> \
+          Se recomienda hacer seguimiento permanente a servicios de pronóstico \
+          meteorológico y considerar el posible traslado temporal en caso de declaración \
+          de alertas meteorológicas asociadas a lluvias de gran intensidad. Se recomienda \
+          que se mantengan protocolos familiares y comunitarios de preparación y \
+          actuación en caso de aludes torrenciales. </p> \
+          <h6><strong>Para lugares en áreas de amenaza MEDIA:</strong></h6> \
           <p> <img src="/assets/one.png" style="padding: 0 15px; float: left; height: 32px;"/> \
-          Se recomienda hacer seguimiento \
-          a servicios de pronóstico meteorológico y tomar previsiones en caso de declaración de alertas meteorológicas \
-          asociadas a lluvias de gran intensidad. Conviene que se mantengan protocolos familiares y comunitarios de \
-          preparación y actuación en caso de aludes torrenciales.</p> \
-          <h6>Nivel de amenaza: <strong>BAJA</strong></h6> \
+          Se recomienda hacer seguimiento a servicios de pronóstico meteorológico y \
+        tomar previsiones en caso de declaración de alertas meteorológicas asociadas a 1 lluvias de gran intensidad. \
+        Conviene que se mantengan protocolos familiares y comunitarios de preparación y actuación en caso de aludes torrenciales.</p> \
+          <h6><strong>Para lugares en áreas de amenaza BAJA:</strong></h6> \
           <p> <img src="/assets/one.png" style="padding: 0 15px; float: left; height: 32px;"/> \
-          Se recomienda hacer algún seguimiento \
-          a servicios de pronóstico meteorológico y tomar algunas previsiones en caso de declaración de alertas \
-          meteorológicas asociadas a lluvias de gran intensidad. Conviene que se mantengan protocolos familiares y \
-          comunitarios de preparación y actuación en caso de aludes torrenciales. </p> \
-          <h6>Nivel de amenaza: <strong>NULA</strong></h6> \
-          <p> Son zonas de resguardo y seguridad ante este tipo de amenazas y donde no son necesarias recomendaciones \
-          sobre este tipo de amenazas.</p> <p>&nbsp;</p> \
+          Se recomienda hacer algún seguimiento a servicios de pronóstico meteorológico y tomar algunas previsiones en caso \
+          de declaración de alertas meteorológicas asociadas a lluvias de gran intensidad. Conviene que se mantengan protocolos \
+           familiares y comunitarios de preparación y actuación en caso de aludes torrenciales. </p> \
+          <h6><strong>Para lugares en áreas de amenaza NULA:</strong></h6> \
+          <p>Son zonas de resguardo y seguridad ante este tipo de amenazas y donde no son necesarias recomendaciones sobre este tipo \
+          de amenazas..</p> <p>&nbsp;</p> \
           <p>&nbsp;</p> \
-          <h6><strong>Si deseas mayor información sobre amenazas de aludes torrenciales locales, visita:</strong></h6> \
+          <h6><strong>Si deseas mayor información sobre amenazas por aludes torrenciales locales, visita:</strong></h6> \
           <a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Chacao/QdasCHACAO.pdf"> \
           CIGIR (2009). “Material de socialización sobre amenazas asociadas a cuencas del municipio Chacao”; \
           adaptado de López JL. IMF-UCV (2004). Convenio CIGIR-IPCA </a></p> \
-          <h6><strong>Sobre protocolos de actuación ante aludes torrenciales, visita:</strong></h6> \
+          <h6><strong>Sobre protocolos internacionales de actuación ante aludes torrenciales, visita:</strong></h6> \
           <a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Merida/Landslide_SPN.pdf"> \
           Recomendaciones de la Cruz Roja Americana ante deslizamientos.</a></p>';
         } else if (this.actualThreatName === 'Inundaciones') {
           body =
-            '<h6><strong>Amenaza por inundación</strong></h6> \
-            <h6>Nivel de amenaza: <strong>ALTA</strong></h6> \
+            '<p><strong>A continuación se presentan algunas recomendaciones para espacios localizados en las áreas \
+            potenciales de inundación definidas para el río Guaire, dentro del municipio Chacao:</strong></p> \
             <p> <img src="/assets/one.png" style="padding: 0 15px; float: left; height: 32px;"/> \
             Se recomienda hacer seguimiento a servicios de pronóstico meteorológico y tomar previsiones en caso \
             de declaración de alertas meteorológicas asociadas a lluvias de gran intensidad. Conviene que se mantengan \
@@ -443,8 +482,9 @@ export class CityPage implements OnInit {
             Video: ¿Qué hacer en caso de inundación?</a></p>';
         } else if (this.actualThreatName === 'Sismicidad') {
           body =
-            '<h6><strong>Microzonificación sísmica</strong></h6> \
-            <h6>Microzona: <strong>3-1</strong></h6> \
+            '<p><strong>A continuación se indican las recomendaciones sugeridas para edificaciones localizadas en \
+            cada una de las 6 microzonas de amenaza sísmicas, identificadas en el municipio Chacao:</strong></p> \
+            <h6><strong>Para edificaciones en Microzona 3-1:</strong></h6> \
             <p> <img src="/assets/one.png" style="padding: 0 15px; float: left; height: 32px;"/> \
             Evaluación sismorresistente de los edificios construidos antes de 1967. </p> \
             <p> <img src="/assets/two.png" style="padding: 0 15px; float: left; height: 32px;"/> \
@@ -455,7 +495,7 @@ export class CityPage implements OnInit {
             <p> <img src="/assets/four.png" style="padding: 0 15px; float: left; height: 32px;"/> \
             Implementación de protocolos familiares y comunitarios de preparación y actuación en caso de terremotos. </p> \
             \
-            <h6>Microzona: <strong>3-2</strong></h6> \
+            <h6><strong>Para edificaciones en Microzona 3-2:</strong></h6> \
             <p> <img src="/assets/one.png" style="padding: 0 15px; float: left; height: 32px;"/> \
             Evaluación sismorresistente de los edificios construidos antes de 1967. </p> \
             <p> <img src="/assets/two.png" style="padding: 0 15px; float: left; height: 32px;"/> \
@@ -465,7 +505,7 @@ export class CityPage implements OnInit {
             <p> <img src="/assets/four.png" style="padding: 0 15px; float: left; height: 32px;"/> \
             Implementación de protocolos familiares y comunitarios de preparación y actuación en caso de terremotos. </p> \
             \
-            <h6>Microzona: <strong>4-1</strong></h6> \
+            <h6><strong>Para edificaciones en Microzona 4-1:</strong></h6> \
             <p> <img src="/assets/one.png" style="padding: 0 15px; float: left; height: 32px;"/> \
             Evaluación sismorresistente de los edificios construidos antes de 1967. </p> \
             <p> <img src="/assets/two.png" style="padding: 0 15px; float: left; height: 32px;"/> \
@@ -476,7 +516,7 @@ export class CityPage implements OnInit {
             <p> <img src="/assets/four.png" style="padding: 0 15px; float: left; height: 32px;"/> \
             Implementación de protocolos familiares y comunitarios de preparación y actuación en caso de terremotos. </p> \
             \
-            <h6>Microzona: <strong>4-2</strong></h6> \
+            <h6><strong>Para edificaciones en Microzona 4-2:</strong></h6> \
             <p> <img src="/assets/one.png" style="padding: 0 15px; float: left; height: 32px;"/> \
             Evaluación sismorresistente de los edificios construidos antes de 1967. </p> \
             <p> <img src="/assets/two.png" style="padding: 0 15px; float: left; height: 32px;"/> \
@@ -487,7 +527,7 @@ export class CityPage implements OnInit {
             <p> <img src="/assets/four.png" style="padding: 0 15px; float: left; height: 32px;"/> \
             Implementación de protocolos familiares y comunitarios de preparación y actuación en caso de terremotos. </p> \
             \
-            <h6>Microzona: <strong>5</strong></h6> \
+            <h6><strong>Para edificaciones en Microzona 5:</strong></h6> \
             <p> <img src="/assets/one.png" style="padding: 0 15px; float: left; height: 32px;"/> \
             Evaluación sismorresistente de los edificios construidos antes de 1967 y de columnas y \
             vigas ≥ 4 pisos o de muros ≥ 7 pisos construidos entre 1967-1982. </p> \
@@ -500,7 +540,7 @@ export class CityPage implements OnInit {
             <p> <img src="/assets/four.png" style="padding: 0 15px; float: left; height: 32px;"/> \
             Implementación de protocolos familiares y comunitarios de preparación y actuación en caso de terremotos. </p> \
             \
-            <h6>Microzona: <strong>6</strong></h6> \
+            <h6><strong>Para edificaciones en Microzona 6:</strong></h6> \
             <p> <img src="/assets/one.png" style="padding: 0 15px; float: left; height: 32px;"/> \
             Evaluación sismorresistente de los edificios construidos antes de 1967 y de columnas y \
             vigas ≥ 4 pisos o de muros ≥ 7 pisos construidos entre 1967-1982. </p> \
@@ -514,17 +554,22 @@ export class CityPage implements OnInit {
             Implementación de protocolos familiares y comunitarios de preparación y actuación en caso de terremotos. </p> \
             <p>&nbsp;</p> \
             <p>&nbsp;</p> \
-            <h6><strong>Si deseas mayor información sobre riesgo sísmico de Chacao, visita:</strong></h6> \
+            <h6><strong>Si deseas mayor información sobre riesgo sísmico de Chacao, visita:</strong></h6> \
             <a href="https://www.researchgate.net/publication/236147665_Principales_resultados_y_recomendaciones_del_proyecto_de_microzonificacion_sismica_de_Caracas"> \
-            Shmitz et al. (2009). “Resultados y recomendaciones del proyecto de Microzonificación Sísmica de Caracas”. Caracas </a></p> \
+            Shmitz et al. (2009). “Resultados y recomendaciones del proyecto de Microzonificación Sísmica de Caracas”. Caracas. </a></p> \
             <h6><strong>Sobre protocolos de actuación ante riesgo sísmico, visita:</strong></h6> \
             <a href="https://www.youtube.com/watch?v=n_7lfodHSYI"> \
-            Video: Riesgo Sísmico de la ciudad de Mérida </a></p>';
+            Video: Riesgo Sísmico de la ciudad de Mérida </a></p> \
+            <h6><strong>Sobre la importancia de los estudios de microzonificación sísmica en la ciudad, visita:</strong></h6> \
+            <a href="https://www.youtube.com/watch?v=8XivQJ3pr5I&feature=emb_title"> \
+            Video: Uso de la microzonificación sísmica.</a></p>';
         }
       } else if (this.actualCity.name === 'Cumaná') {
         if (this.actualThreatName === 'Sismicidad') {
-          body = `<h6><strong>Microzonificaci&oacute;n s&iacute;smica</strong></h6>
-          <h6>Microzona: <strong>1C</strong></h6>
+          body = `<p> Si bien estos estudios para Cumaná aun no permiten brindar recomendaciones específicas
+          para cada una de las 7 microzonas identificadas, las similitudes con los resultados obtenidos
+          para Caracas permiten sugerir preliminarmente lo siguiente:</p>
+          <h6><strong>Para edificaciones en Microzona 1C:</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Evaluaci&oacute;n sismorresistente de los edificios construidos antes de 1967 y de columnas y vigas &le;
           4 pisos o de muros &le; 7 pisos de construidos entre 1967-1982.</p>
@@ -535,7 +580,7 @@ export class CityPage implements OnInit {
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/four.png" /></p>
           <p>Implementaci&oacute;n de protocolos familiares y comunitarios de preparaci&oacute;n y actuaci&oacute;n en
            caso de terremotos.</p>
-          <h6>Microzona: <strong>2C</strong></h6>
+          <h6><strong>Para edificaciones en Microzona 2C:</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Evaluaci&oacute;n sismorresistente de los edificios construidos antes de 1967 y de columnas y vigas &le;
            8 pisos o de muros &le; 15 pisos de construidos entre 1967-1982.</p>
@@ -545,7 +590,7 @@ export class CityPage implements OnInit {
           <p>Dise&ntilde;o de nuevas edificaciones considerando el espectro de la microzona 2C.</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/four.png" />Implementaci&oacute;n
            de protocolos familiares y comunitarios de preparaci&oacute;n y actuaci&oacute;n en caso de terremotos.</p>
-          <h6>Microzona: <strong>1D</strong></h6>
+          <h6><strong>Para edificaciones en Microzona 1D:</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Evaluaci&oacute;n sismorresistente de los edificios construidos antes de 1967 y de columnas y vigas &le; 4
            pisos o de muros &le; 7 pisos de construidos entre 1967-1982.</p>
@@ -555,7 +600,7 @@ export class CityPage implements OnInit {
           <p>Dise&ntilde;o de nuevas edificaciones considerando el espectro de la microzona 1D.</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/four.png" />Implementaci&oacute;n de
            protocolos familiares y comunitarios de preparaci&oacute;n y actuaci&oacute;n en caso de terremotos.</p>
-          <h6>Microzona: <strong>2D</strong></h6>
+          <h6><strong>Para edificaciones en Microzona 2D:</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Evaluaci&oacute;n sismorresistente de los edificios construidos antes de 1967 y de columnas y vigas &le; 8
            pisos o de muros &le; 15 pisos de construidos entre 1967-1982.</p>
@@ -565,7 +610,7 @@ export class CityPage implements OnInit {
            edificaciones considerando el espectro de la microzona 2D.</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/four.png" />Implementaci&oacute;n de
            protocolos familiares y comunitarios de preparaci&oacute;n y actuaci&oacute;n en caso de terremotos.</p>
-          <h6>Microzona: 3D</h6>
+          <h6><strong>Para edificaciones en Microzona 3D</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Evaluaci&oacute;n sismorresistente de los edificios construidos antes de 1967 y de columnas y vigas &ge; 4
            pisos o de muros &ge; 7 pisos construidos entre 1967-1982.</p>
@@ -578,7 +623,7 @@ export class CityPage implements OnInit {
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/four.png" /></p>
           <p>Implementaci&oacute;n de protocolos familiares y comunitarios de preparaci&oacute;n y actuaci&oacute;n
            en caso de terremoto.</p>
-          <h6>Microzona: 2E</h6>
+          <h6><strong>Para edificaciones en Microzona 2E</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Evaluaci&oacute;n sismorresistente de los edificios construidos antes de 1967 y de columnas y vigas &ge;
            4 pisos o de muros &ge; 7 pisos construidos entre 1967-1982.</p>
@@ -591,7 +636,7 @@ export class CityPage implements OnInit {
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/four.png" /></p>
           <p>Implementaci&oacute;n de protocolos familiares y comunitarios de preparaci&oacute;n y actuaci&oacute;n
            en caso de terremoto.</p>
-          <h6>Microzona: 3E</h6>
+          <h6><strong>Para edificaciones en Microzona 3E</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Evaluaci&oacute;n sismorresistente de los edificios construidos antes de 1967 y de columnas y vigas &ge;
            4 pisos o de muros &ge; 7 pisos construidos entre 1967-1982.</p>
@@ -604,37 +649,42 @@ export class CityPage implements OnInit {
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/four.png" /></p>
           <p>Implementaci&oacute;n de protocolos familiares y comunitarios de preparaci&oacute;n y actuaci&oacute;n
            en caso de terremoto.</p>
-          <h6>Microzona: M0</h6>
+          <h6><strong>Para edificaciones en Microzona M0</strong></h6>
           <p>No aplica.</p> <p>&nbsp;</p>
           <p>&nbsp;</p>
-          <p><strong>Si deseas mayor informaci&oacute;n sobre riesgo s&iacute;smico y la microzonificaci&oacute;n
-           s&iacute;smica de Cuman&aacute; visita</strong></p>
-          <p>Video: <a href="https://www.youtube.com/watch?reload=9&amp;v=rDCr0l47ags">Proyecto de Microzonificaci&oacute;n
-           S&iacute;smica de Cuman&aacute;</a></p>`;
-        } else if (this.actualThreatName === 'Sismicidad') {
-          body = `<h6><strong>Zona de influencia de fallas geol&oacute;gicas</strong></h6>
+          <h6><strong>Recomendaciones para la Zona de influencia de fallas geológicas:</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
-          <p>Por ser una zona susceptible a deformarse, posee algunas limitaciones constructivas. Se sugiere seguir las
-           especificaciones del caso, definidas en la norma COVENIN 1756 (2001) y su actualizaci&oacute;n (L&oacute;pez et
-             al., 2019).</p>
+          <p> Por ser una zona susceptible a deformarse, posee algunas limitaciones
+          constructivas. Se sugiere seguir las especificaciones del caso, definidas en la
+          norma COVENIN 1756 (2001) y su actualización (López et al., 2019).</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/two.png" /></p>
-          <p>En el caso de que el sitio de la construcci&oacute;n o edificaci&oacute;n haya quedado dentro del &aacute;rea
-           cubierta por una microzonificaci&oacute;n s&iacute;smica debidamente aprobada, se cumplir&aacute; con las pautas
-            establecidas en ella al respecto de la cercan&iacute;a de fallas, junto a todas las prescripciones de la
-             actualizaci&oacute;n de la norma COVENIN 1756-01 en L&oacute;pez et al. (2019).</p>
+          <p>En el caso de que el sitio de la construcción o edificación haya quedado dentro
+          del área cubierta por una microzonificación sísmica debidamente aprobada, se
+          cumplirá con las pautas establecidas en ella al respecto de la cercanía de fallas,
+          junto a todas las prescripciones de la actualización de la norma COVENIN 1756-
+          01 en López et al., (2019). </p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/three.png" /></p>
-          <p>Debe evitarse en la medida de lo posible realizar nuevas edificaciones en estas &aacute;reas. Como &uacute;ltima
-           instancia deben realizarse bajo el dise&ntilde;o y c&aacute;lculo definidas en L&oacute;pez et al., (2019).</p>
+          <p> Debe evitarse en la medida de lo posible realizar nuevas edificaciones en estas
+          áreas. Como última instancia deben realizarse bajo el diseño y cálculo definidas
+          en López et al., (2019).</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/four.png" /></p>
-          <p>&nbsp;Para las edificaciones existentes en estas zonas, se sugiere la evaluaci&oacute;n por parte de un
-           profesional especialista, para determinar si debe o no realizar modificaciones o adecuaciones a las mismas,
-            en cualquiera de los casos, debe seguir las directrices de L&oacute;pez et al. (2019).</p>
+          <p> Para las edificaciones existentes en estas zonas, se sugiere la evaluación por
+          parte de un profesional especialista, para determinar si debe o no realizar
+          modificaciones o adecuaciones a las mismas, en cualquiera de los casos, debe
+          seguir las directrices de López et al., (2019).</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/five.png" /></p>
-          <p>Se recomienda que se implementen protocolos familiares y comunitarios de preparaci&oacute;n y actuaci&oacute;n
-           en caso de terremotos.&nbsp;</p>`;
+          <p>Se recomienda que se implementen protocolos familiares y comunitarios de
+          preparación y actuación en caso de terremotos.</p>
+          <p><strong>Si deseas mayor informaci&oacute;n sobre riesgo s&iacute;smico y la microzonificaci&oacute;n
+           s&iacute;smica de Cuman&aacute;, visita:</strong></p>
+          <p>Video: <a href="https://www.youtube.com/watch?reload=9&amp;v=rDCr0l47ags">Proyecto de Microzonificaci&oacute;n
+           S&iacute;smica de Cuman&aacute;</a></p>
+           <p><strong>Sobre la importancia de los estudios de microzonificación sísmica en la ciudad, visita:</strong></p>
+           <p>Video: <a href="https://www.youtube.com/watch?v=8XivQJ3pr5I&feature=emb_title">Uso de la microzonificación sísmica</a></p>`;
         } else if (this.actualThreatName === 'Tsunami') {
-          body = `<h6><strong>Amenaza por tsunami</strong></h6>
-          <h6>Altura de la ola: 3 m</h6>
+          body = `<p><strong> A continuación las recomendaciones sugeridas en caso de estar localizado en cada una de las
+          zonas de amenaza por Tsunami, identificadas en la ciudad de Cumaná:</strong></p>
+          <h6><strong>Ubicaciones con altura de la ola de 3 metros (m):</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Posterior a la ocurrencia de un sismo de gran magnitud, se sugiere buscar una zona elevada superior a los 4
            metros de altura para su resguardo, mientras la alerta de tsunami baja.</p>
@@ -643,8 +693,8 @@ export class CityPage implements OnInit {
            en caso de tsunamis.</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/three.png" /></p>
           <p>Participar en los simulacros propiciados por las autoridades gubernamentales o de programas internacionales como
-           el Caribe Wave.&nbsp;</p>
-          <h6>Altura de la ola: 2,5 m</h6>
+           el Caribbean Wave.&nbsp;</p>
+          <h6><strong>Ubicaciones con altura de la ola de 2,5 metros (m):</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Posterior a la ocurrencia de un sismo de gran magnitud, se sugiere buscar una zona elevada superior a los 4 metros
            de altura para su resguardo, mientras la alerta de tsunami baja.</p>
@@ -653,8 +703,8 @@ export class CityPage implements OnInit {
            en caso de tsunamis.</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/three.png" /></p>
           <p>Participar en los simulacros propiciados por las autoridades gubernamentales o de programas internacionales como
-           el Caribe Wave.</p>
-          <h6>Altura de la ola: 2 m</h6>
+           el Caribbean Wave.</p>
+          <h6><strong>Ubicaciones con altura de la ola de 2 metros (m):</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Posterior a la ocurrencia de un sismo de gran magnitud, se sugiere buscar una zona elevada superior a los 3 metros
            de altura para su resguardo, mientras la alerta de tsunami baja.</p>
@@ -663,8 +713,8 @@ export class CityPage implements OnInit {
            caso de tsunamis.</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/three.png" /></p>
           <p>Participar en los simulacros propiciados por las autoridades gubernamentales o de programas internacionales como
-           el Caribe Wave.&nbsp;</p>
-          <h6>Altura de la ola: 1,5 m</h6>
+           el Caribbean Wave.&nbsp;</p>
+          <h6><strong>Ubicaciones con altura de la ola de 1,5 metros (m):</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Posterior a la ocurrencia de un sismo de gran magnitud, se sugiere buscar una zona elevada superior a 2,5 metros
            de altura para su resguardo, mientras la alerta de tsunami baja.</p>
@@ -673,8 +723,8 @@ export class CityPage implements OnInit {
            caso de tsunamis.</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/three.png" /></p>
           <p>Participar en los simulacros propiciados por las autoridades gubernamentales o de programas internacionales como
-           el Caribe Wave.&nbsp;</p>
-          <h6>Altura de la ola: 1 m</h6>
+           el Caribbean Wave.&nbsp;</p>
+          <h6><strong>Ubicaciones con altura de la ola de 1 metro (m):</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Posterior a la ocurrencia de un sismo de gran magnitud, se sugiere buscar una zona elevada superior a 2 metros de
            altura para su resguardo, mientras la alerta de tsunami baja.</p>
@@ -683,27 +733,29 @@ export class CityPage implements OnInit {
            caso de tsunamis.</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/three.png" /></p>
           <p>Participar en los simulacros propiciados por las autoridades gubernamentales o de programas internacionales como
-           el Caribe Wave.&nbsp;</p>
-          <h6>Altura de la ola: 0,5 m</h6>
+           el Caribbean Wave.&nbsp;</p>
+          <h6><strong>Ubicaciones con altura de la ola de 0,5 metros (m):</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Se recomienda que se implementen protocolos familiares y comunitarios de preparaci&oacute;n y actuaci&oacute;n
            en caso de tsunamis.</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/two.png" /></p>
           <p>Participar en los simulacros propiciados por las autoridades gubernamentales o de programas internacionales como
-           el Caribe Wave.&nbsp;</p>
+           el Caribbean Wave.&nbsp;</p>
            <p>&nbsp;</p>
           <p>&nbsp;</p>
-          <h6>Si deseas mayor informaci&oacute;n sobre tsunamis de Cuman&aacute;, visita:</h6>
+          <h6><strong>Si deseas mayor informaci&oacute;n sobre tsunamis en Cuman&aacute;, visita:</strong></h6>
           <p><a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Cumana/52a_Guevara.pdf">
           Guevara, M. (2014). Simulaci&oacute;n num&eacute;rica del tsunami asociado al terremoto del 17 de enero de
            1929 en la ciudad de Cuman&aacute;, una contribuci&oacute;n a los estudios de riesgo en las costas venezolanas.
             Tesis de grado. Maestr&iacute;a en Geof&iacute;sica. Facultad de Ingenier&iacute;a, Universidad
-             Central de Venezuela.&nbsp; </a><strong><u>)</u></strong></p>
-          <p><strong><u>&nbsp;</u></strong></p>
-          <h6>Sobre ejercicios de preparaci&oacute;n para tsunami, visita:</h6>
+             Central de Venezuela.&nbsp; </a></p>
+
+          <h6><strong>Sobre ejercicios de preparaci&oacute;n para tsunami, visita:</strong></h6>
           <p><a href="https://www.tsunamizone.org/espanol/caribewave/">The Tsunami Zone</a></p>`;
         } else if (this.actualThreatName === 'Inundaciones') {
-          body = `<h6><strong>Amenaza por Inundaciones fluviales</strong></h6>
+          body = `<p><strong> A continuación se presentan algunas recomendaciones para espacios localizados dentro de las
+          áreas potenciales de inundación fluvial y pluvial, en la ciudad de Cumaná:</strong></p>
+          <p><strong>Inundaciones fluviales:</strong></p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Se recomienda a quienes ocupan esos espacios a realizar seguimiento a los servicios de pron&oacute;stico
            meteorol&oacute;gico disponibles.</p>
@@ -719,7 +771,7 @@ export class CityPage implements OnInit {
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/five.png" /></p>
           <p>Vigilar y promover la conservaci&oacute;n de las capas de vegetaci&oacute;n aguas arriba.</p>
           <p>&nbsp;</p>
-          <h6>Amenaza por Inundaciones pluviales</h6>
+          <h6><strong>Inundaciones pluviales:</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Se recomienda a quienes ocupan esos espacios a realizar seguimiento a los servicios de pron&oacute;stico
            meteorol&oacute;gico disponibles.</p>
@@ -734,15 +786,16 @@ export class CityPage implements OnInit {
            de efectos de posibles inundaciones.</p>
           <p>&nbsp;</p><p>&nbsp;</p>
           <p>&nbsp;</p>
-          <h6>Si deseas mayor informaci&oacute;n sobre inundaciones pluviales y fluviales de Cuman&aacute;, visita:</h6>
+          <h6><strong>Si deseas mayor informaci&oacute;n sobre inundaciones pluviales y fluviales de Cuman&aacute;, visita:</strong></h6>
           <p><a href="https://issuu.com/ciudadesemergentesysostenibles/docs/cumana_sostenible_lr_compressed">Banco Interamericano
            de Desarrollo y IDOM/IH Cantabria. (2015). CUMAN&Aacute;: Estudio de riesgo y vulnerabilidad ante desastres naturales
             en el contexto de cambio clim&aacute;tico</a>&nbsp;</p>
-          <p><strong><u>&nbsp;</u></strong></p>
-          <h6>Sobre protocolos de actuaci&oacute;n ante inundaciones, visita:</h6>
+          <p>&nbsp;</p>
+          <h6><strong>Sobre protocolos de actuaci&oacute;n ante inundaciones, visita:</strong></h6>
           <p><a href="https://www.youtube.com/watch?v=mFFRzIuD2Nw">Video: &iquest;Qu&eacute; hacer en caso de inundaci&oacute;n? </a></p>`;
         } else if (this.actualThreatName === 'Mov. en masa') {
-          body = `<h6><strong>Amenaza por Movimientos en masa</strong></h6>
+          body = `<p><strong>A continuación se indican recomendaciones sugeridas para zonas susceptibles a movimientos
+          en masa, identificadas para la ciudad de Cumaná:</strong></p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Para el uso y la ocupaci&oacute;n adecuada de estos espacios, se recomienda realizar estudios t&eacute;cnicos
            m&aacute;s espec&iacute;ficos (geol&oacute;gicos, geomorfol&oacute;gicos, geot&eacute;cnicos, etc).</p>
@@ -750,13 +803,15 @@ export class CityPage implements OnInit {
           <p>Promover y practicar permanentemente protocolos comunitarios y familiares de actuaci&oacute;n en caso de
            deslizamientos. Es importante identificar las zonas seguras de su comunidad.</p><p>&nbsp;</p>
            <p>&nbsp;</p>
-          <h6>Si deseas mayor informaci&oacute;n sobre protocolos de actuaci&oacute;n ante movimientos en masa, visita:</h6>
+          <h6><strong>Si deseas mayor informaci&oacute;n sobre protocolos de actuaci&oacute;n ante movimientos en masa,
+          visita:</strong></h6>
           <p><a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Merida/Landslide_SPN.pdf">
           Recomendaciones de la Cruz Roja Americana ante deslizamientos</a></p>`;
         }
       } else if (this.actualCity.name === 'Mérida') {
-        if (this.actualThreatName === 'Inundaciones') {
-          body = `<h6><strong>Amenaza por Inundaciones</strong></h6>
+        if (this.actualThreatName === 'Aludes') {
+          body = `<p><strong> A continuación se presentan algunas recomendaciones para espacios localizados dentro de las
+          zonas de amenazas por Aludes torrenciales, en la ciudad de Mérida:</strong></p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Se recomienda a quienes ocupan esos espacios, realizar seguimiento a los servicios de pronóstico meteorológico disponibles.</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/two.png" /></p>
@@ -766,15 +821,16 @@ export class CityPage implements OnInit {
           <p>Conviene que se mantengan protocolos familiares y comunitarios de preparación y actuación en caso de darse estos eventos.</p>
           <p>&nbsp;</p>
           <p>&nbsp;</p>
-          <h6>Si deseas mayor informaci&oacute;n sobre inundaciones locales  , visita:</h6>
+          <h6><strong>Si deseas mayor informaci&oacute;n sobre aludes torrenciales locales, visita:</strong></h6>
           <p><a href="https://www.academia.edu/42028784/Merida_ciudad_segura">
-          Ferrer C., Linayo A. (2009). Mérida: Ciudad Segura. Mérida, Venezuela. Talleres Gráficos Universitarios</a>&nbsp;</p>
-          <p><strong><u>&nbsp;</u></strong></p>
-          <h6>Sobre protocolos de actuaci&oacute;n ante inundaciones, visita:</h6>
+          Ferrer C., Liñayo A. (2009). Mérida: Ciudad Segura. Mérida, Venezuela. Talleres Gráficos Universitarios</a>&nbsp;</p>
+          <p>&nbsp;</p>
+          <h6><strong>Sobre protocolos de actuaci&oacute;n ante inundaciones, visita:</strong></h6>
           <p><a href="https://www.youtube.com/watch?v=mFFRzIuD2Nw">Video: &iquest;Qu&eacute; hacer en caso de inundaci&oacute;n? </a></p>`;
         } else if (this.actualThreatName === 'Mov. en masa') {
-          body = `<h6><strong>Amenaza por Movimientos en masa</strong></h6>
-          <h6>Nivel de amenaza: <strong>MUY ALTA</strong></h6>
+          body = `<p><strong>A continuación se identifican recomendaciones sugeridas para zonas susceptibles a
+          movimientos en masa, para la ciudad de Mérida:</strong></p>
+          <h6><strong>Para lugares en áreas de amenaza MUY ALTA:</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Se recomienda realizar monitoreo constante en periodos lluviosos o eventos de fuertes precipitaciones, as&iacute;
            como vigilar el uso de la tierra, la adecuada gesti&oacute;n de aguas servidas y la conservaci&oacute;n de las capas
@@ -784,7 +840,7 @@ export class CityPage implements OnInit {
            desplazamientos, grietas o fisuras en paredes, columnas, etc.</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/three.png" /></p>
           <p>Promover y practicar permanentemente protocolos comunitarios y familiares de actuaci&oacute;n en caso de deslizamientos.</p>
-          <h6>Nivel de amenaza: <strong>ALTA</strong></h6>
+          <h6><strong>Para lugares en áreas de amenaza ALTA:</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Se recomienda realizar monitoreo en periodos lluviosos o eventos de fuertes precipitaciones, as&iacute; como vigilar
            el uso de la tierra, la adecuada gesti&oacute;n de aguas servidas y la conservaci&oacute;n de las capas de vegetaci&oacute;n.</p>
@@ -793,33 +849,36 @@ export class CityPage implements OnInit {
            grietas o fisuras en paredes, columnas, etc.</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/three.png" /></p>
           <p>Promover y practicar permanentemente protocolos comunitarios y familiares de actuaci&oacute;n en caso de deslizamientos.</p>
-          <h6>Nivel de amenaza: <strong>MODERADA</strong></h6>
+          <h6><strong>Para lugares en áreas de amenaza MODERADA:</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Se reconocen como zonas intermedias entre &aacute;reas de alta y muy alta, y de baja susceptibilidad, y en tal sentido
            sus habitantes deben conocer su ubicaci&oacute;n en relaci&oacute;n a zonas seguras e inseguras.</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/two.png" /></p>
           <p>Por su condici&oacute;n de incertidumbre ante la ocurrencia de eventos que superan los escenarios normales, se debe
            promover el conocimiento de protocolos preparaci&oacute;n y respuesta comunitaria y sistemas de alerta temprana.</p>
-          <h6>Nivel de amenaza: <strong>BAJA</strong></h6>
+          <h6><strong>Para lugares en áreas de amenaza BAJA:</strong></h6>
           <p>Se corresponden con posiciones geomorfol&oacute;gicas altas, sobresalientes y retiradas de las zonas de alta
            susceptibilidad, que no representan zonas de peligro ante movimientos de masa de grandes magnitudes.</p>
-          <h6>Nivel de amenaza: <strong>MUY BAJA</strong></h6>
+          <h6><strong>Para lugares en áreas de amenaza MUY BAJA:</strong></h6>
           <p>Por considerar que estos espacios no est&aacute;n comprometidos ante la ocurrencia de eventos hidrogeomorfol&oacute;gicos,
            se reconoce que son los m&aacute;s estables, seguros y apropiados para el desarrollo y consolidaci&oacute;n.</p>
            <p>&nbsp;</p>
            <p>&nbsp;</p>
-          <h6>Si deseas mayor informaci&oacute;n sobre movimientos en masa locales, visita:</h6>
+          <h6><strong>Si deseas mayor informaci&oacute;n sobre movimientos en masa locales, visita:</strong></h6>
           <p><a href="https://www.academia.edu/42028784/Merida_ciudad_segura">
-          Ferrer C., Linayo A. (2009). M&eacute;rida: Ciudad Segura. M&eacute;rida, Venezuela. Talleres Gr&aacute;ficos
+          Ferrer C., Liñayo A. (2009). M&eacute;rida: Ciudad Segura. M&eacute;rida, Venezuela. Talleres Gr&aacute;ficos
           Universitarios</a></p>
-          <h6>Sobre protocolos de actuaci&oacute;n ante movimientos en masa, visita:</h6>
+          <h6><strong>Sobre protocolos de actuaci&oacute;n ante movimientos en masa, visita:</strong></h6>
           <p><a href="https://www.youtube.com/watch?v=2kTluSZeML8&amp;feature=youtu.be">Video: Prevenci&oacute;n y
            mitigaci&oacute;n. Deslizamientos y derrumbes. Colecci&oacute;n Defensa Civil Venezuela </a></p>
           <p><a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Merida/Landslide_SPN.pdf">
           Recomendaciones de la Cruz Roja Americana ante deslizamientos</a></p>`;
         } else if (this.actualThreatName === 'Sismicidad') {
-          body = `<h6><strong>Microzonificaci&oacute;n s&iacute;smica</strong></h6>
-          <h6>Microzona: <strong>3-1</strong></h6>
+          body = `<p><strong>Si bien no existen aún recomendaciones específicas para las dos microzonas sísmicas
+          identificadas hasta ahora en Mérida, las similitudes de sus parámetros con los resultados
+          obtenidos en áreas similares de la microzonificación de Caracas permiten sugerir
+          preliminarmente lo siguiente:</strong></p>
+          <h6><strong>Para edificaciones en Microzona 3-1:</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Evaluaci&oacute;n sismorresistente de los edificios construidos antes de 1967.</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/two.png" /></p>
@@ -830,7 +889,7 @@ export class CityPage implements OnInit {
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/four.png" /></p>
           <p>Implementaci&oacute;n de protocolos familiares y comunitarios de preparaci&oacute;n y actuaci&oacute;n
           en caso de terremotos.</p>
-          <h6>Microzona: <strong>4-1</strong></h6>
+          <h6><strong>Para edificaciones en Microzona 4-1:</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Evaluaci&oacute;n sismorresistente de los edificios construidos antes de 1967.</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/two.png" /></p>
@@ -841,7 +900,7 @@ export class CityPage implements OnInit {
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/four.png" />Implementaci&oacute;n de
           protocolos familiares y comunitarios de preparaci&oacute;n y actuaci&oacute;n en caso de terremotos.</p>
           <p>&nbsp;</p>
-          <h6>Zona de influencia de fallas geol&oacute;gicas</h6>
+          <h6><strong>Recomendaciones para la Zona de influencia de fallas geol&oacute;gicas:</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Por ser una zona susceptible a deformarse, posee algunas limitaciones constructivas. El dise&ntilde;o y
           c&aacute;lculo de edificaciones nuevas debe seguir las especificaciones del caso, definidas en la norma COVENIN 1756
@@ -861,7 +920,9 @@ export class CityPage implements OnInit {
           <p><strong>Sobre protocolos de actuaci&oacute;n ante riesgo s&iacute;smico, visita:</strong></p>
           <p><a href="https://www.youtube.com/watch?v=n_7lfodHSYI">Video: Riesgo S&iacute;smico de la ciudad de M&eacute;rida</a></p>
           <p><a href="https://www.youtube.com/watch?v=4j7vsBCRvmE">Video: &iquest;Qu&eacute; debo hacer en caso de sismo?:
-          antes, durante y despu&eacute;s </a></p>`;
+          antes, durante y despu&eacute;s </a></p>
+          <h6><strong>Sobre la importancia de los estudios de microzonificación sísmica en la ciudad, visita:</strong></h6>
+          <p><a href="https://www.youtube.com/watch?v=8XivQJ3pr5I&feature=emb_title">Video: Uso de la microzonificación sísmica</a></p>`;
         }
       }
       this.showInfo(title, '<hr />' + body);
@@ -881,9 +942,9 @@ export class CityPage implements OnInit {
             <li><strong>A quien consultar en su localidad:</strong></li>
             </ul>
             <ol>
-            <li><a title="Instituto de Mec&aacute;nica de Fluidos IMF-UCV"
+            <li><a title="Instituto de Mec&aacute;nica de Fluidos de la Universidad Central de Venezuela (IMF-UCV)."
             href="http://www.ucv.ve/organizacion/facultades/facultad-de-ingenieria/institutos/instituto-de-mecanica-de-fluido-imf.html">
-            Instituto de Mec&aacute;nica de Fluidos IMF-UCV</a></li>
+            Instituto de Mec&aacute;nica de Fluidos de la Universidad Central de Venezuela (IMF-UCV)</a></li>
             <li>Protecci&oacute;n Civil del Municipio Chacao</li>
             </ol>
             <ul>
@@ -895,7 +956,7 @@ export class CityPage implements OnInit {
             href="http://www.ucv.ve/organizacion/facultades/facultad-de-ingenieria/institutos/instituto-de-mecanica-de-fluido-imf.html">
              Instituto de Mec&aacute;nica de Fluidos de la Universidad Central de Venezuela (IMF-UCV)</a> &nbsp;</p>
             <ul>
-            <li><strong>Autores consultados:</strong></li>
+            <li><strong>Referencias adicionales:</strong></li>
             </ul>
             <p style="padding-left: 30px;"><a title="CIGIR (2009). &ldquo;Material de socializaci&oacute;n sobre amenazas asociadas a
               cuencas del municipio Chacao&rdquo;; adaptado de L&oacute;pez JL. IMF-UCV (2004). Convenio CIGIR-IPCA.&nbsp;"
@@ -907,19 +968,19 @@ export class CityPage implements OnInit {
           <li><strong>A quien consultar en su localidad:</strong></li>
           </ul>
           <ol>
-          <li><a title="Instituto de Mec&aacute;nica de Fluidos IMF-UCV"
+          <li><a title="Instituto de Mec&aacute;nica de Fluidos de la Universidad Central de Venezuela (IMF-UCV)."
           href="http://www.ucv.ve/organizacion/facultades/facultad-de-ingenieria/institutos/instituto-de-mecanica-de-fluido-imf.html">
-          Instituto de Mec&aacute;nica de Fluidos IMF-UCV</a></li>
-          <li>Protecci&oacute;n Civil del Municipio Chacao</li>
+          Instituto de Mec&aacute;nica de Fluidos de la Universidad Central de Venezuela (IMF-UCV)</a></li>
+          <li>Protecci&oacute;n Civil del Municipio Chacao.</li>
           </ol>
           <ul>
           <li><strong>Para dudas, comentarios y/o sugerencias sobre la informaci&oacute;n de amenaza por inundaci&oacute;n:</strong></li>
           </ul>
           <p style="padding-left: 30px;"><a title="Instituto de Mec&aacute;nica de Fluidos de la Universidad Central de Venezuela (IMF-UCV)"
           href="http://www.ucv.ve/organizacion/facultades/facultad-de-ingenieria/institutos/instituto-de-mecanica-de-fluido-imf.html">
-          Instituto de Mec&aacute;nica de Fluidos de la Universidad Central de Venezuela (IMF-UCV)</a></p>
+          Instituto de Mec&aacute;nica de Fluidos de la Universidad Central de Venezuela (IMF-UCV).</a></p>
           <ul>
-          <li><strong>Autores consultados:</strong></li>
+          <li><strong>Referencias adicionales:</strong></li>
           </ul>
           <p style="padding-left: 30px;">Fundaci&oacute;n Venezolana de Investigaciones Sismol&oacute;gicas (FUNVISIS). (2014).
           Microzonificaci&oacute;n s&iacute;smica de Caracas. Editores: Michael Schmitz y Andre Singer. Ministerio del Poder Popular
@@ -931,29 +992,34 @@ export class CityPage implements OnInit {
             Sismorresistentes, COVENIN 1756. Subcomit&eacute; T&eacute;cnico de Normalizaci&oacute;n de Sismorresistencia.
              Fundaci&oacute;n Centro Nacional de Investigaci&oacute;n y Certificaci&oacute;n en Vivienda, H&aacute;bitat y
               Desarrollo Urbano (CENVIH), Fundaci&oacute;n Venezolana de Investigaciones Sismol&oacute;gicas (FUNVISIS),
-               Instituto de Materiales y Modelos Estructurales (IMME - UCV).</a></p>`;
+               Instituto de Materiales y Modelos Estructurales (IMME - UCV).</a></p>
+            <p style="padding-left: 30px;">Singer, A., Zambrano, A., Oropeza, J., Tagliaferro, M. (2007). Mapa geológico del Cuaternario y
+             de las fallas cuaternarias del valle de Caracas. Escala 1:25.000. Proyecto de Microzonificación Sísmica de Caracas.
+              Fundación Venezolana de Investigaciones Sismológicas (FUNVISIS)</p>`;
         } else if (this.actualThreatName === 'Sismicidad') {
           body = `<ul>
           <li><strong>A quien consultar en su localidad:</strong></li>
           </ul>
           <ol>
-          <li><a title="Instituto de Materiales y Modelos Estructurales de la UCV" href="http://www.ing.ucv.ve/imme/">
-          Instituto de Materiales y Modelos Estructurales de la UCV</a>.</li>
+          <li><a title="Instituto de Materiales y Modelos Estructurales de la Universidad Central de
+          Venezuela" href="http://www.ing.ucv.ve/imme/">
+          Instituto de Materiales y Modelos Estructurales de la Universidad Central de
+          Venezuela.</a>.</li>
           <li><a title="Fundaci&oacute;n Venezolana de Investigaciones Sismol&oacute;gicas" href="http://www.funvisis.gob.ve/index.php">
-          Fundaci&oacute;n Venezolana de Investigaciones Sismol&oacute;gicas</a>.</li>
+          Fundaci&oacute;n Venezolana de Investigaciones Sismol&oacute;gicas (FUNVISIS). </a></li>
           </ol>
           <ul>
           <li><strong>Para dudas, comentarios y/o sugerencias sobre la informaci&oacute;n de amenaza por sismicidad:</strong></li>
           </ul>
-          <p style="padding-left: 30px;"><a title="Instituto de Materiales y Modelos Estructurales de la UCV"
+          <p style="padding-left: 30px;"><a title="Instituto de Materiales y Modelos Estructurales de la Universidad Central de Venezuela."
           href="http://www.ing.ucv.ve/imme/">Instituto de Materiales y Modelos Estructurales de la UCV</a>.</p>
           <ul>
-          <li><strong>Autores consultados:</strong></li>
+          <li><strong>Referencias adicionales:</strong></li>
           </ul>
           <p style="padding-left: 30px;">
-           <a href="https://www.researchgate.net/publication/236147665_Principales_resultados_y_recomendaciones_del_proyecto_de_microzonificacion_sismica_de_Caracas"><strong>
+           <a href="https://www.researchgate.net/publication/236147665_Principales_resultados_y_recomendaciones_del_proyecto_de_microzonificacion_sismica_de_Caracas">
            Shmitz et all. (2009). &ldquo;Resultados y recomendaciones del proyecto de
-           Microzonificaci&oacute;n S&iacute;smica de Caracas&rdquo;. Caracas. </strong></a></p>`;
+           Microzonificaci&oacute;n S&iacute;smica de Caracas&rdquo;. Caracas.</a></p>`;
         }
       } else if (this.actualCity.name === 'Cumaná') {
         if (this.actualThreatName === 'Inundaciones') {
@@ -969,7 +1035,7 @@ export class CityPage implements OnInit {
           </ul>
           <p style="padding-left: 30px;">Banco Interamericano de Desarrollo e IDOM/IH Cantabria. (2015).</p>
           <ul>
-          <li><strong>Autores consultados:</strong></li>
+          <li><strong>Referencias adicionales:</strong></li>
           </ul>
           <p style="padding-left: 30px;">Banco Interamericano de Desarrollo e IDOM/IH Cantabria. (2015). Estudio 2: Estudio de riesgo y vulnerabilidad ante desastres naturales en el contexto de cambio clim&aacute;tico.</p>`;
         } else if (this.actualThreatName === 'Mov. en masa') {
@@ -986,7 +1052,7 @@ export class CityPage implements OnInit {
           </ul>
           <p style="padding-left: 30px;"><a href="https://cigir.org.ve/inicio/">Centro de Investigaci&oacute;n en Gesti&oacute;n Integral del Riesgo (CIGIR), 2019. Ing. Jenny Moreno</a></p>
           <ul>
-          <li><strong>Autores consultados:</strong></li>
+          <li><strong>Referencias adicionales:</strong></li>
           </ul>
           <p style="padding-left: 30px;">Centro de Investigaci&oacute;n en Gesti&oacute;n Integral del Riesgo (CIGIR), 2019.</p>`;
         } else if (this.actualThreatName === 'Tsunami') {
@@ -995,16 +1061,25 @@ export class CityPage implements OnInit {
           </ul>
           <ol>
           <li>Centro de Sismolog&iacute;a &ldquo;Luis Daniel Beauperthuy Urich&rdquo; de la Universidad de Oriente (UDO).</li>
-          <li>Instituto de Oceanograf&iacute;a (UDO).</li>
+          <li>Instituto de Oceanograf&iacute;a de La Universidad de Oriente.</li>
+          <li>Protección Civil del Estado Sucre</li>
           </ol>
           <ul>
           <li><strong>Para dudas, comentarios y/o sugerencias sobre la informaci&oacute;n de amenaza por tsunami:</strong></li>
           </ul>
-          <p style="padding-left: 30px;">Orihuela Nuris (PhD) y Guevara Mireya (MSc). Escuela Geof&iacute;sica. Facultad de Ingenier&iacute;a, Universidad Central de Venezuela.</p>
+          <p style="padding-left: 30px;">Orihuela Nuris (PhD) y Guevara Mireya (MSc). Escuela Geof&iacute;sica.
+          Facultad de Ingenier&iacute;a, Universidad Central de Venezuela.</p>
           <ul>
-          <li><strong>Autores consultados:</strong></li>
+          <li><strong>Referencias adicionales:</strong></li>
           </ul>
-          <p style="padding-left: 30px;">Orihuela Nuris PhD y Guevara Mireya MSc. Escuela Geof&iacute;sica. Facultad de Ingenier&iacute;a, Universidad Central de Venezuela.</p>`;
+        <p style="padding-left: 30px;"> <a href="https://vps.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Cumana/52a_Guevara.pdf">
+        Guevara, M. (2014). Simulación numérica del tsunami asociado al terremoto del 17 de enero de 1929
+         en la ciudad de Cumaná, una contribución a los estudios de riesgo en las costas venezolanas. Tesis de grado.
+         Maestría en Geofísica.</a></p>
+          <p style="padding-left: 30px;>
+            Facultad de Ingeniería, Universidad Central de Venezuela.</p>
+        <p style="padding-left: 30px;>Orihuela Nuris (PhD) y Guevara Mireya (MSc). Escuela Geofísica. Facultad de Ingeniería,
+        Universidad Central de Venezuela.</p>`;
         } else if (this.actualThreatName === 'Sismicidad') {
           body = `<ul>
           <li><strong>A quien consultar en su localidad:</strong></li>
@@ -1012,41 +1087,47 @@ export class CityPage implements OnInit {
           <ol>
           <li>Centro de Sismolog&iacute;a &ldquo;Luis Daniel Beauperthuy Urich&rdquo; de la Universidad de Oriente (UDO).</li>
           <li>Direcci&oacute;n de Protecci&oacute;n Civil y Administraci&oacute;n de Desastres, del estado Sucre.&nbsp;</li>
+          <li>Protección Civil del Estado Sucre.</li>
           </ol>
           <ul>
           <li><strong>Para dudas, comentarios y/o sugerencias sobre las recomendaciones para la amenaza por sismicidad:</strong></li>
           </ul>
           <ol>
           <li>Centro de Sismolog&iacute;a &ldquo;Luis Daniel Beauperthuy Urich&rdquo; de la Universidad de Oriente (UDO).</li>
-          <li><a href="http://www.ing.ucv.ve/imme/">Instituto de Materiales y Modelos Estructurales de la UCV.</a></li>
+          <li><a href="http://www.ing.ucv.ve/imme/">Instituto de Materiales y Modelos Estructurales de la Universidad
+          Central de Venezuela.</a></li>
           </ol>
           <ul>
-          <li><strong>Autores consultados:</strong></li>
+          <li><strong>Referencias adicionales:</strong></li>
           </ul>
-          <p style="padding-left: 30px;">Viete H. (2012). Evaluaci&oacute;n geol&oacute;gica con fines de Microzonificaci&oacute;n S&iacute;smica de la regi&oacute;n de Cuman&aacute;, edo. Sucre. Informe T&eacute;cnico. CEDI-FUNVISIS. Caracas.</p>`;
+          <p style="padding-left: 30px;">Viete H. (2012). Evaluaci&oacute;n geol&oacute;gica con fines de
+           Microzonificaci&oacute;n S&iacute;smica de la regi&oacute;n de Cuman&aacute;, edo. Sucre. Informe
+            T&eacute;cnico. CEDI-FUNVISIS. Caracas.</p>`;
         }
       } else if (this.actualCity.name === 'Mérida') {
-        if (this.actualThreatName === 'Inundaciones') {
+        if (this.actualThreatName === 'Aludes') {
           body = `<ul>
           <li><strong>A quien consultar en su localidad:</strong></li>
           </ul>
           <ol>
-          <li>Centro de Sismolog&iacute;a &ldquo;Luis Daniel Beauperthuy Urich&rdquo; de la Universidad de Oriente (UDO).</li>
-          <li>Direcci&oacute;n de Protecci&oacute;n Civil y Administraci&oacute;n de Desastres de Sucre.</li>
           <li><a href="http://www.fundapris.org.ve/">Fundaci&oacute;n para Prevenci&oacute;n del Riesgo S&iacute;smico</a></li>
+          <li>Protección Civil del estado Mérida.</li>
+          <li>Alcaldía del municipio Libertador, del estado Mérida.</li>
           </ol>
           <p>&nbsp;</p>
           <ul>
-          <li><strong>Para dudas, comentarios y/o sugerencias sobre la informaci&oacute;n de amenaza por inundaciones:</strong></li>
+          <li><strong>Para dudas, comentarios y/o sugerencias sobre la informaci&oacute;n de amenaza por aludes torrenciales:</strong></li>
           </ul>
           <p style="padding-left: 30px;">Sub-Comisi&oacute;n de Caracterizaci&oacute;n de Riesgos Socionaturales de la
            Fundaci&oacute;n para la Prevenci&oacute;n del Riesgo S&iacute;smico (<a href="http://www.fundapris.org.ve/">
            FUNDAPRIS</a>)&nbsp;</p>
           <p>&nbsp;</p>
           <ul>
-          <li><strong>Autores consultados:</strong></li>
+          <li><strong>Referencias adicionales:</strong></li>
           </ul>
-          <p style="padding-left: 30px;"><a href="https://www.academia.edu/42028784/Merida_ciudad_segura">Ferrer C., Linayo A. (2009). M&eacute;rida: Ciudad Segura. M&eacute;rida, Venezuela. Talleres Gr&aacute;ficos Universitarios</a>.&nbsp;</p>`;
+          <p style="padding-left: 30px;"><a href="https://www.academia.edu/42028784/Merida_ciudad_segura">
+          Ferrer C., Liñayo A. (2009). M&eacute;rida: Ciudad Segura. M&eacute;rida, Venezuela. Talleres
+          Gr&aacute;ficos Universitarios</a>.&nbsp;</p>`;
         } else if (this.actualThreatName === 'Sismicidad') {
           body = `<ul>
           <li><strong>A quien consultar en su localidad:</strong></li>
@@ -1055,7 +1136,7 @@ export class CityPage implements OnInit {
           <li>Sub-Comisi&oacute;n de Caracterizaci&oacute;n de Riesgos Socionaturales de la Fundaci&oacute;n para la
            Prevenci&oacute;n del Riesgo S&iacute;smico (<a href="http://www.fundapris.org.ve/">FUNDAPRIS</a>)</li>
           <li>Departamento Estructuras, Escuela Ingenier&iacute;a Civil de la Universidad de Los Andes (ULA).</li>
-          <li>Laboratorio de Geof&iacute;sica de la ULA.</li>
+          <li>Laboratorio de Geof&iacute;sica de la Universidad de Los Andes (ULA).</li>
           </ol>
           <p>&nbsp;</p>
           <ul>
@@ -1063,16 +1144,16 @@ export class CityPage implements OnInit {
            sismicidad: </strong></li>
           </ul>
           <ol>
-          <li>Laboratorio de Geof&iacute;sica de la Universidad de Los Andes</li>
-          <li>Instituto de Modelos y Materiales de la UCV</li>
+          <li>Laboratorio de Geof&iacute;sica de la Universidad de Los Andes.</li>
+          <li>Instituto de Modelos y Materiales de la Universidad Central de Venezuela.</li>
           </ol>
           <p>&nbsp;</p>
           <ul>
-          <li><strong>Autores consultados</strong></li>
+          <li><strong>Referencias adicionales:</strong></li>
           </ul>
           <p style="padding-left: 30px;">
           <a href="https://www.academia.edu/42028784/Merida_ciudad_segura">
-          Ferrer C., Linayo A. (2009). M&eacute;rida: Ciudad Segura. M&eacute;rida, Venezuela. Talleres Gr&aacute;ficos
+          Ferrer C., Liñayo A. (2009). M&eacute;rida: Ciudad Segura. M&eacute;rida, Venezuela. Talleres Gr&aacute;ficos
           Universitarios</a>.</p>`;
         } else if (this.actualThreatName === 'Mov. en masa') {
           body = `<ul>
@@ -1080,10 +1161,11 @@ export class CityPage implements OnInit {
           </ul>
           <ol>
           <li>Fundaci&oacute;n para la Prevenci&oacute;n del Riesgo S&iacute;smico (<a href="http://www.fundapris.org.ve/">
-          FUNDAPRIS</a>)</li><li><a href="http://www.ula.ve/ciencias-forestales-ambientales/igeo/">Instituto de Geograf&iacute;a
-           de la Universidad de Los Andes</a></li>
+          FUNDAPRIS</a>).</li>
+          <li><a href="http://www.ula.ve/ciencias-forestales-ambientales/igeo/">Instituto de Geograf&iacute;a
+           de la Universidad de Los Andes (ULA).</a></li>
           <li><a href="https://www.facebook.com/ImprademProteccioncivilMerida/">Protecci&oacute;n Civil del Estado M&eacute;rida</a></li>
-          <li>Escuela de Ingenier&iacute;a Geol&oacute;gica ULA.</li>
+          <li>Escuela de Ingenier&iacute;a Geol&oacute;gica, de la Universidad de Los Andes.</li>
           </ol>
           <p>&nbsp;</p>
           <ul>
@@ -1094,11 +1176,11 @@ export class CityPage implements OnInit {
            FUNDAPRIS</a>)&nbsp;</p>
           <p><strong>&nbsp;</strong></p>
           <ul>
-          <li><strong>Autores consultados:</strong></li>
+          <li><strong>Referencias adicionales:</strong></li>
           </ul>
           <p style="padding-left: 30px;">
           <a href="https://www.academia.edu/42028784/Merida_ciudad_segura">
-          Ferrer C., Linayo A. (2009). M&eacute;rida: Ciudad Segura. M&eacute;rida, Venezuela. Talleres Gr&aacute;ficos
+          Ferrer C., Liñayo A. (2009). M&eacute;rida: Ciudad Segura. M&eacute;rida, Venezuela. Talleres Gr&aacute;ficos
            Universitarios.&nbsp;</a></p>`;
         }
       }

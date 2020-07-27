@@ -1,3 +1,5 @@
+/// <reference path="../leaflet.pattern.d.ts"/>
+
 import { Injectable } from '@angular/core';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { EnvService } from './env.service';
@@ -12,8 +14,12 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 
 import * as L from 'leaflet';
-import { Map, tileLayer, marker, icon, GeoJSON, geoJSON, LatLngExpression, TileLayer, Marker } from 'leaflet';
 import 'leaflet.pattern';
+import * as esri from 'esri-leaflet';
+import '../../assets/js/leaflet-polygon.fillPattern';
+
+import { Map, tileLayer, marker, icon, GeoJSON, geoJSON, LatLngExpression, TileLayer, Marker } from 'leaflet';
+
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 
 import { Events } from '@ionic/angular';
@@ -22,7 +28,7 @@ import { City, DBCity, LayerType } from 'src/app/models/mapping';
 import { Button } from 'protractor';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MappingService {
   iconRetinaUrl: string;
@@ -35,7 +41,8 @@ export class MappingService {
   // searchControProvider: GeoSearchControl;
   searchMarker: any;
   map: Map;
-  baseMap: TileLayer;
+  baseMap;
+  baseMapLabels;
   baseMapName: string;
   threadBaseMap: TileLayer;
   nonThreadMaps: LayerType[] = [];
@@ -54,6 +61,8 @@ export class MappingService {
   searchPlaces: any[];
   isSearchMarkerSet: boolean;
 
+  stripes: L.StripePattern;
+
   constructor(
     private authService: AuthService,
     private storage: NativeStorage,
@@ -64,15 +73,20 @@ export class MappingService {
     private http: HttpClient,
     public events: Events
   ) {
-    this.baseMap = tileLayer(
-      'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-      {
-        id: 'mapId',
-        attribution: 'www.usb.ve Licencia GPLv3 y CC',
-        maxZoom: 16
-      }
-    );
-
+    if (this.env.USE_ESRI_BASEMAPS) {
+      this.baseMap = esri.basemapLayer('DarkGray');
+      this.baseMapLabels = esri.basemapLayer('DarkGrayLabels');
+    } else {
+      this.baseMap = tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+        {
+          id: 'mapId',
+          attribution: 'www.usb.ve Licencia GPLv3 y CC',
+          maxZoom: 16,
+        }
+      );
+      this.baseMapLabels = null;
+    }
     this.baseMapName = 'esri-dark';
 
     // Fix Leaflet bug with markers
@@ -87,7 +101,7 @@ export class MappingService {
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],
       tooltipAnchor: [16, -28],
-      shadowSize: [41, 41]
+      shadowSize: [41, 41],
     });
 
     // Define Cities for App
@@ -98,7 +112,7 @@ export class MappingService {
       marker: undefined,
       zoomLevel: 5,
       layers: [],
-      schemaName: ''
+      schemaName: '',
     };
 
     this.searchProvider = new OpenStreetMapProvider();
@@ -106,7 +120,7 @@ export class MappingService {
       provider: this.searchProvider,
       style: 'bar',
       autoComplete: true, // optional: true|false  - default true
-      autoCompleteDelay: 250 // optional: number      - default 250
+      autoCompleteDelay: 250, // optional: number      - default 250
     });
 
     this.searchPlaces = [];
@@ -124,40 +138,39 @@ export class MappingService {
             location: [city.latitud, city.longitud],
             marker: undefined,
             layers: [],
-            zoomLevel: city.zoom
+            zoomLevel: city.zoom,
           });
         });
       },
-      error => {
+      (error) => {
         console.log('error');
       },
       () => {
         // Add Marker of City with GeoInformation
-        this.cities.forEach(city => {
-          city.marker = marker(city.location, { icon: iconVar })
-            .bindPopup(city.name)
-            .openPopup();
+        this.cities.forEach((city) => {
+          city.marker = marker(city.location, { icon: iconVar }).bindPopup(city.name).openPopup();
         });
         this.gotGeoposition = false;
         this.getAllMaps();
         this.events.publish('cities-loaded');
       }
     );
+    this.stripes = new L.StripePattern();
   }
   downloadLocations() {
-    return from(this.storage.getItem('cities')).pipe(catchError(error => this.loadLocations()));
+    return from(this.storage.getItem('cities')).pipe(catchError((error) => this.loadLocations()));
   }
   loadLocations() {
     return this.http
       .get(this.env.API_URL + 'data/getlocations', {
         headers: {
           Authorization: 'Basic ' + this.authService.token,
-          'x-access-token': this.authService.token.token
-        }
+          'x-access-token': this.authService.token.token,
+        },
       })
       .pipe(
-        tap(data => {
-          this.storage.setItem('cities', data).catch(error => {
+        tap((data) => {
+          this.storage.setItem('cities', data).catch((error) => {
             console.log('Error storing Item');
           });
           return data;
@@ -174,8 +187,8 @@ export class MappingService {
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
         tooltipAnchor: [16, -28],
-        shadowSize: [41, 41]
-      })
+        shadowSize: [41, 41],
+      }),
     });
     this.isSearchMarkerSet = true;
   }
@@ -185,13 +198,13 @@ export class MappingService {
       .get(this.env.API_URL + 'data/getlayer', {
         headers: {
           Authorization: 'Basic ' + this.authService.token,
-          'x-access-token': this.authService.token.token
+          'x-access-token': this.authService.token.token,
         },
-        params: parameter
+        params: parameter,
       })
       .pipe(
-        tap(data => {
-          this.storage.setItem(layerName, data).catch(error => {
+        tap((data) => {
+          this.storage.setItem(layerName, data).catch((error) => {
             console.log('Error storing Item');
           });
           return data;
@@ -199,7 +212,7 @@ export class MappingService {
       );
   }
   getLayer(schemaName: string, layerName: string) {
-    return from(this.storage.getItem(layerName)).pipe(catchError(error => this.getGeoJSON(schemaName, layerName)));
+    return from(this.storage.getItem(layerName)).pipe(catchError((error) => this.getGeoJSON(schemaName, layerName)));
   }
   onEachFeature(feature, layer) {
     if (feature.properties) {
@@ -209,7 +222,7 @@ export class MappingService {
   }
   downloadLocationsLayers(cityID) {
     return from(this.storage.getItem('ciyLtayers-id' + String(cityID))).pipe(
-      catchError(error => this.loadLocationsLayers(cityID))
+      catchError((error) => this.loadLocationsLayers(cityID))
     );
   }
   loadLocationsLayers(cityID) {
@@ -219,13 +232,13 @@ export class MappingService {
       .get(this.env.API_URL + 'data/getlocationslayers', {
         headers: {
           Authorization: 'Basic ' + this.authService.token,
-          'x-access-token': this.authService.token.token
+          'x-access-token': this.authService.token.token,
         },
-        params: parameter
+        params: parameter,
       })
       .pipe(
-        tap(data => {
-          this.storage.setItem('ciyLtayers-id' + String(cityID), data).catch(error => {
+        tap((data) => {
+          this.storage.setItem('ciyLtayers-id' + String(cityID), data).catch((error) => {
             console.log('Error storing Item');
           });
           return data;
@@ -240,7 +253,7 @@ export class MappingService {
       iconSize: [12, 13],
       iconAnchor: [12, 13],
       popupAnchor: [1, -34],
-      shadowSize: [20, 20]
+      shadowSize: [20, 20],
     });
   }
   getAllMaps() {
@@ -250,24 +263,24 @@ export class MappingService {
     var level4 = this.setIcon('level-4.png');
     var level5 = this.setIcon('level-5.png');
     var smallIcon = this.setIcon('marker-icon-4.png');
-    this.cities.forEach(city => {
+    this.cities.forEach((city) => {
       this.downloadLocationsLayers(city.id).subscribe(
-        result => {
-          result.forEach(layer => {
+        (result) => {
+          result.forEach((layer) => {
             let geoJSONVar: L.GeoJSON;
             geoJSONVar = geoJSON(layer.geojson, {
               style: {
                 color: layer.color,
                 fill: false,
                 weight: 0.3,
-                opacity: 1
+                opacity: 1,
               },
               onEachFeature: (feature, layer: L.GeoJSON) => {
                 let message: string = '';
                 let value: string = '';
                 const vals2Omit = ['Espesor', 'Color', 'ColorRelleno', 'Opacidad', 'Segmentada'];
                 if (feature.properties) {
-                  Object.keys(feature.properties).forEach(key => {
+                  Object.keys(feature.properties).forEach((key) => {
                     if (vals2Omit.indexOf(key) == -1) {
                       value = feature.properties[key] == 'null' ? 'Sin datos' : feature.properties[key];
                       message += '<b>' + key + ':</b>' + '  ' + value + '<br />';
@@ -286,7 +299,14 @@ export class MappingService {
                   if (feature.properties.Opacidad) {
                     layer.setStyle({ fillOpacity: feature.properties.Opacidad });
                   }
+                  if (feature.properties.Punteada) {
+                    // Layer segmentada
+                    layer.setStyle({ fill: true, fillPattern: this.stripes });
+                    console.log('Entrada a FillPattern');
+                    console.log(layer);
+                  }
                   if (feature.properties.Segmentada) {
+                    // Layer punteada
                     layer.setStyle({ dashArray: '10 5' });
                   }
                 }
@@ -294,34 +314,34 @@ export class MappingService {
               pointToLayer: (feature, latlng) => {
                 if (feature.properties.Afectacion === '1') {
                   return L.marker(latlng, {
-                    icon: level1
+                    icon: level1,
                   });
                 } else if (feature.properties.Afectacion === '2') {
                   return L.marker(latlng, {
-                    icon: level2
+                    icon: level2,
                   });
                 } else if (feature.properties.Afectacion === '3') {
                   return L.marker(latlng, {
-                    icon: level3
+                    icon: level3,
                   });
                 } else if (feature.properties.Afectacion === '4') {
                   return L.marker(latlng, {
-                    icon: level4
+                    icon: level4,
                   });
                 } else if (feature.properties.Afectacion === '5') {
                   return L.marker(latlng, {
-                    icon: level5
+                    icon: level5,
                   });
                 }
                 return L.marker(latlng, {
-                  icon: smallIcon
+                  icon: smallIcon,
                 });
-              }
+              },
             });
 
             let layerThreats = [];
             if (layer.amenazas) {
-              layer.amenazas.forEach(amenaza => {
+              layer.amenazas.forEach((amenaza) => {
                 layerThreats.push(amenaza.nombre);
               });
             } else {
@@ -338,25 +358,25 @@ export class MappingService {
               type: layer.rel_asociacion,
               downloaded: true,
               threadType: layerThreats,
-              fixed: layer.fijar_capa
+              fixed: layer.fijar_capa,
             });
           });
         },
-        error => {},
+        (error) => {},
         () => {}
       );
     });
   }
   checkGPSPermission() {
     this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(
-      result => {
+      (result) => {
         if (result.hasPermission) {
           this.askToTurnOnGPS();
         } else {
           this.requestGPSPermission();
         }
       },
-      err => {
+      (err) => {
         alert(err);
       }
     );
@@ -370,7 +390,7 @@ export class MappingService {
           () => {
             this.askToTurnOnGPS();
           },
-          error => {
+          (error) => {
             alert('requestPermission Error requesting location permissions ' + error);
           }
         );
@@ -383,7 +403,7 @@ export class MappingService {
       () => {
         this.getGeolocation();
       },
-      error => alert('Error requesting location permissions ' + JSON.stringify(error))
+      (error) => alert('Error requesting location permissions ' + JSON.stringify(error))
     );
   }
 
@@ -391,19 +411,19 @@ export class MappingService {
     this.geolocation
       .getCurrentPosition({ maximumAge: 1000, timeout: 5000, enableHighAccuracy: true })
       .then(
-        resp => {
+        (resp) => {
           console.log(resp);
           this.geoLatitude = resp.coords.latitude;
           this.geoLongitude = resp.coords.longitude;
           this.geoAccuracy = resp.coords.accuracy;
           this.gotGeoposition = true;
         },
-        err => {
+        (err) => {
           // alert("error getting location")
           alert('Can not retrieve Location');
         }
       )
-      .catch(error => {
+      .catch((error) => {
         alert('Error getting location' + JSON.stringify(error));
       });
   }

@@ -13,9 +13,12 @@ import { MappingService } from 'src/app/services/mapping.service';
 import { InfoPageComponent } from 'src/app/components/info-page/info-page.component';
 
 import * as L from 'leaflet';
+import * as esri from 'esri-leaflet';
+import * as Geocoding from 'esri-leaflet-geocoder';
 import 'leaflet-easybutton';
 import 'leaflet.locatecontrol';
 import 'leaflet.pattern';
+import '../../../assets/js/leaflet-polygon.fillPattern';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import { NavigationExtras } from '@angular/router';
 import { from } from 'rxjs';
@@ -200,14 +203,39 @@ export class HomePage implements OnInit {
       this.mappingService.initialView.zoomLevel
     );
     // Add all non-thread layers
+    // this.mappingService.baseMap.addTo(this.mappingService.map);
+    // Check selected baseMap and apply
     this.mappingService.baseMap.addTo(this.mappingService.map);
+    if (this.mappingService.baseMapLabels) {
+      this.mappingService.baseMapLabels.addTo(this.mappingService.map);
+    }
+
+    // Commented by elinarezv to 4 testing purposes...
     // Home button
     L.easyButton('fa-home fa-lg', () => {
       this.mappingService.map.setView(this.mappingService.initialView.location, this.mappingService.initialView.zoomLevel);
     }).addTo(this.mappingService.map);
-    L.easyButton('fa-search fa-lg', () => {
-      this.mappingService.map.setView(this.mappingService.initialView.location, this.mappingService.initialView.zoomLevel);
+
+    // L.easyButton('fa-search fa-lg', () => {
+    //   this.mappingService.map.setView(this.mappingService.initialView.location, this.mappingService.initialView.zoomLevel);
+    // }).addTo(this.mappingService.map);
+
+    const searchControl = Geocoding.geosearch({
+      position: 'topleft',
+      collapseAfterResult: true,
+      expanded: false,
+      placeholder: 'Escriba un lugar a buscar...',
     }).addTo(this.mappingService.map);
+
+    // create an empty layer group to store the results and add it to the map
+    const results = L.layerGroup().addTo(this.mappingService.map);
+    // listen for the results event and add every result to the map
+    searchControl.on('results', (data) => {
+      results.clearLayers();
+      for (let i = data.results.length - 1; i >= 0; i--) {
+        results.addLayer(L.marker(data.results[i].latlng));
+      }
+    });
 
     // Add search provider to map
     // this.mappingService.searchControl.addTo(this.mappingService.map);
