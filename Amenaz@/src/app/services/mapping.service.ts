@@ -140,6 +140,7 @@ export class MappingService {
             layers: [],
             zoomLevel: city.zoom,
           });
+          this.loadLocationsLayers(city.id);
         });
       },
       (error) => {
@@ -227,7 +228,6 @@ export class MappingService {
   }
   loadLocationsLayers(cityID) {
     const parameter = new HttpParams().set('cityID', cityID);
-
     return this.http
       .get(this.env.API_URL + 'data/getlocationslayers', {
         headers: {
@@ -241,6 +241,8 @@ export class MappingService {
           this.storage.setItem('ciyLtayers-id' + String(cityID), data).catch((error) => {
             console.log('Error storing Item');
           });
+          console.log('*******************************  Downloading Layers for city:' + cityID);
+          console.log(data);
           return data;
         })
       );
@@ -278,7 +280,7 @@ export class MappingService {
               onEachFeature: (feature, layer: L.GeoJSON) => {
                 let message: string = '';
                 let value: string = '';
-                const vals2Omit = ['Espesor', 'Color', 'ColorRelleno', 'Opacidad', 'Segmentada'];
+                const vals2Omit = ['Espesor', 'Color', 'ColorRelleno', 'Opacidad', 'Segmentada', 'Punteada'];
                 if (feature.properties) {
                   Object.keys(feature.properties).forEach((key) => {
                     if (vals2Omit.indexOf(key) == -1) {
@@ -286,7 +288,9 @@ export class MappingService {
                       message += '<b>' + key + ':</b>' + '  ' + value + '<br />';
                     }
                   });
-                  layer.bindPopup(message);
+                  if (message !== '') {
+                    layer.bindPopup(message);
+                  }
                   if (feature.properties.Espesor) {
                     layer.setStyle({ weight: feature.properties.Espesor });
                   }

@@ -97,7 +97,7 @@ export class CityPage implements OnInit {
       }
     });
 
-    L.control.locate({ setView: 'untilPanOrZoom', flyTo: true }).addTo(this.mappingService.map);
+    L.control.locate({ setView: 'untilPanOrZoom', flyTo: false }).addTo(this.mappingService.map);
     let nodeList = document.querySelectorAll<HTMLElement>(
       '.leaflet-control-locate.leaflet-bar.leaflet-control .leaflet-bar-part.leaflet-bar-part-single span'
     );
@@ -114,6 +114,8 @@ export class CityPage implements OnInit {
     });
     this.mappingService.stripes.addTo(this.mappingService.map);
     this.centerOnCity();
+    console.log(this.actualCity.id);
+    this.mappingService.loadLocationsLayers(this.actualCity.id);
   }
   async legendPopover(ev: any) {
     const popover = await this.popoverController.create({
@@ -566,9 +568,9 @@ export class CityPage implements OnInit {
         }
       } else if (this.actualCity.name === 'Cumaná') {
         if (this.actualThreatName === 'Sismicidad') {
-          body = `<p> Si bien estos estudios para Cumaná aun no permiten brindar recomendaciones específicas
+          body = `<p><strong>Si bien estos estudios para Cumaná aun no permiten brindar recomendaciones específicas
           para cada una de las 7 microzonas identificadas, las similitudes con los resultados obtenidos
-          para Caracas permiten sugerir preliminarmente lo siguiente:</p>
+          para Caracas permiten sugerir preliminarmente lo siguiente:</strong></p>
           <h6><strong>Para edificaciones en Microzona 1C:</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Evaluaci&oacute;n sismorresistente de los edificios construidos antes de 1967 y de columnas y vigas &le;
@@ -944,8 +946,8 @@ export class CityPage implements OnInit {
             <ol>
             <li><a title="Instituto de Mec&aacute;nica de Fluidos de la Universidad Central de Venezuela (IMF-UCV)."
             href="http://www.ucv.ve/organizacion/facultades/facultad-de-ingenieria/institutos/instituto-de-mecanica-de-fluido-imf.html">
-            Instituto de Mec&aacute;nica de Fluidos de la Universidad Central de Venezuela (IMF-UCV)</a></li>
-            <li>Protecci&oacute;n Civil del Municipio Chacao</li>
+            Instituto de Mec&aacute;nica de Fluidos de la Universidad Central de Venezuela (IMF-UCV).</a></li>
+            <li>Protecci&oacute;n Civil del Municipio Chacao.</li>
             </ol>
             <ul>
             <li><strong>Para dudas, comentarios y/o sugerencias sobre la informaci&oacute;n de amenaza por aludes torrenciales:
@@ -970,7 +972,7 @@ export class CityPage implements OnInit {
           <ol>
           <li><a title="Instituto de Mec&aacute;nica de Fluidos de la Universidad Central de Venezuela (IMF-UCV)."
           href="http://www.ucv.ve/organizacion/facultades/facultad-de-ingenieria/institutos/instituto-de-mecanica-de-fluido-imf.html">
-          Instituto de Mec&aacute;nica de Fluidos de la Universidad Central de Venezuela (IMF-UCV)</a></li>
+          Instituto de Mec&aacute;nica de Fluidos de la Universidad Central de Venezuela (IMF-UCV).</a></li>
           <li>Protecci&oacute;n Civil del Municipio Chacao.</li>
           </ol>
           <ul>
@@ -1072,7 +1074,7 @@ export class CityPage implements OnInit {
           <ul>
           <li><strong>Referencias adicionales:</strong></li>
           </ul>
-        <p style="padding-left: 30px;"> <a href="https://vps.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Cumana/52a_Guevara.pdf">
+        <p style="padding-left: 30px;"> <a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Cumana/52a_Guevara.pdf">
         Guevara, M. (2014). Simulación numérica del tsunami asociado al terremoto del 17 de enero de 1929
          en la ciudad de Cumaná, una contribución a los estudios de riesgo en las costas venezolanas. Tesis de grado.
          Maestría en Geofísica.</a></p>

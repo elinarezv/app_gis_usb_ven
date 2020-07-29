@@ -21,7 +21,7 @@ router.get('/getLocations', VerifyToken, (req, res, next) => {
     host: 'localhost',
     database: 'amenazasdb',
     password: 'Anaporatumacaya',
-    port: 5432
+    port: 5432,
   });
   console.log('Entering loadLocations');
   var queryString =
@@ -35,19 +35,19 @@ router.get('/getLocations', VerifyToken, (req, res, next) => {
     query.on('row', (row, result) => {
       result.addRow(row.row_to_json);
     });
-    query.on('end', result => {
+    query.on('end', (result) => {
       res.send(result.rows);
       console.log(result.rows);
       pool.end();
     });
-    query.on('error', err => {
+    query.on('error', (err) => {
       console.log(err);
     });
     done();
   });
 });
 
-router.get('/getLocationsLayers', VerifyToken, (req, res, next) => {
+router.get('/getLocationsLayers', (req, res, next) => {
   var cityID = req.query.cityID;
   if (!cityID || cityID === '') {
     return res.status(500).send({ message: 'Parámetros incorrectos.' });
@@ -57,7 +57,7 @@ router.get('/getLocationsLayers', VerifyToken, (req, res, next) => {
     host: 'localhost',
     database: 'amenazasdb',
     password: 'Anaporatumacaya',
-    port: 5432
+    port: 5432,
   });
   var queryString =
     'SELECT row_to_json(cp.*) \
@@ -80,11 +80,11 @@ router.get('/getLocationsLayers', VerifyToken, (req, res, next) => {
     query.on('row', (row, result) => {
       result.addRow(row.row_to_json);
     });
-    query.on('end', result => {
+    query.on('end', (result) => {
       res.send(result.rows);
       pool.end();
     });
-    query.on('error', err => {
+    query.on('error', (err) => {
       console.log(err);
     });
     done();
@@ -101,7 +101,7 @@ router.get('/getTreats', VerifyToken, (req, res, next) => {
     host: 'localhost',
     database: 'amenazasdb',
     password: 'Anaporatumacaya',
-    port: 5432
+    port: 5432,
   });
   var queryString =
     'SELECT row_to_json(amenazas.*) FROM \
@@ -116,30 +116,30 @@ router.get('/getTreats', VerifyToken, (req, res, next) => {
 	                      JOIN public.capas_amenazas AS cxa ON capasxciudad.id_capa = cxa.id_capa \
 	                      JOIN public.amenazas AS amen ON cxa.id_amenaza = amen.id \
 	                      GROUP BY amen.nombre) AS amenazas';
-  pool.connect(function(err, client, done) {
+  pool.connect(function (err, client, done) {
     var query = client.query(new pg.Query(queryString));
-    query.on('row', function(row, result) {
+    query.on('row', function (row, result) {
       result.addRow(row.row_to_json);
     });
-    query.on('end', function(result) {
+    query.on('end', function (result) {
       // pool shutdown
       res.send(result.rows);
       pool.end();
     });
-    query.on('error', err => {
+    query.on('error', (err) => {
       console.log(err);
     });
     done();
   });
 });
 
-router.get('/getlayer', VerifyToken, function(req, res, next) {
+router.get('/getlayer', VerifyToken, function (req, res, next) {
   const pool = new Pool({
     user: 'elinarezv',
     host: 'localhost',
     database: 'amenazasdb',
     password: 'Anaporatumacaya',
-    port: 5432
+    port: 5432,
   });
   var cityName = req.query.cityName;
   var layerName = req.query.layerName;
@@ -148,17 +148,17 @@ router.get('/getlayer', VerifyToken, function(req, res, next) {
     return res.status(500).send({ message: 'Parámetros incorrectos.' });
   }
   var queryString = 'SELECT * FROM ' + cityName + '.' + layerName + ' ';
-  pool.connect(function(err, client, done) {
+  pool.connect(function (err, client, done) {
     var query = client.query(new pg.Query(queryString));
-    query.on('row', function(row, result) {
+    query.on('row', function (row, result) {
       result.addRow(row);
     });
-    query.on('end', function(result) {
+    query.on('end', function (result) {
       // pool shutdown
       res.send(result.rows[0].row_to_json);
       pool.end();
     });
-    query.on('error', err => {
+    query.on('error', (err) => {
       console.log(err);
     });
     done();

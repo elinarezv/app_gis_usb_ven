@@ -80,6 +80,9 @@ export class HomePage implements OnInit {
     this.events.subscribe('cities-loaded', () => {
       this.areCitiesAvailable = true;
       this.putCityMarkers();
+      this.mappingService.downloadLocationsLayers(3);
+      this.mappingService.downloadLocationsLayers(2);
+      this.mappingService.downloadLocationsLayers(1);
     });
   }
   changeCity(event) {
@@ -240,7 +243,7 @@ export class HomePage implements OnInit {
     // Add search provider to map
     // this.mappingService.searchControl.addTo(this.mappingService.map);
 
-    L.control.locate({ setView: 'untilPanOrZoom', flyTo: true }).addTo(this.mappingService.map);
+    L.control.locate({ setView: 'untilPanOrZoom', flyTo: false }).addTo(this.mappingService.map);
     let nodeList = document.querySelectorAll<HTMLElement>(
       '.leaflet-control-locate.leaflet-bar.leaflet-control .leaflet-bar-part.leaflet-bar-part-single span'
     );
