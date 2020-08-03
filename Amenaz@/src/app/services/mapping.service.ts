@@ -228,24 +228,16 @@ export class MappingService {
   }
   loadLocationsLayers(cityID) {
     const parameter = new HttpParams().set('cityID', cityID);
-    return this.http
-      .get(this.env.API_URL + 'data/getlocationslayers', {
-        headers: {
-          Authorization: 'Basic ' + this.authService.token,
-          'x-access-token': this.authService.token.token,
-        },
-        params: parameter,
+    return this.http.get('../assets/geojson/' + cityID + '.json').pipe(
+      tap((data) => {
+        this.storage.setItem('ciyLtayers-id' + String(cityID), data).catch((error) => {
+          console.log('Error storing Item');
+        });
+        console.log('*******************************  Downloading Layers for city:' + cityID);
+        console.log(data);
+        return data;
       })
-      .pipe(
-        tap((data) => {
-          this.storage.setItem('ciyLtayers-id' + String(cityID), data).catch((error) => {
-            console.log('Error storing Item');
-          });
-          console.log('*******************************  Downloading Layers for city:' + cityID);
-          console.log(data);
-          return data;
-        })
-      );
+    );
   }
   setIcon(fileName: string) {
     return new L.Icon({

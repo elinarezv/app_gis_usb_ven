@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="io.ionic.starter" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.appmenazas.app" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Appmenazas</name>
     <description>aplicación creada con la intención de socializar información existente sobre los distintos tipos y niveles de exposición a amenazas de origen natural, que han sido identificados para diversas ciudades venezolanas</description>
     <author email="elio.linarez@tk-peru.com" href="http://tk-peru.com/">Technik Peru Team</author>

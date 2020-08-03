@@ -54,6 +54,8 @@ export class HomePage implements OnInit {
   areMarkersActive: boolean;
   backButtonSubscription;
   selectedItem: string;
+  private searchControl;
+  private resultsLayersGroup;
 
   constructor(
     private menu: MenuController,
@@ -213,35 +215,47 @@ export class HomePage implements OnInit {
       this.mappingService.baseMapLabels.addTo(this.mappingService.map);
     }
 
+    const arcgisOnline = Geocoding.arcgisOnlineProvider({ countries: ['VEN'] });
+
+    this.searchControl = Geocoding.geosearch({
+      position: 'topleft',
+      collapseAfterResult: true,
+      expanded: false,
+      placeholder: 'Escriba un lugar a buscar...',
+      allowMultipleResults: true,
+      providers: [arcgisOnline],
+      useMapBounds: true,
+    });
+
     // Commented by elinarezv to 4 testing purposes...
     // Home button
     L.easyButton('fa-home fa-lg', () => {
       this.mappingService.map.setView(this.mappingService.initialView.location, this.mappingService.initialView.zoomLevel);
     }).addTo(this.mappingService.map);
 
-    // L.easyButton('fa-search fa-lg', () => {
-    //   this.mappingService.map.setView(this.mappingService.initialView.location, this.mappingService.initialView.zoomLevel);
-    // }).addTo(this.mappingService.map);
-
-    const searchControl = Geocoding.geosearch({
-      position: 'topleft',
-      collapseAfterResult: true,
-      expanded: false,
-      placeholder: 'Escriba un lugar a buscar...',
-    }).addTo(this.mappingService.map);
+    this.searchControl.addTo(this.mappingService.map);
 
     // create an empty layer group to store the results and add it to the map
-    const results = L.layerGroup().addTo(this.mappingService.map);
-    // listen for the results event and add every result to the map
-    searchControl.on('results', (data) => {
-      results.clearLayers();
-      for (let i = data.results.length - 1; i >= 0; i--) {
-        results.addLayer(L.marker(data.results[i].latlng));
-      }
+    this.resultsLayersGroup = L.layerGroup().addTo(this.mappingService.map);
+
+    const iconVar = L.icon({
+      iconRetinaUrl: this.mappingService.iconRetinaUrl,
+      iconUrl: this.mappingService.iconUrl,
+      shadowUrl: this.mappingService.shadowUrl,
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      tooltipAnchor: [16, -28],
+      shadowSize: [41, 41],
     });
 
-    // Add search provider to map
-    // this.mappingService.searchControl.addTo(this.mappingService.map);
+    this.searchControl.on('results', (data) => {
+      this.resultsLayersGroup.clearLayers();
+      for (let i = data.results.length - 1; i >= 0; i--) {
+        const resultMarker = L.marker(data.results[i].latlng, { icon: iconVar }).bindPopup(data.results[i].properties.LongLabel);
+        this.resultsLayersGroup.addLayer(resultMarker);
+      }
+    });
 
     L.control.locate({ setView: 'untilPanOrZoom', flyTo: false }).addTo(this.mappingService.map);
     let nodeList = document.querySelectorAll<HTMLElement>(

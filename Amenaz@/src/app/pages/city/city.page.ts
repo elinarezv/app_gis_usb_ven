@@ -67,11 +67,15 @@ export class CityPage implements OnInit {
       this.mappingService.baseMapLabels.addTo(this.mappingService.map);
     }
 
+    const arcgisOnline = Geocoding.arcgisOnlineProvider({ countries: ['VEN'] });
+
     this.searchControl = Geocoding.geosearch({
       position: 'topleft',
       collapseAfterResult: true,
       expanded: false,
       placeholder: 'Escriba un lugar a buscar...',
+      allowMultipleResults: true,
+      providers: [arcgisOnline],
       useMapBounds: true,
     });
 
@@ -81,19 +85,28 @@ export class CityPage implements OnInit {
       this.resultsLayersGroup.clearLayers();
     }).addTo(this.mappingService.map);
 
-    // L.easyButton('fa-search fa-lg', () => {
-    //   this.mappingService.map.setView(this.actualCity.location, this.actualCity.zoomLevel);
-    // }).addTo(this.mappingService.map);
-
     this.searchControl.addTo(this.mappingService.map);
 
     // create an empty layer group to store the results and add it to the map
     this.resultsLayersGroup = L.layerGroup().addTo(this.mappingService.map);
     // listen for the results event and add every result to the map
+
+    const iconVar = L.icon({
+      iconRetinaUrl: this.mappingService.iconRetinaUrl,
+      iconUrl: this.mappingService.iconUrl,
+      shadowUrl: this.mappingService.shadowUrl,
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      tooltipAnchor: [16, -28],
+      shadowSize: [41, 41],
+    });
+
     this.searchControl.on('results', (data) => {
       this.resultsLayersGroup.clearLayers();
       for (let i = data.results.length - 1; i >= 0; i--) {
-        this.resultsLayersGroup.addLayer(L.marker(data.results[i].latlng));
+        const resultMarker = L.marker(data.results[i].latlng, { icon: iconVar }).bindPopup(data.results[i].properties.LongLabel);
+        this.resultsLayersGroup.addLayer(resultMarker);
       }
     });
 
@@ -458,7 +471,7 @@ export class CityPage implements OnInit {
            familiares y comunitarios de preparación y actuación en caso de aludes torrenciales. </p> \
           <h6><strong>Para lugares en áreas de amenaza NULA:</strong></h6> \
           <p>Son zonas de resguardo y seguridad ante este tipo de amenazas y donde no son necesarias recomendaciones sobre este tipo \
-          de amenazas..</p> <p>&nbsp;</p> \
+          de amenazas.</p> <p>&nbsp;</p> \
           <p>&nbsp;</p> \
           <h6><strong>Si deseas mayor información sobre amenazas por aludes torrenciales locales, visita:</strong></h6> \
           <a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Chacao/QdasCHACAO.pdf"> \
@@ -1020,7 +1033,7 @@ export class CityPage implements OnInit {
           </ul>
           <p style="padding-left: 30px;">
            <a href="https://www.researchgate.net/publication/236147665_Principales_resultados_y_recomendaciones_del_proyecto_de_microzonificacion_sismica_de_Caracas">
-           Shmitz et all. (2009). &ldquo;Resultados y recomendaciones del proyecto de
+           Shmitz et al. (2009). &ldquo;Resultados y recomendaciones del proyecto de
            Microzonificaci&oacute;n S&iacute;smica de Caracas&rdquo;. Caracas.</a></p>`;
         }
       } else if (this.actualCity.name === 'Cumaná') {
