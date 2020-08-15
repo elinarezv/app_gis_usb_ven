@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HTTP } from '@ionic-native/http/ngx';
 import { tap } from 'rxjs/operators';
+import { from } from 'rxjs';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { EnvService } from './env.service';
 import { User } from '../models/user';
@@ -17,7 +19,7 @@ export class AuthService {
   userEmail: string;
   userAddress: string;
 
-  constructor(private http: HttpClient, private storage: NativeStorage, private env: EnvService) {}
+  constructor(private http: HttpClient, private http2: HTTP, private storage: NativeStorage, private env: EnvService) {}
   isLogged() {
     return this.isLoggedIn;
   }
@@ -28,8 +30,15 @@ export class AuthService {
     this.token = newToken;
   }
   login(email: string, password: string) {
-    return this.http.post(this.env.API_URL + 'auth/login', { email: email, password: password }).pipe(
-      tap((token) => {
+    this.http2.setServerTrustMode('nocheck');
+    this.http2.setHeader('*', 'Access-Control-Allow-Origin', '*');
+    this.http2.setHeader('*', 'Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT');
+    this.http2.setHeader('*', 'Accept', 'application/json');
+    this.http2.setHeader('*', 'content-type', 'application/json');
+    this.http2.setDataSerializer('json');
+    return from(
+      this.http2.post(this.env.API_URL + 'auth/login', { email, password }, {}).then((token) => {
+        console.log('Conectó al serve API');
         this.storage.setItem('token', token).then(
           () => {
             console.log('Token Stored');
@@ -42,6 +51,7 @@ export class AuthService {
       })
     );
   }
+
   register(email: string, password: string, notifications: string) {
     const body = new HttpParams().set('email', email).set('password', password).set('notifications', notifications);
     return this.http.post(this.env.API_URL + 'auth/register', body.toString(), {

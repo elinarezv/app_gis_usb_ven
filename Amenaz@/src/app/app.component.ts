@@ -86,7 +86,7 @@ export class AppComponent {
     }
   }
   share() {
-    this.socialShare.share('https://play.google.com/store/apps/details?id=com.android.chrome&hl=en_us');
+    this.socialShare.share('https://play.google.com/store/apps/details?id=com.tk_peru.appmenazas');
   }
   logout() {
     this.authService.logout().subscribe(
