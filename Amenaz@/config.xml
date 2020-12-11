@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.appmenazas.app" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="ve.org.cigir.appmenazas" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Appmenazas</name>
-    <description>aplicación creada con la intención de socializar información existente sobre los distintos tipos y niveles de exposición a amenazas de origen natural, que han sido identificados para diversas ciudades venezolanas</description>
-    <author email="elio.linarez@tk-peru.com" href="http://tk-peru.com/">Technik Peru Team</author>
+    <description>Aplicación creada con la intención de socializar información existente sobre los distintos tipos y niveles de exposición a amenazas de origen natural, que han sido identificados para diversas ciudades venezolanas. </description>
+    <author email="developers@appmenazas.com" href="http://www.cigir.org.ve/">Centro de Investigación en Gestión Integral de Riesgos</author>
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
