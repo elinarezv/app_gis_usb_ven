@@ -500,7 +500,7 @@ export class HomePage implements OnInit {
       <div class="logo">
         <img src="/assets/logo.png" style="height: 100px;" />
       </div>
-      <ion-title>¡Bienvenido(a) a Appmenazas!</ion-title>
+      <h3>¡Bienvenido(a) a Appmenazas!</h3>
       <p>
         Gracias por utilizar Appmenazas V1.0, una aplicación creada con la intención de socializar información existente sobre los
         distintos tipos y niveles de exposición a amenazas de origen natural, que han sido identificados para diversas ciudades
@@ -511,7 +511,7 @@ export class HomePage implements OnInit {
         amenazas de origen natural, que han sido estimados para cada lugar de su ciudad, así como algunas recomendaciones generales
         que podrían minimizar sus niveles de riesgo en ese respectivo lugar.
       </p>
-      <ion-title>Descarga de responsabilidad</ion-title>
+      <h3>Descarga de responsabilidad</h3>
       <p>
         Todos los datos que son presentados en los distintos módulos de esta aplicación son extraídos de estudios rigurosos, que han
         sido publicados por investigadores y especialistas destacados de distintas disciplinas, vinculadas a la caracterización de

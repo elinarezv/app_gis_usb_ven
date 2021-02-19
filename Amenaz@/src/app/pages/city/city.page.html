@@ -2,7 +2,7 @@
   <ion-toolbar mode="ios">
     <ion-title> <img src="/assets/logo2.png" style="height: 32px; padding-right: 20px;" /> {{this.actualCity.name}} </ion-title>
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button color="light"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end" (click)="legendPopover($event)">
       <ion-button> <img style="max-width: 24px;" src="/assets/legend.svg" /> </ion-button>
@@ -12,7 +12,7 @@
 <ion-content>
   <ion-fab vertical="center" horizontal="end">
     <ion-fab-button color="medium" size="small" translucent="true">
-      <ion-icon name="add"></ion-icon>
+      <ion-icon color="light" name="add"></ion-icon>
     </ion-fab-button>
     <ion-fab-list side="top">
       <ion-fab-button
@@ -23,7 +23,7 @@
         data-desc="Más información"
         (click)="clickMoreInfo()"
       >
-        <ion-icon name="information-circle"></ion-icon>
+        <ion-icon color="light" name="information-circle"></ion-icon>
       </ion-fab-button>
       <ion-fab-button
         *ngIf="actualThreatName !== ''"
@@ -40,7 +40,8 @@
       </ion-fab-button>
     </ion-fab-list>
   </ion-fab>
-  <div id="mapCityId" style="width: 100%; height: 100%"></div>
+  <div id="mapCityId" style="width: 100%; height: 100%">
+  </div>
 </ion-content>
 <ion-footer>
   <div id="threats-toolbar" class="toolbar">

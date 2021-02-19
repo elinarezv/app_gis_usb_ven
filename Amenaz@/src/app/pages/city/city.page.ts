@@ -83,7 +83,7 @@ export class CityPage implements OnInit {
     L.easyButton('fa-home fa-lg', () => {
       this.mappingService.map.setView(this.actualCity.location, this.actualCity.zoomLevel);
       this.resultsLayersGroup.clearLayers();
-    }).addTo(this.mappingService.map);
+    }, 'Inicio', 'lfHomeBtn').addTo(this.mappingService.map);
 
     this.searchControl.addTo(this.mappingService.map);
 

@@ -21,7 +21,7 @@
     "@angular/router": "~8.1.2",
     "@ionic-native/android-permissions": "^5.18.0",
     "@ionic-native/core": "^5.0.0",
-    "@ionic-native/geolocation": "^5.18.0",
+    "@ionic-native/geolocation": "^5.31.1",
     "@ionic-native/in-app-browser": "^5.19.1",
     "@ionic-native/location-accuracy": "^5.18.0",
     "@ionic-native/native-storage": "^5.18.0",

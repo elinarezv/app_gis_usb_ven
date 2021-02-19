@@ -68,4 +68,17 @@ button {
 .easy-button-button.leaflet-bar-part.leaflet-interactive.unnamed-state-active {
   width: 30px;
   height: 30px;
+  background-color: #efefef !important;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0); 
+  -webkit-tap-highlight-color: #efefef; 
+  -webkit-touch-callout: none;
+}
+
+#lfHomeBtn {
+  width: 30px;
+  height: 30px;
+  background-color: #efefef !important;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0); 
+  -webkit-tap-highlight-color: #efefef; 
+  -webkit-touch-callout: none;
 }
