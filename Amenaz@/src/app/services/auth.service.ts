@@ -6,9 +6,11 @@ import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { EnvService } from './env.service';
 import { User } from '../models/user';
 
+
 @Injectable({
   providedIn: 'root',
 })
+
 export class AuthService {
   isLoggedIn = false;
   token: any;

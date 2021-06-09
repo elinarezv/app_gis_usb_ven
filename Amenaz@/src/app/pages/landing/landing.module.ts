@@ -15,6 +15,7 @@ const routes: Routes = [
     component: LandingPage,
   },
 ];
+
 @NgModule({
   imports: [CommonModule, ReactiveFormsModule, FormsModule, IonicModule, RouterModule.forChild(routes)],
   declarations: [LandingPage, LoginPage, RegisterPage, RecoverPage],

@@ -19,6 +19,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { UsernameValidator } from './validators/username';
 
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],

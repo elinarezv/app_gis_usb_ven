@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { resolve } from 'url';
 
+
 @Injectable({ providedIn: 'root' })
 export class UsernameValidator {
     public userTaken: boolean;

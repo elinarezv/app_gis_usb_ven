@@ -8,6 +8,7 @@ import { HomePage } from './home.page';
 import { InfoPageComponent } from 'src/app/components/info-page/info-page.component';
 import { InfoPageModule } from 'src/app/components/info-page/info-page.module';
 
+
 @NgModule({
   imports: [
     CommonModule,

@@ -9,6 +9,7 @@ import {
   NavParams,
   IonSelect,
 } from '@ionic/angular';
+
 import { MappingService } from 'src/app/services/mapping.service';
 import { InfoPageComponent } from 'src/app/components/info-page/info-page.component';
 

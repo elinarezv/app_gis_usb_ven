@@ -14,6 +14,7 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
 })
+    
 export class AppComponent {
   public appPages = [
     {

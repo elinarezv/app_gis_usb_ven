@@ -27,9 +27,11 @@ import { Events } from '@ionic/angular';
 import { City, DBCity, LayerType } from 'src/app/models/mapping';
 import { Button } from 'protractor';
 
+
 @Injectable({
   providedIn: 'root',
 })
+    
 export class MappingService {
   iconRetinaUrl: string;
   iconUrl: string;

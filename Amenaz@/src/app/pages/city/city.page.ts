@@ -15,11 +15,13 @@ import { ModalController, MenuController, PopoverController, Events, AlertContro
 import { InfoPageComponent } from 'src/app/components/info-page/info-page.component';
 import { LegendComponent } from 'src/app/components/legend/legend.component';
 
+
 @Component({
   selector: 'app-city',
   templateUrl: './city.page.html',
   styleUrls: ['./city.page.scss'],
 })
+
 export class CityPage implements OnInit {
   public actualCity: City;
   private baseLayerMap: any;

@@ -3,11 +3,13 @@ import { ModalController, MenuController, NavController, Platform, Events } from
 import { RegisterPage } from '../auth/register/register.page';
 import { LoginPage } from '../auth/login/login.page';
 import { AuthService } from 'src/app/services/auth.service';
+
 @Component({
   selector: 'app-landing',
   templateUrl: './landing.page.html',
   styleUrls: ['./landing.page.scss'],
 })
+    
 export class LandingPage implements OnInit {
   backButtonSubscription;
 
