@@ -1,7 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="ve.org.cigir.appmenazas" version="1.0.0"
-    xmlns="http://www.w3.org/ns/widgets"
-    xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="ve.org.cigir.appmenazas" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Appmenazas</name>
     <description>Aplicación creada con la intención de socializar información existente sobre los distintos tipos y niveles de exposición a amenazas de origen natural, que han sido identificados para diversas ciudades venezolanas. </description>
     <author email="developers@appmenazas.com" href="http://www.cigir.org.ve/">Centro de Investigación en Gestión Integral de Riesgos</author>
@@ -26,8 +24,7 @@
     <preference name="AutoHideSplashScreen" value="false" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <platform name="android">
-        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application"
-            xmlns:android="http://schemas.android.com/apk/res/android">
+        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
             <application android:networkSecurityConfig="@xml/network_security_config" />
         </edit-config>
         <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
