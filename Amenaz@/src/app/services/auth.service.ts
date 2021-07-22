@@ -36,10 +36,13 @@ export class AuthService {
     this.http2.setHeader('*', 'Accept', 'application/json');
     this.http2.setHeader('*', 'content-type', 'application/json');
     this.http2.setDataSerializer('json');
+
     return from(
       this.http2.post(this.env.API_URL + 'auth/login', { email, password }, {}).then((token) => {
         console.log('Conectó al serve API');
-        this.storage.setItem('token', token).then(
+        const thaMFToken = JSON.parse(token.data);
+        debugger;
+        this.storage.setItem('token', thaMFToken).then(
           () => {
             console.log('Token Stored');
           },
@@ -113,6 +116,7 @@ export class AuthService {
       );
   }
   getToken() {
+      debugger;
     return this.storage.getItem('token').then(
       (data) => {
         this.token = data;
