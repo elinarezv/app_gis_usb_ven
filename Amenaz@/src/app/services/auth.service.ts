@@ -36,24 +36,32 @@ export class AuthService {
     this.http2.setHeader('*', 'Accept', 'application/json');
     this.http2.setHeader('*', 'content-type', 'application/json');
     this.http2.setDataSerializer('json');
-
     return from(
       this.http2.post(this.env.API_URL + 'auth/login', { email, password }, {}).then((token) => {
         console.log('Conectó al serve API');
         const thaMFToken = JSON.parse(token.data);
-        debugger;
         this.storage.setItem('token', thaMFToken).then(
           () => {
             console.log('Token Stored');
           },
           (error) => console.error('Error storing token', error)
         );
-        this.token = token;
+        this.token = thaMFToken;
         this.isLoggedIn = true;
         return token;
       })
     );
-  }
+    // const body = new HttpParams().set('email', email).set('password', password);
+    // return this.http.post(this.env.API_URL + 'auth/login', body.toString(), {
+    //     headers: new HttpHeaders()
+    //         .set('Content-Type', 'application/x-www-form-urlencoded')
+    //         .set('Accept', 'application/json')
+    //         .set('content-type', 'application/json'),
+    //   }).subscribe((token) => {
+    //     console.log('Conectó al serve API');
+    //     const thaMFToken = token;
+    //   }, (error)=> {}, () => {});
+    }
 
   register(email: string, password: string, notifications: string) {
     const body = new HttpParams().set('email', email).set('password', password).set('notifications', notifications);
@@ -116,10 +124,10 @@ export class AuthService {
       );
   }
   getToken() {
-      debugger;
     return this.storage.getItem('token').then(
       (data) => {
         this.token = data;
+        console.log(data);
         if (this.token != null) {
           this.isLoggedIn = true;
         } else {
