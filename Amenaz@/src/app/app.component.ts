@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { Platform, NavController, Events } from '@ionic/angular';
+import { Platform, NavController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './services/auth.service';
@@ -8,6 +8,7 @@ import { AlertService } from './services/alert.service';
 
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { EventspublishService } from './services/eventspublish.service';
 
 @Component({
   selector: 'app-root',
@@ -44,7 +45,7 @@ export class AppComponent {
     private authService: AuthService,
     private navCtrl: NavController,
     private alertService: AlertService,
-    public events: Events,
+    public eventLogin: EventspublishService,
     private socialShare: SocialSharing,
     private iab: InAppBrowser
   ) {
@@ -65,7 +66,12 @@ export class AppComponent {
         this.navCtrl.navigateRoot('/home');
       }
     });
-    this.events.subscribe('user-login', (data) => {
+    interface user {
+      firstname: string;
+      lastname: string;
+      email: string;
+    };
+    this.eventLogin.userLoginSource$.subscribe((data: user) => {
       // this.userName = data.firstname + ' ' + data.lastname;
       this.email = data.email;
       // this.partnerProfileImageURL = this.getInitials(this.userName);

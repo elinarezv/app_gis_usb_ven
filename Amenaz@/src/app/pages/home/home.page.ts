@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   MenuController,
-  Events,
   Platform,
   ModalController,
   AlertController,
@@ -23,6 +22,7 @@ import '../../../assets/js/leaflet-polygon.fillPattern';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import { NavigationExtras } from '@angular/router';
 import { from } from 'rxjs';
+import { EventspublishService } from 'src/app/services/eventspublish.service';
 
 type ThreatsButton = {
   title: string;
@@ -36,7 +36,7 @@ type ThreatsButton = {
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
-  @ViewChild('cityselector', { read: false, static: false }) citySelectorRef: IonSelect;
+  @ViewChild('cityselector') citySelectorRef: IonSelect;
 
   addedLayerControl: boolean;
   areCitiesAvailable: boolean;
@@ -62,7 +62,7 @@ export class HomePage implements OnInit {
     private menu: MenuController,
     public alertController: AlertController,
     public mappingService: MappingService,
-    public events: Events,
+    public eventCitiesLoaded: EventspublishService,
     private platform: Platform,
     private modalController: ModalController,
     private navController: NavController
@@ -80,7 +80,7 @@ export class HomePage implements OnInit {
     this.actualCityThreats = [];
     this.layerControl = null;
     this.areMarkersActive = false;
-    this.events.subscribe('cities-loaded', () => {
+    this.eventCitiesLoaded.citiesLoadedSource$.subscribe(() => {
       this.areCitiesAvailable = true;
       this.putCityMarkers();
       this.mappingService.downloadLocationsLayers(3);

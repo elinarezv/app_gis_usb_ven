@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Events, NavParams, PopoverController } from '@ionic/angular';
+import { NavParams, PopoverController } from '@ionic/angular';
+import { EventspublishService } from 'src/app/services/eventspublish.service';
 
 interface Segment {}
 
@@ -12,7 +13,8 @@ export class LegendComponent implements OnInit {
   public threat: string;
   public city: string;
 
-  constructor(private events: Events, private navParams: NavParams, private popoverController: PopoverController) {}
+  constructor(private eventFromPopoverSource: EventspublishService, 
+    private navParams: NavParams, private popoverController: PopoverController) {}
 
   ngOnInit() {
     // Get data from popover page
@@ -312,7 +314,7 @@ export class LegendComponent implements OnInit {
   }
 
   eventFromPopover() {
-    this.events.publish('fromPopoverEvent');
+    this.eventFromPopoverSource.publishfromPopOver();
     this.popoverController.dismiss();
   }
 }

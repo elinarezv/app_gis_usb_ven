@@ -22,10 +22,9 @@ import { Map, tileLayer, marker, icon, GeoJSON, geoJSON, LatLngExpression, TileL
 
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 
-import { Events } from '@ionic/angular';
-
 import { City, DBCity, LayerType } from 'src/app/models/mapping';
 import { Button } from 'protractor';
+import { EventspublishService } from './eventspublish.service';
 
 
 @Injectable({
@@ -73,7 +72,7 @@ export class MappingService {
     private geolocation: Geolocation,
     private locationAccuracy: LocationAccuracy,
     private http: HttpClient,
-    public events: Events
+    public eventCitiesLoaded: EventspublishService
   ) {
     if (this.env.USE_ESRI_BASEMAPS) {
       this.baseMap = esri.basemapLayer('DarkGray');
@@ -155,7 +154,7 @@ export class MappingService {
         });
         this.gotGeoposition = false;
         this.getAllMaps();
-        this.events.publish('cities-loaded');
+        this.eventCitiesLoaded.publishCitiesLoaded();
       }
     );
     this.stripes = new L.StripePattern();

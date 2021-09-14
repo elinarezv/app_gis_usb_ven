@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, MenuController, NavController, Platform, Events } from '@ionic/angular';
+import { ModalController, MenuController, NavController, Platform } from '@ionic/angular';
 import { RegisterPage } from '../auth/register/register.page';
 import { LoginPage } from '../auth/login/login.page';
 import { AuthService } from 'src/app/services/auth.service';
@@ -19,7 +19,6 @@ export class LandingPage implements OnInit {
     private authService: AuthService,
     private navCtrl: NavController,
     private platform: Platform,
-    public events: Events
   ) {
     this.menu.enable(false);
   }
@@ -29,9 +28,6 @@ export class LandingPage implements OnInit {
         this.navCtrl.navigateRoot('/home');
       }
     });
-    // data => {
-    //     this.events.publish('user-login', data);
-    //   },
     this.backButtonSubscription = this.platform.backButton.subscribe(async () => {
       navigator['app'].exitApp();
     });

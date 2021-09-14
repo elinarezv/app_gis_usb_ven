@@ -11,9 +11,10 @@ import 'leaflet.pattern';
 import '../../../assets/js/leaflet-polygon.fillPattern';
 
 import { withLatestFrom } from 'rxjs/operators';
-import { ModalController, MenuController, PopoverController, Events, AlertController } from '@ionic/angular';
+import { ModalController, MenuController, PopoverController, AlertController } from '@ionic/angular';
 import { InfoPageComponent } from 'src/app/components/info-page/info-page.component';
 import { LegendComponent } from 'src/app/components/legend/legend.component';
+import { EventspublishService } from 'src/app/services/eventspublish.service';
 
 
 @Component({
@@ -39,7 +40,7 @@ export class CityPage implements OnInit {
     public alertController: AlertController,
     private menu: MenuController,
     private popoverController: PopoverController,
-    private event: Events
+    private eventFromPopOver: EventspublishService
   ) {
     this.actualCity = undefined;
     this.route.queryParams.subscribe((params) => {
@@ -144,7 +145,7 @@ export class CityPage implements OnInit {
     });
 
     /** Sync event from popover component */
-    this.event.subscribe('fromPopoverEvent', () => {
+    this.eventFromPopOver.fromPopOverSource$.subscribe(() => {
       // this.syncTasks();
       console.log('entro');
     });

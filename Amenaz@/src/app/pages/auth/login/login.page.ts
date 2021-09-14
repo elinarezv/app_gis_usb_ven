@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, NavController, Events } from '@ionic/angular';
+import { ModalController, NavController} from '@ionic/angular';
 import { RegisterPage } from '../register/register.page';
 import { NgForm } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { RecoverPage } from '../recover/recover.page';
+import { EventspublishService } from 'src/app/services/eventspublish.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +19,7 @@ export class LoginPage implements OnInit {
     private authService: AuthService,
     private navCtrl: NavController,
     private alertService: AlertService,
-    public events: Events
+    public eventLogin: EventspublishService
   ) {
     this.activateLoginButton = true;
   }
@@ -46,7 +47,7 @@ export class LoginPage implements OnInit {
     this.alertService.presentToast('Iniciando sesión en servidor...', 800);
     this.authService.login(form.value.email, form.value.password).subscribe(
       (data) => {
-        this.events.publish('user-login', data);
+        this.eventLogin.publishUserLogin(data);
         this.alertService.presentToast('Sesión iniciada');
       },
       (error) => {
