@@ -14,6 +14,8 @@ import { RegisterPage } from '../register/register.page';
 })
 export class RecoverPage implements OnInit {
   public recoverForm: FormGroup;
+  public submitAttempt: boolean;
+  public usernameTaken: boolean;
 
   constructor(
     private modalController: ModalController,
@@ -22,6 +24,8 @@ export class RecoverPage implements OnInit {
     private alertService: AlertService,
     public formBuilder: FormBuilder
   ) {
+    this.submitAttempt = false;
+    this.usernameTaken = false;
     this.recoverForm = formBuilder.group({
       email: [
         '',
@@ -36,7 +40,7 @@ export class RecoverPage implements OnInit {
       ],
     });
   }
-  ngOnInit() {}
+  ngOnInit() { }
   dismissRecover() {
     this.modalController.dismiss();
   }

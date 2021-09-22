@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, NavController } from '@ionic/angular';
 import { LoginPage } from '../login/login.page';
 import { AuthService } from 'src/app/services/auth.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AlertService } from 'src/app/services/alert.service';
 import { UsernameValidator } from 'src/app/validators/username';
 import { RecoverPage } from '../recover/recover.page';
@@ -18,7 +18,7 @@ export class RegisterPage implements OnInit {
   private activateRegisterButton: boolean = true;
   public accountForm: FormGroup;
   public submitAttempt: boolean = false;
-  private usernameTaken: boolean = false;
+  public usernameTaken: boolean = false;
 
   constructor(
     private modalController: ModalController,
@@ -26,7 +26,7 @@ export class RegisterPage implements OnInit {
     private navCtrl: NavController,
     private alertService: AlertService,
     public formBuilder: FormBuilder,
-    private usernameValidator: UsernameValidator
+    public usernameValidator: UsernameValidator
   ) {
     this.accountForm = formBuilder.group({
       email: [
@@ -46,7 +46,7 @@ export class RegisterPage implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
   dismissRegister() {
     this.modalController.dismiss();
   }
@@ -71,7 +71,7 @@ export class RegisterPage implements OnInit {
       .subscribe(
         (data) => {
           this.authService.login(this.accountForm.controls.email.value, this.accountForm.controls.password.value).subscribe(
-            (data) => {},
+            (data) => { },
             (error) => {
               this.submitAttempt = true;
               this.termAccept = true;
@@ -89,7 +89,7 @@ export class RegisterPage implements OnInit {
           this.alertService.presentToast(error['error']);
           console.log(error);
         },
-        () => {}
+        () => { }
       );
   }
 }
