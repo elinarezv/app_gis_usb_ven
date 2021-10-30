@@ -79,18 +79,8 @@ export class AppComponent {
     this.socialShare.share('https://play.google.com/store/apps/details?id=com.android.chrome&hl=en_us');
   }
   logout() {
-    this.authService.logout().subscribe(
-      (data) => {
-        this.alertService.presentToast(data['message']);
-      },
-      (error) => {
-        console.log(error);
-      },
-      () => {
-        debugger
-        this.navCtrl.navigateRoot('/landing');
-      }
-    );
+    localStorage.removeItem('userappemanzas');
+    this.navCtrl.navigateRoot('/landing');
   }
   getInitials(name: string) {
     if (!name || name === '') {
