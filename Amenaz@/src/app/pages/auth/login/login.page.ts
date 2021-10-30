@@ -46,6 +46,8 @@ export class LoginPage implements OnInit {
     this.alertService.presentToast('Iniciando sesión en servidor...', 800);
     this.authService.login(form.value.email, form.value.password).subscribe(
       (data) => {
+        console.log(data);
+         localStorage.setItem('userappemanzas',JSON.stringify(data));
         this.events.publish('user-login', data);
         this.alertService.presentToast('Sesión iniciada');
       },

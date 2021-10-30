@@ -23,7 +23,10 @@ import { UsernameValidator } from './validators/username';
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule],
+  imports: [BrowserModule, IonicModule.forRoot({
+    scrollPadding: false,
+    scrollAssist: true
+  }), AppRoutingModule, HttpClientModule],
   providers: [
     StatusBar,
     UsernameValidator,

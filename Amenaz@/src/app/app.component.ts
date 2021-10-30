@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
-
 import { Platform, NavController, Events } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './services/auth.service';
 import { AlertService } from './services/alert.service';
-
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
@@ -37,16 +35,8 @@ export class AppComponent {
   public email = '';
   public partnerProfileImageURL: any;
 
-  constructor(
-    private platform: Platform,
-    private splashScreen: SplashScreen,
-    private statusBar: StatusBar,
-    private authService: AuthService,
-    private navCtrl: NavController,
-    private alertService: AlertService,
-    public events: Events,
-    private socialShare: SocialSharing,
-    private iab: InAppBrowser
+  constructor( private platform: Platform, private splashScreen: SplashScreen, private statusBar: StatusBar, private authService: AuthService, private navCtrl: NavController, private alertService: AlertService, public events: Events,
+    private socialShare: SocialSharing, private iab: InAppBrowser
   ) {
     this.initializeApp();
   }
@@ -60,22 +50,21 @@ export class AppComponent {
         this.splashScreen.hide();
       }, 10000);
     });
-    this.authService.getToken().then(() => {
-      if (this.authService.isLoggedIn) {
-        this.navCtrl.navigateRoot('/home');
-      }
-    });
     this.events.subscribe('user-login', (data) => {
       // this.userName = data.firstname + ' ' + data.lastname;
       this.email = data.email;
       // this.partnerProfileImageURL = this.getInitials(this.userName);
     });
+    setTimeout(()=>{
+     this.session();
+     },1000);
   }
   gotoWebsite(url: string, setRoot: boolean = false) {
     if (!url || url === '') {
       return;
     }
     if (url.includes('http')) {
+      console.log(url);
       const browser = this.iab.create(url);
       browser.show();
     } else {
@@ -98,6 +87,7 @@ export class AppComponent {
         console.log(error);
       },
       () => {
+        debugger
         this.navCtrl.navigateRoot('/landing');
       }
     );
@@ -138,5 +128,15 @@ export class AppComponent {
     const data = canvas.toDataURL();
     document.body.removeChild(canvas);
     return data;
+  }
+  session(){
+    let usuario=JSON.parse(localStorage.getItem('userappemanzas'));
+    if(usuario!=null || usuario!=undefined){
+      this.events.publish('user-login', usuario);
+      this.authService.token=usuario.token;
+      this.navCtrl.navigateRoot('home');
+    }else{
+     this.navCtrl.navigateRoot('/landing');
+    }
   }
 }

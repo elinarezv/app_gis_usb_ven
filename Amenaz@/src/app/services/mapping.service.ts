@@ -95,6 +95,8 @@ export class MappingService {
     this.iconRetinaUrl = 'assets/marker-icon-2x.png';
     this.iconUrl = 'assets/marker-icon.png';
     this.shadowUrl = 'assets/marker-shadow.png';
+    let usuario=JSON.parse(localStorage.getItem('userappemanzas'));
+    this.authService.token=usuario.token;
     const iconVar = icon({
       iconRetinaUrl: this.iconRetinaUrl,
       iconUrl: this.iconUrl,
@@ -146,7 +148,7 @@ export class MappingService {
         });
       },
       (error) => {
-        console.log('error');
+        console.log('error ', error);
       },
       () => {
         // Add Marker of City with GeoInformation
@@ -166,9 +168,10 @@ export class MappingService {
   loadLocations() {
     return this.http
       .get(this.env.API_URL + 'data/getlocations', {
+        
         headers: {
           Authorization: 'Basic ' + this.authService.token,
-          'x-access-token': this.authService.token.token,
+          'x-access-token':this.authService.token,
         },
       })
       .pipe(
@@ -201,7 +204,7 @@ export class MappingService {
       .get(this.env.API_URL + 'data/getlayer', {
         headers: {
           Authorization: 'Basic ' + this.authService.token,
-          'x-access-token': this.authService.token.token,
+          'x-access-token': this.authService.token,
         },
         params: parameter,
       })

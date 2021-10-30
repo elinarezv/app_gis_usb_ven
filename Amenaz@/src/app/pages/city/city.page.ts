@@ -281,7 +281,7 @@ export class CityPage implements OnInit {
           a&ntilde;o 1892 y se recuerda por la importante cantidad de viviendas que destruy&oacute;.</p>
           <p>Otra crecida importante se registr&oacute; en el a&ntilde;o de 1900, siendo entonces un evento que caus&oacute;
            expectaci&oacute;n y angustia entre los habitantes de Caracas. Otras inundaciones posteriores importantes han sido
-            las de 1949 y la de 1959</p>
+            las de 1949 y la de 1959.</p>
           <p><img src="/assets/images/CH-3.jpg"
           alt="Fuente: twitter: El Nacional" /></p>
           <p>El Instituto de Mec&aacute;nica de Fluidos de la UCV ha desarrollado algunos modelos de simulaci&oacute;n que
@@ -294,7 +294,7 @@ export class CityPage implements OnInit {
            el comportamiento de sus suelos en caso de un terremoto. </p>
           <p> Se cuenta también para este municipio con modelos que sugieren las características estructurales que deberían
            tener el diseño de sus edificios (espectros de diseño) en función del lugar específico del municipio en que estos
-            se encuentran localizados </p>
+            se encuentran localizados. </p>
           <img src="/assets/images/CH-4.jpg"
           alt="Fuente: Diario El Nacional Fecha: 30-07-1967" />
           <p> Los estudios de Microzonificación Sísmica de la ciudad de Caracas identifican que en el Municipio Chacao
@@ -478,7 +478,7 @@ export class CityPage implements OnInit {
           <h6><strong>Si deseas mayor información sobre amenazas por aludes torrenciales locales, visita:</strong></h6> \
           <a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Chacao/QdasCHACAO.pdf"> \
           CIGIR (2009). “Material de socialización sobre amenazas asociadas a cuencas del municipio Chacao”; \
-          adaptado de López JL. IMF-UCV (2004). Convenio CIGIR-IPCA </a></p> \
+          adaptado de López JL. IMF-UCV (2004). Convenio CIGIR-IPCA </a></p>. \
           <h6><strong>Sobre protocolos internacionales de actuación ante aludes torrenciales, visita:</strong></h6> \
           <a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Merida/Landslide_SPN.pdf"> \
           Recomendaciones de la Cruz Roja Americana ante deslizamientos.</a></p>';
@@ -493,10 +493,10 @@ export class CityPage implements OnInit {
             <p>&nbsp;</p> \
             <h6><strong>Si deseas mayor información sobre amenazas de inundaciones locales, visita:</strong></h6> \
             <a href="https://es.slideshare.net/MercedesMarrero/j-l-lpez-las-inundaciones-los-drenajes-de-caracas-y-las-obras-sobre-el-ro-valle"> \
-            López J.L. (2003). Informe final de Estudio de Amenazas de Inundaciones y Aludes Torrenciales de Caracas. IMF-UCV </a></p> \
+            López J.L. (2003). Informe final de Estudio de Amenazas de Inundaciones y Aludes Torrenciales de Caracas. IMF-UCV. </a></p> \
             <h6><strong>Sobre protocolos de actuación ante inundaciones, visita:</strong></h6> \
             <a href="https://www.youtube.com/watch?v=mFFRzIuD2Nw"> \
-            Video: ¿Qué hacer en caso de inundación?</a></p>';
+            Video: ¿Qué hacer en caso de inundación?.</a></p>';
         } else if (this.actualThreatName === 'Sismicidad') {
           body =
             '<p><strong>A continuación se indican las recomendaciones sugeridas para edificaciones localizadas en \
@@ -576,7 +576,7 @@ export class CityPage implements OnInit {
             Shmitz et al. (2009). “Resultados y recomendaciones del proyecto de Microzonificación Sísmica de Caracas”. Caracas. </a></p> \
             <h6><strong>Sobre protocolos de actuación ante riesgo sísmico, visita:</strong></h6> \
             <a href="https://www.youtube.com/watch?v=n_7lfodHSYI"> \
-            Video: Riesgo Sísmico de la ciudad de Mérida </a></p> \
+            Video: Riesgo Sísmico de la ciudad de Mérida.</a></p> \
             <h6><strong>Sobre la importancia de los estudios de microzonificación sísmica en la ciudad, visita:</strong></h6> \
             <a href="https://www.youtube.com/watch?v=8XivQJ3pr5I&feature=emb_title"> \
             Video: Uso de la microzonificación sísmica.</a></p>';
@@ -627,7 +627,7 @@ export class CityPage implements OnInit {
            edificaciones considerando el espectro de la microzona 2D.</p>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/four.png" />Implementaci&oacute;n de
            protocolos familiares y comunitarios de preparaci&oacute;n y actuaci&oacute;n en caso de terremotos.</p>
-          <h6><strong>Para edificaciones en Microzona 3D</strong></h6>
+          <h6><strong>Para edificaciones en Microzona 3D:</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Evaluaci&oacute;n sismorresistente de los edificios construidos antes de 1967 y de columnas y vigas &ge; 4
            pisos o de muros &ge; 7 pisos construidos entre 1967-1982.</p>
@@ -640,7 +640,7 @@ export class CityPage implements OnInit {
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/four.png" /></p>
           <p>Implementaci&oacute;n de protocolos familiares y comunitarios de preparaci&oacute;n y actuaci&oacute;n
            en caso de terremoto.</p>
-          <h6><strong>Para edificaciones en Microzona 2E</strong></h6>
+          <h6><strong>Para edificaciones en Microzona 2E:</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Evaluaci&oacute;n sismorresistente de los edificios construidos antes de 1967 y de columnas y vigas &ge;
            4 pisos o de muros &ge; 7 pisos construidos entre 1967-1982.</p>
@@ -653,7 +653,7 @@ export class CityPage implements OnInit {
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/four.png" /></p>
           <p>Implementaci&oacute;n de protocolos familiares y comunitarios de preparaci&oacute;n y actuaci&oacute;n
            en caso de terremoto.</p>
-          <h6><strong>Para edificaciones en Microzona 3E</strong></h6>
+          <h6><strong>Para edificaciones en Microzona 3E:</strong></h6>
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/one.png" /></p>
           <p>Evaluaci&oacute;n sismorresistente de los edificios construidos antes de 1967 y de columnas y vigas &ge;
            4 pisos o de muros &ge; 7 pisos construidos entre 1967-1982.</p>
@@ -666,7 +666,7 @@ export class CityPage implements OnInit {
           <p><img style="padding: 0 15px; float: left; height: 32px;" src="/assets/four.png" /></p>
           <p>Implementaci&oacute;n de protocolos familiares y comunitarios de preparaci&oacute;n y actuaci&oacute;n
            en caso de terremoto.</p>
-          <h6><strong>Para edificaciones en Microzona M0</strong></h6>
+          <h6><strong>Para edificaciones en Microzona M0:</strong></h6>
           <p>No aplica.</p> <p>&nbsp;</p>
           <p>&nbsp;</p>
           <h6><strong>Recomendaciones para la Zona de influencia de fallas geológicas:</strong></h6>
@@ -695,9 +695,9 @@ export class CityPage implements OnInit {
           <p><strong>Si deseas mayor informaci&oacute;n sobre riesgo s&iacute;smico y la microzonificaci&oacute;n
            s&iacute;smica de Cuman&aacute;, visita:</strong></p>
           <p>Video: <a href="https://www.youtube.com/watch?reload=9&amp;v=rDCr0l47ags">Proyecto de Microzonificaci&oacute;n
-           S&iacute;smica de Cuman&aacute;</a></p>
+           S&iacute;smica de Cuman&aacute;.</a></p>
            <p><strong>Sobre la importancia de los estudios de microzonificación sísmica en la ciudad, visita:</strong></p>
-           <p>Video: <a href="https://www.youtube.com/watch?v=8XivQJ3pr5I&feature=emb_title">Uso de la microzonificación sísmica</a></p>`;
+           <p>Video: <a href="https://www.youtube.com/watch?v=8XivQJ3pr5I&feature=emb_title">Uso de la microzonificación sísmica.</a></p>`;
         } else if (this.actualThreatName === 'Tsunami') {
           body = `<p><strong> A continuación las recomendaciones sugeridas en caso de estar localizado en cada una de las
           zonas de amenaza por Tsunami, identificadas en la ciudad de Cumaná:</strong></p>
@@ -765,10 +765,10 @@ export class CityPage implements OnInit {
           Guevara, M. (2014). Simulaci&oacute;n num&eacute;rica del tsunami asociado al terremoto del 17 de enero de
            1929 en la ciudad de Cuman&aacute;, una contribuci&oacute;n a los estudios de riesgo en las costas venezolanas.
             Tesis de grado. Maestr&iacute;a en Geof&iacute;sica. Facultad de Ingenier&iacute;a, Universidad
-             Central de Venezuela.&nbsp; </a></p>
+             Central de Venezuela.</a></p>
 
           <h6><strong>Sobre ejercicios de preparaci&oacute;n para tsunami, visita:</strong></h6>
-          <p><a href="https://www.tsunamizone.org/espanol/caribewave/">The Tsunami Zone</a></p>`;
+          <p><a href="https://www.tsunamizone.org/espanol/caribewave/">The Tsunami Zone.</a></p>`;
         } else if (this.actualThreatName === 'Inundaciones') {
           body = `<p><strong> A continuación se presentan algunas recomendaciones para espacios localizados dentro de las
           áreas potenciales de inundación fluvial y pluvial, en la ciudad de Cumaná:</strong></p>
@@ -806,10 +806,10 @@ export class CityPage implements OnInit {
           <h6><strong>Si deseas mayor informaci&oacute;n sobre inundaciones pluviales y fluviales de Cuman&aacute;, visita:</strong></h6>
           <p><a href="https://issuu.com/ciudadesemergentesysostenibles/docs/cumana_sostenible_lr_compressed">Banco Interamericano
            de Desarrollo y IDOM/IH Cantabria. (2015). CUMAN&Aacute;: Estudio de riesgo y vulnerabilidad ante desastres naturales
-            en el contexto de cambio clim&aacute;tico</a>&nbsp;</p>
+            en el contexto de cambio clim&aacute;tico</a>.&nbsp;</p>
           <p>&nbsp;</p>
           <h6><strong>Sobre protocolos de actuaci&oacute;n ante inundaciones, visita:</strong></h6>
-          <p><a href="https://www.youtube.com/watch?v=mFFRzIuD2Nw">Video: &iquest;Qu&eacute; hacer en caso de inundaci&oacute;n? </a></p>`;
+          <p><a href="https://www.youtube.com/watch?v=mFFRzIuD2Nw">Video: &iquest;Qu&eacute; hacer en caso de inundaci&oacute;n? </a>.</p>`;
         } else if (this.actualThreatName === 'Mov. en masa') {
           body = `<p><strong>A continuación se indican recomendaciones sugeridas para zonas susceptibles a movimientos
           en masa, identificadas para la ciudad de Cumaná:</strong></p>
@@ -823,7 +823,7 @@ export class CityPage implements OnInit {
           <h6><strong>Si deseas mayor informaci&oacute;n sobre protocolos de actuaci&oacute;n ante movimientos en masa,
           visita:</strong></h6>
           <p><a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Merida/Landslide_SPN.pdf">
-          Recomendaciones de la Cruz Roja Americana ante deslizamientos</a></p>`;
+          Recomendaciones de la Cruz Roja Americana ante deslizamientos.</a></p>`;
         }
       } else if (this.actualCity.name === 'Mérida') {
         if (this.actualThreatName === 'Aludes') {
@@ -840,10 +840,10 @@ export class CityPage implements OnInit {
           <p>&nbsp;</p>
           <h6><strong>Si deseas mayor informaci&oacute;n sobre aludes torrenciales locales, visita:</strong></h6>
           <p><a href="https://www.academia.edu/42028784/Merida_ciudad_segura">
-          Ferrer C., Liñayo A. (2009). Mérida: Ciudad Segura. Mérida, Venezuela. Talleres Gráficos Universitarios</a>&nbsp;</p>
+          Ferrer C., Liñayo A. (2009). Mérida: Ciudad Segura. Mérida, Venezuela. Talleres Gráficos Universitarios.</a>&nbsp;</p>
           <p>&nbsp;</p>
           <h6><strong>Sobre protocolos de actuaci&oacute;n ante inundaciones, visita:</strong></h6>
-          <p><a href="https://www.youtube.com/watch?v=mFFRzIuD2Nw">Video: &iquest;Qu&eacute; hacer en caso de inundaci&oacute;n? </a></p>`;
+          <p><a href="https://www.youtube.com/watch?v=mFFRzIuD2Nw">Video: &iquest;Qu&eacute; hacer en caso de inundaci&oacute;n?. </a></p>`;
         } else if (this.actualThreatName === 'Mov. en masa') {
           body = `<p><strong>A continuación se identifican recomendaciones sugeridas para zonas susceptibles a
           movimientos en masa, para la ciudad de Mérida:</strong></p>
@@ -884,12 +884,12 @@ export class CityPage implements OnInit {
           <h6><strong>Si deseas mayor informaci&oacute;n sobre movimientos en masa locales, visita:</strong></h6>
           <p><a href="https://www.academia.edu/42028784/Merida_ciudad_segura">
           Ferrer C., Liñayo A. (2009). M&eacute;rida: Ciudad Segura. M&eacute;rida, Venezuela. Talleres Gr&aacute;ficos
-          Universitarios</a></p>
+          Universitarios.</a></p>
           <h6><strong>Sobre protocolos de actuaci&oacute;n ante movimientos en masa, visita:</strong></h6>
           <p><a href="https://www.youtube.com/watch?v=2kTluSZeML8&amp;feature=youtu.be">Video: Prevenci&oacute;n y
-           mitigaci&oacute;n. Deslizamientos y derrumbes. Colecci&oacute;n Defensa Civil Venezuela </a></p>
+           mitigaci&oacute;n. Deslizamientos y derrumbes. Colecci&oacute;n Defensa Civil Venezuela.</a></p>
           <p><a href="https://www.appmenazas.com/amenazasurbanas/DocumentosYFotos/Documentos/Merida/Landslide_SPN.pdf">
-          Recomendaciones de la Cruz Roja Americana ante deslizamientos</a></p>`;
+          Recomendaciones de la Cruz Roja Americana ante deslizamientos.</a></p>`;
         } else if (this.actualThreatName === 'Sismicidad') {
           body = `<p><strong>Si bien no existen aún recomendaciones específicas para las dos microzonas sísmicas
           identificadas hasta ahora en Mérida, las similitudes de sus parámetros con los resultados
@@ -933,13 +933,13 @@ export class CityPage implements OnInit {
           <p><strong>Si deseas mayor informaci&oacute;n sobre riesgo s&iacute;smico de M&eacute;rida, visita:</strong></p>
           <p><a href="https://www.academia.edu/42028700/MERIDA_ciudad_de_4_rios_y_4_terremotos">Laffaille J.
            (2009). M&eacute;rida: Ciudad de cuatro r&iacute;os y cuatro terremotos. M&eacute;rida, Venezuela.
-           Talleres Gr&aacute;ficos Universitarios</a></p>
+           Talleres Gr&aacute;ficos Universitarios.</a></p>
           <p><strong>Sobre protocolos de actuaci&oacute;n ante riesgo s&iacute;smico, visita:</strong></p>
-          <p><a href="https://www.youtube.com/watch?v=n_7lfodHSYI">Video: Riesgo S&iacute;smico de la ciudad de M&eacute;rida</a></p>
+          <p><a href="https://www.youtube.com/watch?v=n_7lfodHSYI">Video: Riesgo S&iacute;smico de la ciudad de M&eacute;rida.</a></p>
           <p><a href="https://www.youtube.com/watch?v=4j7vsBCRvmE">Video: &iquest;Qu&eacute; debo hacer en caso de sismo?:
-          antes, durante y despu&eacute;s </a></p>
+          antes, durante y despu&eacute;s.</a></p>
           <h6><strong>Sobre la importancia de los estudios de microzonificación sísmica en la ciudad, visita:</strong></h6>
-          <p><a href="https://www.youtube.com/watch?v=8XivQJ3pr5I&feature=emb_title">Video: Uso de la microzonificación sísmica</a></p>`;
+          <p><a href="https://www.youtube.com/watch?v=8XivQJ3pr5I&feature=emb_title">Video: Uso de la microzonificación sísmica.</a></p>`;
         }
       }
       this.showInfo(title, '<hr />' + body);
@@ -1012,7 +1012,7 @@ export class CityPage implements OnInit {
                Instituto de Materiales y Modelos Estructurales (IMME - UCV).</a></p>
             <p style="padding-left: 30px;">Singer, A., Zambrano, A., Oropeza, J., Tagliaferro, M. (2007). Mapa geológico del Cuaternario y
              de las fallas cuaternarias del valle de Caracas. Escala 1:25.000. Proyecto de Microzonificación Sísmica de Caracas.
-              Fundación Venezolana de Investigaciones Sismológicas (FUNVISIS)</p>`;
+              Fundación Venezolana de Investigaciones Sismológicas (FUNVISIS).</p>`;
         } else if (this.actualThreatName === 'Sismicidad') {
           body = `<ul>
           <li><strong>A quien consultar en su localidad:</strong></li>
@@ -1067,7 +1067,7 @@ export class CityPage implements OnInit {
           <ul>
           <li><strong>Para dudas, comentarios y/o sugerencias sobre la informaci&oacute;n de amenaza por movimientos en masa:</strong></li>
           </ul>
-          <p style="padding-left: 30px;"><a href="https://cigir.org.ve/inicio/">Centro de Investigaci&oacute;n en Gesti&oacute;n Integral del Riesgo (CIGIR), 2019. Ing. Jenny Moreno</a></p>
+          <p style="padding-left: 30px;"><a href="https://cigir.org.ve/inicio/">Centro de Investigaci&oacute;n en Gesti&oacute;n Integral del Riesgo (CIGIR), 2019. Ing. Jenny Moreno.</a></p>
           <ul>
           <li><strong>Referencias adicionales:</strong></li>
           </ul>
@@ -1079,7 +1079,7 @@ export class CityPage implements OnInit {
           <ol>
           <li>Centro de Sismolog&iacute;a &ldquo;Luis Daniel Beauperthuy Urich&rdquo; de la Universidad de Oriente (UDO).</li>
           <li>Instituto de Oceanograf&iacute;a de La Universidad de Oriente.</li>
-          <li>Protección Civil del Estado Sucre</li>
+          <li>Protección Civil del Estado Sucre.</li>
           </ol>
           <ul>
           <li><strong>Para dudas, comentarios y/o sugerencias sobre la informaci&oacute;n de amenaza por tsunami:</strong></li>
@@ -1137,14 +1137,14 @@ export class CityPage implements OnInit {
           </ul>
           <p style="padding-left: 30px;">Sub-Comisi&oacute;n de Caracterizaci&oacute;n de Riesgos Socionaturales de la
            Fundaci&oacute;n para la Prevenci&oacute;n del Riesgo S&iacute;smico (<a href="http://www.fundapris.org.ve/">
-           FUNDAPRIS</a>)&nbsp;</p>
+           FUNDAPRIS</a>).&nbsp;</p>
           <p>&nbsp;</p>
           <ul>
           <li><strong>Referencias adicionales:</strong></li>
           </ul>
           <p style="padding-left: 30px;"><a href="https://www.academia.edu/42028784/Merida_ciudad_segura">
           Ferrer C., Liñayo A. (2009). M&eacute;rida: Ciudad Segura. M&eacute;rida, Venezuela. Talleres
-          Gr&aacute;ficos Universitarios</a>.&nbsp;</p>`;
+          Gr&aacute;ficos Universitarios.</a>&nbsp;</p>`;
         } else if (this.actualThreatName === 'Sismicidad') {
           body = `<ul>
           <li><strong>A quien consultar en su localidad:</strong></li>
@@ -1171,7 +1171,7 @@ export class CityPage implements OnInit {
           <p style="padding-left: 30px;">
           <a href="https://www.academia.edu/42028784/Merida_ciudad_segura">
           Ferrer C., Liñayo A. (2009). M&eacute;rida: Ciudad Segura. M&eacute;rida, Venezuela. Talleres Gr&aacute;ficos
-          Universitarios</a>.</p>`;
+          Universitarios.</a></p>`;
         } else if (this.actualThreatName === 'Mov. en masa') {
           body = `<ul>
           <li><strong>A quien consultar en su localidad:</strong></li>
@@ -1181,7 +1181,7 @@ export class CityPage implements OnInit {
           FUNDAPRIS</a>).</li>
           <li><a href="http://www.ula.ve/ciencias-forestales-ambientales/igeo/">Instituto de Geograf&iacute;a
            de la Universidad de Los Andes (ULA).</a></li>
-          <li><a href="https://www.facebook.com/ImprademProteccioncivilMerida/">Protecci&oacute;n Civil del Estado M&eacute;rida</a></li>
+          <li><a href="https://www.facebook.com/ImprademProteccioncivilMerida/">Protecci&oacute;n Civil del Estado M&eacute;rida.</a></li>
           <li>Escuela de Ingenier&iacute;a Geol&oacute;gica, de la Universidad de Los Andes.</li>
           </ol>
           <p>&nbsp;</p>
@@ -1190,7 +1190,7 @@ export class CityPage implements OnInit {
           </ul>
           <p style="padding-left: 30px;">Sub-Comisi&oacute;n de Caracterizaci&oacute;n de Riesgos Socionaturales de la
            Fundaci&oacute;n para la Prevenci&oacute;n del Riesgo S&iacute;smico (<a href="http://www.fundapris.org.ve/">
-           FUNDAPRIS</a>)&nbsp;</p>
+           FUNDAPRIS</a>).&nbsp;</p>
           <p><strong>&nbsp;</strong></p>
           <ul>
           <li><strong>Referencias adicionales:</strong></li>

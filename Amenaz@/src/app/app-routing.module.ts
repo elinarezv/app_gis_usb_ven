@@ -59,6 +59,11 @@ const routes: Routes = [
     path: 'recover',
     loadChildren: () => import('./pages/auth/recover/recover.module').then((m) => m.RecoverPageModule),
   },
+  {
+    path: 'lading2',
+    loadChildren: () => import('./pages/lading2/lading2.module').then( m => m.Lading2PageModule)
+  },
+
 ];
 
 @NgModule({

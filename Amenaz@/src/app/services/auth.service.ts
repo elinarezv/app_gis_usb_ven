@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
@@ -29,9 +28,10 @@ export class AuthService {
   setToken(newToken: any) {
     this.token = newToken;
   }
-  login(email: string, password: string) {
+  login(email: string, password: string){
     return this.http.post(this.env.API_URL + 'auth/login', { email: email, password: password }).pipe(
       tap((token) => {
+        console.log(token);
         this.storage.setItem('token', token).then(
           () => {
             console.log('Token Stored');

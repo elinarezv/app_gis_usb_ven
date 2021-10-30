@@ -8,13 +8,14 @@ import { AuthService } from '../services/auth.service';
 export class AuthGuard implements CanActivate {
   constructor(private router: Router, private authService: AuthService) {}
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-    const currentUser = this.authService.isLoggedIn;
-    if (currentUser) {
-      // authorized so return true
+    const currentUser = JSON.parse(localStorage.getItem('userappemanzas'));
+    if (currentUser){
+      this.authService.isLoggedIn=true;
       return true;
+    }else{
+      this.router.navigate(['/landing']);
+      return false;
     }
-    // not logged in so redirect to login page with the return url
-    this.router.navigate(['/landing']);
-    return false;
+
   }
 }

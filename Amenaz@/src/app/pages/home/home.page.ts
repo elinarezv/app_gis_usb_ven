@@ -1,18 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import {
-  MenuController,
-  Events,
-  Platform,
-  ModalController,
-  AlertController,
-  NavController,
-  NavParams,
-  IonSelect,
-} from '@ionic/angular';
-
+import { Component, OnInit, ViewChild  } from '@angular/core';
+import { MenuController, Events, Platform, ModalController, AlertController, NavController, NavParams, IonSelect  } from '@ionic/angular';
 import { MappingService } from 'src/app/services/mapping.service';
 import { InfoPageComponent } from 'src/app/components/info-page/info-page.component';
-
 import * as L from 'leaflet';
 import * as esri from 'esri-leaflet';
 import * as Geocoding from 'esri-leaflet-geocoder';
@@ -23,7 +12,6 @@ import '../../../assets/js/leaflet-polygon.fillPattern';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import { NavigationExtras } from '@angular/router';
 import { from } from 'rxjs';
-
 type ThreatsButton = {
   title: string;
   iconName: string;
@@ -37,7 +25,6 @@ type ThreatsButton = {
 })
 export class HomePage implements OnInit {
   @ViewChild('cityselector', { read: false, static: false }) citySelectorRef: IonSelect;
-
   addedLayerControl: boolean;
   areCitiesAvailable: boolean;
   isMarkerActive: boolean;
@@ -57,15 +44,7 @@ export class HomePage implements OnInit {
   selectedItem: string;
   private searchControl;
   private resultsLayersGroup;
-
-  constructor(
-    private menu: MenuController,
-    public alertController: AlertController,
-    public mappingService: MappingService,
-    public events: Events,
-    private platform: Platform,
-    private modalController: ModalController,
-    private navController: NavController
+  constructor( private menu: MenuController, public alertController: AlertController, public mappingService: MappingService, public events: Events, private platform: Platform, private modalController: ModalController, private navController: NavController
   ) {
     this.menu.enable(true);
     this.addedLayerControl = false;
@@ -120,7 +99,7 @@ export class HomePage implements OnInit {
     this.threatsOnBar = [];
     this.centerOnCity();
   }
-  removeLayerControl() {
+  removeLayerControl(){
     Object.keys(this.overlayMaps).forEach((key) => {
       this.mappingService.map.removeLayer(this.overlayMaps[key]);
     });
@@ -138,8 +117,9 @@ export class HomePage implements OnInit {
       this.layerControl = undefined;
     }
   }
-  ionViewWillEnter() {
-    this.backButtonSubscription = this.platform.backButton.subscribe(async () => {
+  ionViewWillEnter(){
+    this.backButtonSubscription = this.platform.backButton.subscribe(async () =>{
+      console.log(this.backButtonSubscription);
       navigator['app'].exitApp();
     });
   }
